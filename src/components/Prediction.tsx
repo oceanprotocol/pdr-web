@@ -13,29 +13,27 @@ export default function Prediction(
     const [dirResult, setDirResult] = useState(0);
     const [stakeResult, setStakeResult] = useState(0);
     
-    if (!wallet || !provider) {
-        return null;
-    }
-    
     useEffect(() => {
-        const fetchData = async () => {
-            const epochResult = await epoch(provider, predictoorContractAddress);
-            setEpochResult(Number(epochResult));
+        if( provider ) {
+            const fetchData = async () => {
+                const epochResult = await epoch(provider, predictoorContractAddress);
+                setEpochResult(Number(epochResult));
 
-            const aggPredvalResult = await get_agg_predval(
-                provider, 
-                predictoorContractAddress,
-                epochResult + epochOffset
-            );
+                const aggPredvalResult = await get_agg_predval(
+                    provider, 
+                    predictoorContractAddress,
+                    epochResult + epochOffset
+                );
 
-            setBlockNumResult(Number(aggPredvalResult?.blockNum));
-            setDirResult(Number(aggPredvalResult?.dir));
-            setConfidenceResult(Number(aggPredvalResult?.confidence));
-            setStakeResult(Number(aggPredvalResult?.stake));
-        };
+                setBlockNumResult(Number(aggPredvalResult?.blockNum));
+                setDirResult(Number(aggPredvalResult?.dir));
+                setConfidenceResult(Number(aggPredvalResult?.confidence));
+                setStakeResult(Number(aggPredvalResult?.stake));
+            };
 
-        fetchData();
-    }, [wallet, provider, predictoorContractAddress]);
+            fetchData();
+        }
+    }, [wallet, provider, predictoorContractAddress, epochOffset]);
 
     return (
         <div>

@@ -9,8 +9,8 @@ import { RPCProvider } from '@/contexts/RPCContext';
 
 const chains = [arbitrum, mainnet, goerli]
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
-const predictoorRPC = process.env.NEXT_PUBLIC_WC2_PREDICTOOR_RPC || '';
-const predictoorPK = process.env.NEXT_PUBLIC_WC2_PREDICTOOR_PK || '';
+const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || '';
+const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || '';
 
 const { provider } = configureChains(chains, [w3mProvider({ projectId })])
 const wagmiClient = createClient({
