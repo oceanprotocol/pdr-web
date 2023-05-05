@@ -14,8 +14,8 @@ export default function Balance() {
         chainId: 5
     })
     useEffect(() => {
-        data && setBalance(ethers.utils.formatEther(BigInt(data.toString()).toString(10)))
-    },[data])
+      data && setBalance(ethers.utils.formatEther(BigInt(data as string).toString(10)))
+  }, [data])
     return (
       <div>
         Balance: {balance} OCEAN
