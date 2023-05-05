@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
 
-  const { address} = useAccount()
+  const {address} = useAccount()
 
   return (
     <>

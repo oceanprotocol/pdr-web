@@ -3,6 +3,7 @@ import tokenABI from '../metadata/abis/tokenABI'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 
+// TODO - Fix balance component so it stops throwing errors into the console
 export default function Balance() {
     const {address} = useAccount()
     const [balance, setBalance] = useState('0')

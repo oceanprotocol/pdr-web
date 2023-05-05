@@ -20,7 +20,7 @@ const wagmiClient = createClient({
 })
 const ethereumClient = new EthereumClient(wagmiClient, chains)
 
-const predictoorProvider = new ethers.providers.JsonRpcProvider(predictoorRPC);
+const predictoorProvider = new ethers.providers.InfuraProvider('homestead', predictoorRPC);
 const predictoorWallet = new ethers.Wallet(predictoorPK, predictoorProvider);
 
 export default function App({ Component, pageProps }: AppProps) {
