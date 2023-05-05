@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Header from "../components/Header"
 import Balance from "../components/Balance"
+import Prediction from "../components/Prediction"
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useAccount } from 'wagmi'
@@ -23,6 +24,7 @@ export default function Home() {
         <Header/>
         <h1>Predictoor</h1>
         <Balance/>
+        <Prediction epochOffset={0} predictoorContractAddress={"0x00"} />
       </main>
     </>
   )
