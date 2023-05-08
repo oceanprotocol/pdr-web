@@ -34,7 +34,6 @@ config.forEach((data) => {
   let index = 1
   let row: TableData = {}
   for (const [, value] of Object.entries(data)) {
-    console.log(value)
     row[`col${index}`] = value
     index++
   }
