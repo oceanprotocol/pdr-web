@@ -1,28 +1,28 @@
-import { createContext, createElement, useContext } from "react";
 import { ethers } from "ethers";
+import { createContext, createElement, useContext } from "react";
 
-type RPCContextType = {
+type OPFContextType = {
   wallet: ethers.Wallet | null;
   provider: ethers.providers.JsonRpcProvider | null;
 };
 
-export const RPCContext = createContext<RPCContextType>({
+export const OPFContext = createContext<OPFContextType>({
   wallet: null,
   provider: null
 });
 
-type RPCProviderProps = {
+type OPFProviderProps = {
   wallet: ethers.Wallet;
   provider: ethers.providers.JsonRpcProvider;
   children: React.ReactNode;
 };
 
-export const RPCProvider = ({ children, wallet, provider }: RPCProviderProps) => {
+export const OPFProvider = ({ children, wallet, provider }: OPFProviderProps) => {
   return createElement(
-    RPCContext.Provider,
+    OPFContext.Provider,
     { value: { wallet, provider } },
     children
   );
 };
 
-export const useRPCContext = () => useContext(RPCContext);
+export const useOPFContext = () => useContext(OPFContext);

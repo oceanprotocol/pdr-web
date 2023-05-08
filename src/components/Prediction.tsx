@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { useRPCContext } from "@/contexts/RPCContext";
+import { useOPFContext } from "@/contexts/OPFContext";
 import { epoch, get_agg_predval } from "@/utils/predictoor";
+import { useEffect, useState } from "react";
 
 export default function Prediction(props: {
     epochOffset: number, // offset from epoch index
     predictoorContractAddress: string // predictoor contract address
 }) {
-    const { wallet, provider } = useRPCContext();
+    const { wallet, provider } = useOPFContext();
     const [blockNumResult, setBlockNumResult] = useState(0);
     const [epochResult, setEpochResult] = useState(0);
     const [confidenceResult, setConfidenceResult] = useState(0);
