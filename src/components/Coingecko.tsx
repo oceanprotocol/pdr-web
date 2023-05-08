@@ -37,7 +37,7 @@ export default function Coingecko(props: {
   }, [props.config]);
 
   if (!price || !logo || !mcap ) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
@@ -47,4 +47,4 @@ export default function Coingecko(props: {
       MCAP ${mcap}<br/>
     </div>
   )
-};
+}
