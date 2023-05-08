@@ -1,5 +1,6 @@
 import styles from '@/styles/PredictionsTable.module.css'
 import config from '../metadata/config.json'
+import Prediction from './Prediction'
 import Table from './Table'
 
 const tableColumns = [
@@ -26,7 +27,7 @@ const tableColumns = [
 ]
 
 interface TableData {
-  [key: string]: string
+  [key: string]: any
 }
 
 let tableData: TableData[] = []
@@ -37,6 +38,8 @@ config.forEach((data) => {
     row[`col${index}`] = value
     index++
   }
+  row['col4'] = <Prediction epochOffset={0} predictoorContractAddress="0x" />
+  row['col5'] = <Prediction epochOffset={0} predictoorContractAddress="0x" />
   tableData.push(row)
 })
 

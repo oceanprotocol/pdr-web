@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Balance from '../components/Balance'
 import Header from '../components/Header'
-import Prediction from '../components/Prediction'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,7 +21,6 @@ export default function Home() {
         <h1>Predictoor</h1>
         <Balance />
         <PredictionsTable />
-        <Prediction epochOffset={0} predictoorContractAddress={'0x00'} />
       </main>
     </>
   )
