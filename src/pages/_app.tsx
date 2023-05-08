@@ -1,9 +1,9 @@
 import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
+import type { AppProps } from 'next/app'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { arbitrum, mainnet, goerli } from 'wagmi/chains'
+import { arbitrum, goerli, mainnet } from 'wagmi/chains'
 
 const chains = [arbitrum, mainnet, goerli]
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
