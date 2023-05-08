@@ -1,23 +1,30 @@
-import { useTable } from 'react-table'
+import styles from '@/styles/Table.module.css'
+import { Column, useTable } from 'react-table'
 
-export default function Table({ columns, data }) {
+export default function Table({
+  columns,
+  data
+}: {
+  columns: Column[]
+  data: {}[]
+}) {
   console.log(columns, data)
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data })
   return (
-    <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
+    <table {...getTableProps()} className={styles.table}>
       <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
+        {headerGroups.map((headerGroup, key) => (
+          <tr
+            {...headerGroup.getHeaderGroupProps()}
+            className={styles.tableRow}
+            key={key}
+          >
+            {headerGroup.headers.map((column, key) => (
               <th
                 {...column.getHeaderProps()}
-                style={{
-                  borderBottom: 'solid 3px red',
-                  background: 'aliceblue',
-                  color: 'black',
-                  fontWeight: 'bold'
-                }}
+                className={styles.tableHeaderCell}
+                key={key}
               >
                 {column.render('Header')}
               </th>
@@ -26,19 +33,16 @@ export default function Table({ columns, data }) {
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row) => {
+        {rows.map((row, key) => {
           prepareRow(row)
           return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
+            <tr {...row.getRowProps()} className={styles.tableRow} key={key}>
+              {row.cells.map((cell, key) => {
                 return (
                   <td
                     {...cell.getCellProps()}
-                    style={{
-                      padding: '10px',
-                      border: 'solid 1px gray',
-                      background: 'papayawhip'
-                    }}
+                    className={styles.tableRowCell}
+                    key={key}
                   >
                     {cell.render('Cell')}
                   </td>
