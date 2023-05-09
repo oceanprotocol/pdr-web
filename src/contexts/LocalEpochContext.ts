@@ -1,23 +1,24 @@
 import { createContext, createElement, useContext, useEffect, useState } from "react";
 
-interface EpochContextValue {
+// TODO - Expand LocalEpochContext to support additional logic
+// TODO - Add price
+interface LocalEpochContextValue {
   epochIndex: number;
   setEpochIndex: React.Dispatch<React.SetStateAction<number>>;
   incrementEpochIndex: () => void;
 }
 
-const EpochContext = createContext<EpochContextValue>({
+const LocalEpochContext = createContext<LocalEpochContextValue>({
   epochIndex: 0,
   setEpochIndex: () => {},
   incrementEpochIndex: () => {},
 });
 
-type EpochProviderProps = {
+type LocalEpochProviderProps = {
     children: React.ReactNode;
   };
 
-export const EpochProvider = ({ children }: EpochProviderProps) => {    
-    const [spotPrice, setSpotPrice] = useState<number>(0);
+export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {    
     const [epochIndex, setEpochIndex] = useState<number>(0);
 
   useEffect(() => {
@@ -38,17 +39,17 @@ export const EpochProvider = ({ children }: EpochProviderProps) => {
     setEpochIndex((epochIndex) => epochIndex + 1);
   };
 
-  const value: EpochContextValue = {
+  const value: LocalEpochContextValue = {
     epochIndex,
     setEpochIndex,
     incrementEpochIndex,
   };
 
   return createElement(
-    EpochContext.Provider,
+    LocalEpochContext.Provider,
     { value },
     children
   );
 };
 
-export const useEpochContext = () => useContext(EpochContext);
+export const useLocalEpochContext = () => useContext(LocalEpochContext);

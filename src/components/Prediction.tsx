@@ -1,4 +1,4 @@
-import { useEpochContext } from "@/contexts/EpochContext";
+import { useLocalEpochContext } from "@/contexts/LocalEpochContext";
 import { useOPFContext } from "@/contexts/OPFContext";
 import { epoch as getEpoch, get_agg_predval } from "@/utils/predictoor";
 import { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ function Prediction(props: {
 }) {
     // Contexts
     const {wallet, provider} = useOPFContext();
-    const {epochIndex, incrementEpochIndex} = useEpochContext();
+    const {epochIndex, incrementEpochIndex} = useLocalEpochContext();
                 
     // Component Params
     const [blockNum, setBlockNum] = useState(0);

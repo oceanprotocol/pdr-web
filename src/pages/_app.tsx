@@ -1,4 +1,4 @@
-import { EpochProvider } from '@/contexts/EpochContext'
+import { LocalEpochProvider } from '@/contexts/LocalEpochContext'
 import { OPFProvider } from '@/contexts/OPFContext'
 import '@/styles/globals.css'
 import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
@@ -38,9 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <WagmiConfig client={wagmiClient}>
         <OPFProvider provider={infuraProviderETH} wallet={predictoorWallet}>
-          <EpochProvider>
+          <LocalEpochProvider>
             <Component {...pageProps} />
-          </EpochProvider>
+          </LocalEpochProvider>
         </OPFProvider>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
