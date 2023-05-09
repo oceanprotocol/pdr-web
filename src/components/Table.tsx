@@ -8,7 +8,6 @@ export default function Table({
   columns: Column[]
   data: {}[]
 }) {
-  //console.log(columns, data)
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data })
   return (

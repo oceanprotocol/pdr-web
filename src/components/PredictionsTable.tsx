@@ -3,6 +3,7 @@ import config from '../metadata/config.json'
 import styles from '../styles/PredictionsTable.module.css'
 import { TokenData, getTokenData } from '../utils/coin'
 import Coin from './Coin'
+import Prediction from './Prediction'
 import Table from './Table'
 
 const tableColumns = [
@@ -43,8 +44,18 @@ export default function PredictionsTable() {
       row['coin'] = <Coin coinData={tokenData} />
       row['price'] = `$${tokenData.price}`
       row['amount'] = ''
-      row['nextPrediction'] = data.pairAddress
-      row['currentPrediction'] = data.pairAddress
+      row['nextPrediction'] = (
+        <Prediction
+          epochOffset={0}
+          predictoorContractAddress={data.pairAddress}
+        />
+      )
+      row['currentPrediction'] = (
+        <Prediction
+          epochOffset={0}
+          predictoorContractAddress={data.pairAddress}
+        />
+      )
       newData.push(row)
       setTableData(newData)
       console.log(newData)
