@@ -3,9 +3,7 @@ import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Balance from '../components/Balance'
-import Coingecko from '../components/Coingecko'
 import Header from '../components/Header'
-import config from "../metadata/config.json"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +21,6 @@ export default function Home() {
         <h1>Predictoor</h1>
         <Balance />
         <PredictionsTable />
-        <Coingecko config={config[0]} />
       </main>
     </>
   )
