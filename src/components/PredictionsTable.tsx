@@ -71,7 +71,7 @@ export default function PredictionsTable() {
       )
       newData.push(row)
       setTableData(newData)
-      console.log(newData)
+      // console.log(newData)
     })
   }
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function PredictionsTable() {
   }, [])
 
   useEffect(() => {
-    console.log(tableData)
+    // console.log(tableData)
   }, [tableData])
 
   return tableData ? (
