@@ -41,7 +41,7 @@ export default function PredictionsTable() {
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
-      row['price'] = tokenData.price
+      row['price'] = `$${tokenData.price}`
       row['amount'] = ''
       row['nextPrediction'] = data.pairAddress
       row['currentPrediction'] = data.pairAddress
