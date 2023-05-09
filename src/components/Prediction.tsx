@@ -4,13 +4,16 @@ import { epoch as getEpoch, get_agg_predval } from "@/utils/predictoor";
 import { useEffect, useState } from "react";
 
 // 3 States => Defines how the Prediction component behaves
-enum PredictionState {
+// Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
+/* eslint-disable no-unused-vars */
+export enum PredictionState {
     Next = 'next',
     Live = 'live',
     History = 'history',
 }
+/* eslint-enable no-unused-vars */
 
-function Prediction(props: {
+export default function Prediction(props: {
     state: PredictionState,
     epochOffset: number, // offset from epoch index
     predictoorContractAddress: string // predictoor contract address
@@ -32,7 +35,7 @@ function Prediction(props: {
     
     useEffect(() => {
         if( provider ) {
-            /// If in local mode, we want to use the mock data & implementation
+            // If in local mode, we want to use the mock data & implementation
             if( process.env.NEXT_PUBLIC_ENV == 'local' ) {
                 setEpoch(Number(epochIndex) + props.epochOffset);
                 setBlockNum(1);
@@ -43,13 +46,14 @@ function Prediction(props: {
             }
             
             const fetchData = async () => {
-                const curEpoch:Number = await getEpoch(provider, props.predictoorContractAddress);
-                setEpoch(Number(curEpoch) + props.epochOffset);
+                const curEpoch:number = await getEpoch(provider, props.predictoorContractAddress);
+                const newEpoch:number = curEpoch + props.epochOffset
+                setEpoch(newEpoch);
 
                 const aggPredval = await get_agg_predval(
                     provider, 
                     props.predictoorContractAddress,
-                    epoch + props.epochOffset
+                    newEpoch
                 );
                 
                 setBlockNum(Number(aggPredval?.blockNum));
@@ -99,8 +103,3 @@ function Prediction(props: {
         </div>
     )          
 }
-
-export {
-    Prediction,
-    PredictionState
-};

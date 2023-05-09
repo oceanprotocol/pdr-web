@@ -3,7 +3,7 @@ import config from '../metadata/config.json';
 import styles from '../styles/PredictionsTable.module.css';
 import { getTokenData, TokenData } from '../utils/coin';
 import Coin from './Coin';
-import { Prediction, PredictionState } from './Prediction';
+import Prediction, { PredictionState } from './Prediction';
 import Table from './Table';
 
 const tableColumns = [
