@@ -1,52 +1,79 @@
-import styles from '@/styles/PredictionsTable.module.css'
+import { useEffect, useState } from 'react'
 import config from '../metadata/config.json'
+import styles from '../styles/PredictionsTable.module.css'
+import { TokenData, getTokenData } from '../utils/coin'
+import Coin from './Coin'
 import Prediction from './Prediction'
 import Table from './Table'
 
 const tableColumns = [
   {
     Header: 'Coin',
-    accessor: 'col1'
+    accessor: 'coin'
   },
   {
     Header: 'Price',
-    accessor: 'col2'
+    accessor: 'price'
   },
   {
     Header: 'Amount',
-    accessor: 'col3'
+    accessor: 'amount'
   },
   {
     Header: 'Next prediction',
-    accessor: 'col4'
+    accessor: 'nextPrediction'
   },
   {
     Header: 'Current Prediction',
-    accessor: 'col5'
+    accessor: 'currentPrediction'
   }
 ]
 
-interface TableData {
-  [key: string]: any
-}
-
-let tableData: TableData[] = []
-config.forEach((data) => {
-  let index = 1
-  let row: TableData = {}
-  for (const [, value] of Object.entries(data)) {
-    row[`col${index}`] = value
-    index++
-  }
-  row['col4'] = <Prediction epochOffset={0} predictoorContractAddress="0x" />
-  row['col5'] = <Prediction epochOffset={0} predictoorContractAddress="0x" />
-  tableData.push(row)
-})
-
 export default function PredictionsTable() {
-  return (
+  interface TableData {
+    [key: string]: any
+  }
+
+  const [tableData, setTableData] = useState<TableData[]>()
+
+  const loadTableData = async () => {
+    config.forEach(async (data) => {
+      let newData: any = []
+      let row: any = {}
+      let tokenData: TokenData = await getTokenData(data.cg_id)
+      row['coin'] = <Coin coinData={tokenData} />
+      row['price'] = `$${tokenData.price}`
+      row['amount'] = ''
+      row['nextPrediction'] = (
+        <Prediction
+          epochOffset={0}
+          predictoorContractAddress={data.pairAddress}
+        />
+      )
+      row['currentPrediction'] = (
+        <Prediction
+          epochOffset={0}
+          predictoorContractAddress={data.pairAddress}
+        />
+      )
+      newData.push(row)
+      setTableData(newData)
+      console.log(newData)
+    })
+  }
+  useEffect(() => {
+    loadTableData()
+  }, [])
+
+  useEffect(() => {
+    console.log(tableData)
+  }, [tableData])
+
+  return tableData ? (
     <div className={styles.container}>
       <Table columns={tableColumns} data={tableData} />
     </div>
+  ) : (
+    <div>Loading</div>
   )
 }

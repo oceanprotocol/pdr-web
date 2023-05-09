@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 30px;
+  object-fit: contain;
+}

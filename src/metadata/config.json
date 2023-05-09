@@ -1,9 +1,13 @@
 [
   {
-    "chainId": "0x",
+    "chainId": "1",
+    "tokenName": "ETH",
     "tokenAddress": "0x",
-    "stabelcoinAddress": "0x",
+    "pairName": "USDC",
+    "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    "exchange": "univ3",
     "predictoorContractAddress": "0x",
-    "exchangeAddress": "0x"
+    "cg_id": "ethereum",
+    "cg_vs_currencies": "usd"
   }
 ]
