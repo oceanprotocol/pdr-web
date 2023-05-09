@@ -1,8 +1,9 @@
-import { useContractRead, useAccount } from 'wagmi'
-import tokenABI from '../metadata/abis/tokenABI'
-import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import { useEffect, useState } from 'react'
+import { useAccount, useContractRead } from 'wagmi'
+import tokenABI from '../metadata/abis/tokenABI'
 
+// TODO - Fix balance component so it stops throwing errors into the console
 export default function Balance() {
   const { address } = useAccount()
   const [balance, setBalance] = useState('0')
@@ -15,7 +16,7 @@ export default function Balance() {
   })
   useEffect(() => {
     data &&
-      setBalance(ethers.utils.formatEther(BigInt(data.toString()).toString(10)))
+      setBalance(ethers.utils.formatEther(BigInt(data as string).toString(10)))
   }, [data])
   return <div>Balance: {balance} OCEAN</div>
 }
