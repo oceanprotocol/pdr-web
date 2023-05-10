@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-import config from '../metadata/config.json'
-import styles from '../styles/PredictionsTable.module.css'
-import { TokenData, getTokenData } from '../utils/coin'
-import Coin from './Coin'
-import Prediction from './Prediction'
-import Table from './Table'
+import { useEffect, useState } from 'react';
+import config from '../metadata/config.json';
+import styles from '../styles/PredictionsTable.module.css';
+import { getTokenData, TokenData } from '../utils/coin';
+import Coin from './Coin';
+import Prediction, { PredictionState } from './Prediction';
+import Table from './Table';
 
 const tableColumns = [
   {
@@ -20,12 +20,16 @@ const tableColumns = [
     accessor: 'amount'
   },
   {
-    Header: 'Next prediction',
-    accessor: 'nextPrediction'
+    Header: 'Next',
+    accessor: 'next'
   },
   {
-    Header: 'Current Prediction',
-    accessor: 'currentPrediction'
+    Header: 'Live',
+    accessor: 'live'
+  },
+  {
+    Header: 'History',
+    accessor: 'history'
   }
 ]
 
@@ -44,21 +48,30 @@ export default function PredictionsTable() {
       row['coin'] = <Coin coinData={tokenData} />
       row['price'] = `$${tokenData.price}`
       row['amount'] = ''
-      row['nextPrediction'] = (
+      row['next'] = (
         <Prediction
+          state={PredictionState.Next}
+          epochOffset={+1}
+          predictoorContractAddress={data.pairAddress}
+        />
+      )
+      row['live'] = (
+        <Prediction
+          state={PredictionState.Live}
           epochOffset={0}
           predictoorContractAddress={data.pairAddress}
         />
       )
-      row['currentPrediction'] = (
+      row['history'] = (
         <Prediction
-          epochOffset={0}
+          state={PredictionState.History}
+          epochOffset={-1}
           predictoorContractAddress={data.pairAddress}
         />
       )
       newData.push(row)
       setTableData(newData)
-      console.log(newData)
+      // console.log(newData)
     })
   }
   useEffect(() => {
@@ -66,7 +79,7 @@ export default function PredictionsTable() {
   }, [])
 
   useEffect(() => {
-    console.log(tableData)
+    // console.log(tableData)
   }, [tableData])
 
   return tableData ? (
