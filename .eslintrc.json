@@ -8,5 +8,8 @@
     "browser": true,
     "node": true,
     "mocha": true
+  },
+  "rules": {
+    "no-unused-vars": ["error", { "args": "none" }]
   }
 }

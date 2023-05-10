@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import config from '../metadata/config.json'
 import styles from '../styles/PredictionsTable.module.css'
 import { TokenData, getTokenData } from '../utils/coin'
+import AmountInput from './AmountInput'
 import Coin from './Coin'
 import Prediction from './Prediction'
 import Table from './Table'
@@ -43,7 +44,7 @@ export default function PredictionsTable() {
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
       row['price'] = `$${tokenData.price}`
-      row['amount'] = ''
+      row['amount'] = <AmountInput />
       row['nextPrediction'] = (
         <Prediction
           epochOffset={0}
@@ -58,7 +59,6 @@ export default function PredictionsTable() {
       )
       newData.push(row)
       setTableData(newData)
-      console.log(newData)
     })
   }
   useEffect(() => {
