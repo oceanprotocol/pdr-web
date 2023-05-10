@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import config from '../metadata/config.json';
-import styles from '../styles/PredictionsTable.module.css';
-import { getTokenData, TokenData } from '../utils/coin';
-import Coin from './Coin';
-import Prediction, { PredictionState } from './Prediction';
-import Table from './Table';
+import { useEffect, useState } from 'react'
+import config from '../metadata/config.json'
+import styles from '../styles/PredictionsTable.module.css'
+import { TokenData, getTokenData } from '../utils/coin'
+import AmountInput from './AmountInput'
+import Coin from './Coin'
+import Prediction, { PredictionState } from './Prediction'
+import Table from './Table'
 
 const tableColumns = [
   {
@@ -47,7 +48,7 @@ export default function PredictionsTable() {
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
       row['price'] = `$${tokenData.price}`
-      row['amount'] = ''
+      row['amount'] = <AmountInput />
       row['next'] = (
         <Prediction
           state={PredictionState.Next}
@@ -71,7 +72,6 @@ export default function PredictionsTable() {
       )
       newData.push(row)
       setTableData(newData)
-      // console.log(newData)
     })
   }
   useEffect(() => {
