@@ -42,10 +42,11 @@ export default function Prediction({
     if (provider) {
       // If in local mode, we want to use the mock data & implementation
       if (process.env.NEXT_PUBLIC_ENV == 'local') {
+        let randomConfidence = parseFloat(Math.random().toFixed(2))
         setEpoch(Number(epochIndex) + epochOffset)
         setBlockNum(1)
-        setDirection(1)
-        setConfidence(0.7)
+        setDirection(randomConfidence > 0.5 ? 1 : 0)
+        setConfidence(randomConfidence)
         setStake(100)
         return
       }
