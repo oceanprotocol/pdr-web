@@ -2,6 +2,7 @@ import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
+import styles from '../styles/Prediction.module.css'
 
 // 3 States => Defines how the Prediction component behaves
 // Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
@@ -13,7 +14,11 @@ export enum PredictionState {
 }
 /* eslint-enable no-unused-vars */
 
-export default function Prediction(props: {
+export default function Prediction({
+  state,
+  epochOffset,
+  predictoorContractAddress
+}: {
   state: PredictionState
   epochOffset: number // offset from epoch index
   predictoorContractAddress: string // predictoor contract address
@@ -37,10 +42,10 @@ export default function Prediction(props: {
     if (provider) {
       // If in local mode, we want to use the mock data & implementation
       if (process.env.NEXT_PUBLIC_ENV == 'local') {
-        setEpoch(Number(epochIndex) + props.epochOffset)
+        setEpoch(Number(epochIndex) + epochOffset)
         setBlockNum(1)
-        setDir(0.7)
-        setConfidence(1)
+        setDir(1)
+        setConfidence(0.7)
         setStake(100)
         return
       }
@@ -48,14 +53,14 @@ export default function Prediction(props: {
       const fetchData = async () => {
         const curEpoch: number = await getEpoch(
           provider,
-          props.predictoorContractAddress
+          predictoorContractAddress
         )
-        const newEpoch: number = curEpoch + props.epochOffset
+        const newEpoch: number = curEpoch + epochOffset
         setEpoch(newEpoch)
 
         const aggPredval = await get_agg_predval(
           provider,
-          props.predictoorContractAddress,
+          predictoorContractAddress,
           newEpoch
         )
 
@@ -66,35 +71,27 @@ export default function Prediction(props: {
       }
       fetchData()
     }
-  }, [
-    wallet,
-    provider,
-    props.predictoorContractAddress,
-    props.epochOffset,
-    epochIndex
-  ])
+  }, [wallet, provider, predictoorContractAddress, epochOffset, epochIndex])
+
+  console.log(blockNum, epoch, stake)
+
+  const getDirectionText = (direction: number) => {
+    return direction == 1 ? 'BULL' : 'BEAR'
+  }
 
   return (
-    <div>
-      State: {props.state} <br />
-      <br />
-      Epoch: {epoch} <br />
-      <br />
-      epochOffset: {props.epochOffset} <br />
-      <br />
-      BlockNum: {blockNum} <br />
-      <br />
-      Dir: {dir} <br />
-      <br />
-      Confidence: {confidence} <br />
-      <br />
-      Stake: {stake} <br />
-      <br />
+    <div
+      className={styles.container}
+      style={{
+        backgroundColor: `rgba(${dir == 1 ? 'green' : 'red'}, ${confidence})`
+      }}
+    >
+      <span>{`${confidence}% ${getDirectionText(dir)}`}</span>
+      <span>{state === PredictionState.Next ? `BUY NOW` : 'PNL: N/A'}</span>
       {process.env.NEXT_PUBLIC_ENV == 'local' &&
-        props.state === PredictionState.Next && (
-          <button onClick={incrementEpochIndex}>BUY</button>
+        state === PredictionState.Next && (
+          <button onClick={incrementEpochIndex}>BUY NOW</button>
         )}
-      {props.state === PredictionState.History && <span>PnL: N/A</span>}
     </div>
   )
 }
