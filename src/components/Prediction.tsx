@@ -31,7 +31,7 @@ export default function Prediction({
   const [blockNum, setBlockNum] = useState(0)
   const [epoch, setEpoch] = useState(0)
   const [confidence, setConfidence] = useState(0)
-  const [dir, setDir] = useState(0)
+  const [direction, setDirection] = useState(0)
   const [stake, setStake] = useState(0)
 
   // Next State Params
@@ -44,7 +44,7 @@ export default function Prediction({
       if (process.env.NEXT_PUBLIC_ENV == 'local') {
         setEpoch(Number(epochIndex) + epochOffset)
         setBlockNum(1)
-        setDir(1)
+        setDirection(1)
         setConfidence(0.7)
         setStake(100)
         return
@@ -65,7 +65,7 @@ export default function Prediction({
         )
 
         setBlockNum(Number(aggPredval?.blockNum))
-        setDir(Number(aggPredval?.dir))
+        setDirection(Number(aggPredval?.dir))
         setConfidence(Number(aggPredval?.confidence))
         setStake(Number(aggPredval?.stake))
       }
@@ -81,12 +81,14 @@ export default function Prediction({
 
   return (
     <div
-      className={styles.container}
       style={{
-        backgroundColor: `rgba(${dir == 1 ? 'green' : 'red'}, ${confidence})`
+        backgroundColor: `rgba(${
+          direction == 1 ? '0, 255, 0' : '255, 0, 0'
+        }, ${confidence})`
       }}
+      className={styles.container}
     >
-      <span>{`${confidence}% ${getDirectionText(dir)}`}</span>
+      <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
       <span>{state === PredictionState.Next ? `BUY NOW` : 'PNL: N/A'}</span>
       {process.env.NEXT_PUBLIC_ENV == 'local' &&
         state === PredictionState.Next && (
