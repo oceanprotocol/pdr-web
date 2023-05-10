@@ -1,4 +1,5 @@
 import { OPFProvider } from '@/contexts/OPFContext'
+import { UserProvider } from '@/contexts/UserContext'
 import '@/styles/globals.css'
 import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
@@ -37,7 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <WagmiConfig client={wagmiClient}>
         <OPFProvider provider={infuraProviderETH} wallet={predictoorWallet}>
-          <Component {...pageProps} />
+          <UserProvider>
+            <Component {...pageProps} />
+          </UserProvider>
         </OPFProvider>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
