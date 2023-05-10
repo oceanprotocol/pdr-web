@@ -1,3 +1,4 @@
+import { LocalEpochProvider } from '@/contexts/LocalEpochContext'
 import { OPFProvider } from '@/contexts/OPFContext'
 import { UserProvider } from '@/contexts/UserContext'
 import '@/styles/globals.css'
@@ -39,7 +40,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <WagmiConfig client={wagmiClient}>
         <OPFProvider provider={infuraProviderETH} wallet={predictoorWallet}>
           <UserProvider>
-            <Component {...pageProps} />
+            <LocalEpochProvider>
+              <Component {...pageProps} />
+            </LocalEpochProvider>
           </UserProvider>
         </OPFProvider>
       </WagmiConfig>
