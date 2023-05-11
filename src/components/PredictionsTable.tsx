@@ -93,8 +93,6 @@ export default function PredictionsTable() {
 
   useEffect(() => {
     if( tableData ) {
-      console.log(tableData)
-      
       tableData?.forEach(async (tableRow) => {
         let newData: any = [];
         let row: any = {}

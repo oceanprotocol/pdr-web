@@ -10,6 +10,10 @@ interface LocalEpochContextValue {
   price: number;
   setPrice: React.Dispatch<React.SetStateAction<number>>;
   updatePrice: (newPrice: number) => void;
+
+  balance: number;
+  setBalance: React.Dispatch<React.SetStateAction<number>>;
+  updateBalance: (newBalance: number) => void;
 }
 
 const LocalEpochContext = createContext<LocalEpochContextValue>({
@@ -19,16 +23,21 @@ const LocalEpochContext = createContext<LocalEpochContextValue>({
 
   price: 0,
   setPrice: () => {},
-  updatePrice: (newPrice) => {}
+  updatePrice: (newPrice) => {},
+
+  balance: 0,
+  setBalance: () => {},
+  updateBalance: (newBalance) => {},
 });
 
 type LocalEpochProviderProps = {
-    children: React.ReactNode;
-  };
+  children: React.ReactNode;
+};
 
 export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {    
     const [epochIndex, setEpochIndex] = useState<number>(0);
     const [price, setPrice] = useState<number>(0);
+    const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_ENV === "local") {
@@ -36,7 +45,10 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
       setEpochIndex(cachedIndex);
 
       const cachedPrice = parseInt(localStorage.getItem("price") || "0");
-      setPrice(cachedPrice);  
+      setPrice(cachedPrice);
+      
+      const cachedBalance = parseInt(localStorage.getItem("balance") || "0");
+      setBalance(cachedBalance);
     }
   }, []);
 
@@ -44,17 +56,20 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
     if (process.env.NEXT_PUBLIC_ENV === "local") {
       localStorage.setItem("epochIndex", epochIndex.toString());
       localStorage.setItem("price", price.toString());      
+      localStorage.setItem("balance", balance.toString());      
     }
-  }, [epochIndex]);
+  }, [epochIndex, price, balance]);
 
   const incrementEpochIndex = () => {
-    console.log("incrementEpochIndex");
     setEpochIndex((epochIndex) => epochIndex + 1);
   };
 
   const updatePrice = (newPrice: number) => {
-    console.log("updatePrice");
     setPrice(newPrice);
+  }
+
+  const updateBalance = (newBalance: number) => {
+    setBalance(newBalance);
   };
 
   const value: LocalEpochContextValue = {
@@ -64,6 +79,9 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
     price,
     setPrice,
     updatePrice,
+    balance,
+    setBalance,
+    updateBalance,
   };
 
   return createElement(

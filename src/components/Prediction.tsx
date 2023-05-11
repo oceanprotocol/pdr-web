@@ -20,7 +20,14 @@ export default function Prediction(props: {
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
-  const { epochIndex, incrementEpochIndex, price, updatePrice } = useLocalEpochContext()
+  const { 
+    epochIndex, 
+    incrementEpochIndex, 
+    price, 
+    updatePrice,
+    balance,
+    updateBalance
+  } = useLocalEpochContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -60,12 +67,15 @@ export default function Prediction(props: {
           
           setEpoch(Number(epochIndex) + props.epochOffset)
           setBlockNum(1)
-          setDir(randomConfidence > 0.5 ? 1 : 0);
+          setDir(randomConfidence > 0.5 ? 1 : -1);
           setConfidence(randomConfidence);
           setStake(100)
 
           let newPrice = price + (dir * 5.0);
           updatePrice(newPrice);
+
+          let newBalance = balance + (dir * 5.0);
+          updateBalance(newBalance);
         }       
       }
       fetchData()

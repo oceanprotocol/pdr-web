@@ -22,7 +22,7 @@ type UserProps = {
 export const UserProvider = ({ children }: UserProps) => {
   const { address } = useAccount()
   const [balance, setBalance] = useState(0)
-
+  
   const { data } = useContractRead({
     address: '0xCfDdA22C9837aE76E0faA845354f33C62E03653a',
     abi: tokenABI,
