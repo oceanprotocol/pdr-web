@@ -6,6 +6,7 @@ interface InputProps {
   placeholder?: string
   value?: any | undefined
   label?: string
+  disabled?: boolean
   min?: number
   max?: number
 }
@@ -16,6 +17,7 @@ export default function Input({
   placeholder,
   onChange,
   value,
+  disabled,
   min,
   max
 }: InputProps) {
@@ -27,6 +29,7 @@ export default function Input({
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
         value={value}
+        disabled={disabled}
         max={max}
         min={min}
       />

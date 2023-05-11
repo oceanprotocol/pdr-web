@@ -12,6 +12,7 @@ export default function AmountInput() {
       onChange={(value: number) => {
         setAmount(value)
       }}
+      disabled={balance == 0}
       min={0}
       max={balance}
     />
