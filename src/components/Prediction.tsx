@@ -3,6 +3,7 @@ import { useOPFContext } from '@/contexts/OPFContext'
 import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
+import Button from './Button'
 
 // 3 States => Defines how the Prediction component behaves
 // Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
@@ -93,7 +94,7 @@ export default function Prediction({
       <span>{state === PredictionState.Next ? `BUY NOW` : 'PNL: N/A'}</span>
       {process.env.NEXT_PUBLIC_ENV == 'local' &&
         state === PredictionState.Next && (
-          <button onClick={incrementEpochIndex}>BUY NOW</button>
+          <Button onClick={incrementEpochIndex} text={'BUY NOW'} />
         )}
     </div>
   )
