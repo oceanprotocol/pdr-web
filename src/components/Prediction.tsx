@@ -1,5 +1,6 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
+import { useUserContext } from '@/contexts/UserContext'
 import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 
@@ -21,6 +22,7 @@ export default function Prediction(props: {
   // Contexts
   const { wallet, provider } = useOPFContext()
   const { epochIndex, incrementEpochIndex } = useLocalEpochContext()
+  const { balance } = useUserContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -92,7 +94,9 @@ export default function Prediction(props: {
       <br />
       {process.env.NEXT_PUBLIC_ENV == 'local' &&
         props.state === PredictionState.Next && (
-          <button onClick={incrementEpochIndex}>BUY</button>
+          <button onClick={incrementEpochIndex} disabled={balance == 0}>
+            BUY
+          </button>
         )}
       {props.state === PredictionState.History && <span>PnL: N/A</span>}
     </div>
