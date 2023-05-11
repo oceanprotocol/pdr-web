@@ -37,6 +37,10 @@ export const UserProvider = ({ children }: UserProps) => {
       )
   }, [data])
 
+  useEffect(() => {
+    !address && setBalance(0)
+  }, [address])
+
   return createElement(UserContext.Provider, { value: { balance } }, children)
 }
 
