@@ -23,6 +23,7 @@ export default function Input({
     <div className={styles.container}>
       {label ? <label>{label}</label> : ''}
       <input
+        className={styles.input}
         type={type}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}

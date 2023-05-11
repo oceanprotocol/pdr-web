@@ -91,11 +91,11 @@ export default function Prediction({
       className={styles.container}
     >
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
-      <span>{state === PredictionState.Next ? `BUY NOW` : 'PNL: N/A'}</span>
-      {process.env.NEXT_PUBLIC_ENV == 'local' &&
-        state === PredictionState.Next && (
-          <Button onClick={incrementEpochIndex} text={'BUY NOW'} />
-        )}
+      {state === PredictionState.Next ? (
+        <Button onClick={incrementEpochIndex} text={'BUY NOW'} />
+      ) : (
+        <span className={styles.position}>PNL: N/A</span>
+      )}
     </div>
   )
 }

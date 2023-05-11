@@ -18,7 +18,6 @@ export default function Home() {
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
-        <h1>Predictoor</h1>
         <Balance />
         <PredictionsTable />
       </main>
