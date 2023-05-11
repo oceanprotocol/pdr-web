@@ -22,7 +22,7 @@ export default function Prediction(props: {
   // Contexts
   const { wallet, provider } = useOPFContext()
   const { epochIndex, incrementEpochIndex } = useLocalEpochContext()
-  const { balance } = useUserContext()
+  const { balance, amount } = useUserContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -94,7 +94,10 @@ export default function Prediction(props: {
       <br />
       {process.env.NEXT_PUBLIC_ENV == 'local' &&
         props.state === PredictionState.Next && (
-          <button onClick={incrementEpochIndex} disabled={balance == 0}>
+          <button
+            onClick={incrementEpochIndex}
+            disabled={balance == 0 || amount <= 0}
+          >
             BUY
           </button>
         )}

@@ -11,9 +11,14 @@ import tokenABI from '../metadata/abis/tokenABI'
 
 type UserType = {
   balance: number
+  amount: number
+  setAmount?: (value: number) => void
 }
 
-export const UserContext = createContext<UserType>({ balance: 0 })
+export const UserContext = createContext<UserType>({
+  balance: 0,
+  amount: 0
+})
 
 type UserProps = {
   children: React.ReactNode
@@ -22,6 +27,7 @@ type UserProps = {
 export const UserProvider = ({ children }: UserProps) => {
   const { address } = useAccount()
   const [balance, setBalance] = useState(0)
+  const [amount, setAmount] = useState<number>(0)
 
   const { data } = useContractRead({
     address: '0xCfDdA22C9837aE76E0faA845354f33C62E03653a',
@@ -41,7 +47,11 @@ export const UserProvider = ({ children }: UserProps) => {
     !address && setBalance(0)
   }, [address])
 
-  return createElement(UserContext.Provider, { value: { balance } }, children)
+  return createElement(
+    UserContext.Provider,
+    { value: { balance, amount, setAmount } },
+    children
+  )
 }
 
 export const useUserContext = () => useContext(UserContext)

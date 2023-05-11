@@ -2,7 +2,7 @@ import styles from '@/styles/Input.module.css'
 
 interface InputProps {
   type: string
-  onChange: (inputValue: any) => void // eslint-disable-next-line
+  onChange?: (inputValue: any) => void // eslint-disable-next-line
   placeholder?: string
   value?: any | undefined
   label?: string
@@ -27,7 +27,9 @@ export default function Input({
       <input
         type={type}
         placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={
+          onChange ? (event) => onChange(event.target.value) : undefined
+        }
         value={value}
         disabled={disabled}
         max={max}
