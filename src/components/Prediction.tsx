@@ -82,14 +82,15 @@ export default function Prediction({
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: `rgba(${
-          direction == 1 ? '0, 255, 0' : '255, 0, 0'
-        }, ${confidence})`
-      }}
-      className={styles.container}
-    >
+    <div className={styles.container}>
+      <div
+        className={styles.confidence}
+        style={{
+          backgroundColor: `rgba(${
+            direction == 1 ? '124,252,0' : '220,20,60'
+          }, ${confidence})`
+        }}
+      ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
       {state === PredictionState.Next ? (
         <Button onClick={incrementEpochIndex} text={'BUY NOW'} />
