@@ -35,29 +35,34 @@ type LocalEpochProviderProps = {
 };
 
 export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {    
-    const [epochIndex, setEpochIndex] = useState<number>(0);
-    const [price, setPrice] = useState<number>(0);
-    const [balance, setBalance] = useState<number>(0);
+  const [times, setTimes] = useState<number>(0);
+  
+  const [epochIndex, setEpochIndex] = useState<number>(0);
+  const [price, setPrice] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV === "local") {
-      const cachedIndex = parseInt(localStorage.getItem("epochIndex") || "0");
-      setEpochIndex(cachedIndex);
+    console.log("LocalEpochContext.initLocalStorage()");
+    const cachedIndex = parseInt(localStorage.getItem("epochIndex") || "0");
+    const cachedPrice = parseInt(localStorage.getItem("price") || "0");
+    const cachedBalance = parseInt(localStorage.getItem("balance") || "0");
 
-      const cachedPrice = parseInt(localStorage.getItem("price") || "0");
-      setPrice(cachedPrice);
-      
-      const cachedBalance = parseInt(localStorage.getItem("balance") || "0");
-      setBalance(cachedBalance);
-    }
+    // TODO - Look @ logs... why is this being executed twice in parallel?
+    // - Checked everything + React Dev Tools
+    console.log(`cachedBalance ${cachedBalance} times: ${times}`);
+    setTimes(times+1);
+    
+    setEpochIndex(cachedIndex);
+    setPrice(cachedPrice);    
+    setBalance(cachedBalance);
   }, []);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV === "local") {
-      localStorage.setItem("epochIndex", epochIndex.toString());
-      localStorage.setItem("price", price.toString());      
-      localStorage.setItem("balance", balance.toString());      
-    }
+    console.log("LocalEpochContext.updateLocalStorage()");
+
+    localStorage.setItem("epochIndex", epochIndex.toString());
+    localStorage.setItem("price", price.toString());      
+    localStorage.setItem("balance", balance.toString());      
   }, [epochIndex, price, balance]);
 
   const incrementEpochIndex = () => {

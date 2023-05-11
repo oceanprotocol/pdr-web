@@ -30,6 +30,7 @@ export const UserProvider = ({ children }: UserProps) => {
     args: [address],
     chainId: 5
   })
+  
   useEffect(() => {
     data &&
       setBalance(

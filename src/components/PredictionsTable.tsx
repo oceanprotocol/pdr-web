@@ -72,12 +72,21 @@ export default function PredictionsTable() {
           predictoorContractAddress={data.pairAddress}
         />
       )
+
+      // TODO - Make Init Work
+      // if (process.env.NEXT_PUBLIC_ENV == 'local') {
+      //   if( price == 0) {
+      //     console.log("init local price")
+      //     updatePrice(tokenData.price);
+      //     row['price'] = tokenData.price;
+      //   }
+      //   else {
+      //     row['price'] = price;
+      //   }
+      // }
+
       newData.push(row)
       setTableData(newData)
-
-      if (process.env.NEXT_PUBLIC_ENV == 'local') {
-        updatePrice(tokenData.price);
-      }
     })
 
     // console.log(newData)
@@ -93,6 +102,7 @@ export default function PredictionsTable() {
 
   useEffect(() => {
     if( tableData ) {
+      // console.log(">> Trigger price change <<");
       tableData?.forEach(async (tableRow) => {
         let newData: any = [];
         let row: any = {}

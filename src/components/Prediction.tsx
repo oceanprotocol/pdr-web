@@ -70,12 +70,6 @@ export default function Prediction(props: {
           setDir(randomConfidence > 0.5 ? 1 : -1);
           setConfidence(randomConfidence);
           setStake(100)
-
-          let newPrice = price + (dir * 5.0);
-          updatePrice(newPrice);
-
-          let newBalance = balance + (dir * 5.0);
-          updateBalance(newBalance);
         }       
       }
       fetchData()
@@ -87,6 +81,21 @@ export default function Prediction(props: {
     props.epochOffset,
     epochIndex
   ])
+
+  const buyPrediction = () => {
+    if (process.env.NEXT_PUBLIC_ENV == 'local') {
+      let randomConfidence = parseFloat(Math.random().toFixed(2));
+      const dir = randomConfidence > 0.5 ? 1 : -1;    
+
+      incrementEpochIndex();
+
+      let newPrice = price + (dir * 5.0);
+      updatePrice(newPrice);
+
+      let newBalance = balance + (dir * 5.0);
+      updateBalance(newBalance);
+    }
+  }
 
   return (
     <div>
@@ -106,7 +115,7 @@ export default function Prediction(props: {
       <br />
       {process.env.NEXT_PUBLIC_ENV == 'local' &&
         props.state === PredictionState.Next && (
-          <button onClick={incrementEpochIndex}>BUY</button>
+          <button onClick={buyPrediction}>BUY</button>
         )}
       {props.state === PredictionState.History && <span>PnL: N/A</span>}
     </div>
