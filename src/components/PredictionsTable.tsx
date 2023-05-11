@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import config from '../metadata/config.json';
 import styles from '../styles/PredictionsTable.module.css';
 import { getTokenData, TokenData } from '../utils/coin';
+import AmountInput from './AmountInput';
 import Coin from './Coin';
 import Prediction, { PredictionState } from './Prediction';
 import Table from './Table';
@@ -40,17 +41,16 @@ export default function PredictionsTable() {
   }
 
   const [tableData, setTableData] = useState<TableData[]>()
-  const { price } = useLocalEpochContext()
+  const { price, updatePrice } = useLocalEpochContext()
 
   const loadTableData = async () => {
-    let newData: any = []
-
     config.forEach(async (data) => {
+      let newData: any = []
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
       row['price'] = `$${tokenData.price}`
-      row['amount'] = ''
+      row['amount'] = <AmountInput />
       row['next'] = (
         <Prediction
           state={PredictionState.Next}
@@ -73,9 +73,13 @@ export default function PredictionsTable() {
         />
       )
       newData.push(row)
+      setTableData(newData)
+
+      if (process.env.NEXT_PUBLIC_ENV == 'local') {
+        updatePrice(tokenData.price);
+      }
     })
 
-    setTableData(newData)
     // console.log(newData)
   }
   
@@ -90,9 +94,9 @@ export default function PredictionsTable() {
   useEffect(() => {
     if( tableData ) {
       console.log(tableData)
-      let newData: any = [];
       
       tableData?.forEach(async (tableRow) => {
+        let newData: any = [];
         let row: any = {}
         row['coin'] = tableRow['coin'];
         row['price'] = price;
@@ -101,9 +105,8 @@ export default function PredictionsTable() {
         row['live'] = tableRow['live'];
         row['history'] = tableRow['history'];
         newData.push(row);
+        setTableData(newData);
       })
-
-      setTableData(newData);
     }
   }, [price])
 

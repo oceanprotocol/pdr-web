@@ -20,7 +20,7 @@ export default function Prediction(props: {
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
-  const { epochIndex, incrementEpochIndex } = useLocalEpochContext()
+  const { epochIndex, incrementEpochIndex, price, updatePrice } = useLocalEpochContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -35,16 +35,6 @@ export default function Prediction(props: {
 
   useEffect(() => {
     if (provider) {
-      // If in local mode, we want to use the mock data & implementation
-      if (process.env.NEXT_PUBLIC_ENV == 'local') {
-        setEpoch(Number(epochIndex) + props.epochOffset)
-        setBlockNum(1)
-        setDir(0.7)
-        setConfidence(1)
-        setStake(100)
-        return
-      }
-
       const fetchData = async () => {
         const curEpoch: number = await getEpoch(
           provider,
@@ -63,6 +53,20 @@ export default function Prediction(props: {
         setDir(Number(aggPredval?.dir))
         setConfidence(Number(aggPredval?.confidence))
         setStake(Number(aggPredval?.stake))
+
+        // If in local mode, we want to use the mock data & implementation
+        if (process.env.NEXT_PUBLIC_ENV == 'local') {
+          let randomConfidence = parseFloat(Math.random().toFixed(2));
+          
+          setEpoch(Number(epochIndex) + props.epochOffset)
+          setBlockNum(1)
+          setDir(randomConfidence > 0.5 ? 1 : 0);
+          setConfidence(randomConfidence);
+          setStake(100)
+
+          let newPrice = price + (dir * 5.0);
+          updatePrice(newPrice);
+        }       
       }
       fetchData()
     }
