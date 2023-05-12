@@ -6,7 +6,7 @@ import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { ethers } from 'ethers'
 import type { AppProps } from 'next/app'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { WagmiConfig, configureChains, createClient } from 'wagmi'
 import { arbitrum, goerli, mainnet } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 

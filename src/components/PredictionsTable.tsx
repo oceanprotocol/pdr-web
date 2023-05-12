@@ -1,12 +1,12 @@
-import { useLocalEpochContext } from '@/contexts/LocalEpochContext';
-import { useEffect, useState } from 'react';
-import config from '../metadata/config.json';
-import styles from '../styles/PredictionsTable.module.css';
-import { getTokenData, TokenData } from '../utils/coin';
-import AmountInput from './AmountInput';
-import Coin from './Coin';
-import Prediction, { PredictionState } from './Prediction';
-import Table from './Table';
+import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
+import { useEffect, useState } from 'react'
+import config from '../metadata/config.json'
+import styles from '../styles/PredictionsTable.module.css'
+import { TokenData, getTokenData } from '../utils/coin'
+import AmountInput from './AmountInput'
+import Coin from './Coin'
+import Prediction, { PredictionState } from './Prediction'
+import Table from './Table'
 
 const tableColumns = [
   {
@@ -49,10 +49,8 @@ export default function PredictionsTable() {
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
-      
       row['price'] = `$${tokenData.price}`
-      updatePrice(tokenData.price);
-
+      updatePrice(tokenData.price)
       row['amount'] = <AmountInput />
       row['next'] = (
         <Prediction
@@ -95,7 +93,7 @@ export default function PredictionsTable() {
 
     // console.log(newData)
   }
-  
+
   useEffect(() => {
     loadTableData()
   }, [])
@@ -105,18 +103,18 @@ export default function PredictionsTable() {
   }, [tableData])
 
   useEffect(() => {
-    if( tableData ) {
+    if (tableData) {
       tableData?.forEach(async (tableRow) => {
-        let newData: any = [];
+        let newData: any = []
         let row: any = {}
-        row['coin'] = tableRow['coin'];
-        row['price'] = price;
-        row['amount'] = tableRow['amount'];
-        row['next'] = tableRow['next'];
-        row['live'] = tableRow['live'];
-        row['history'] = tableRow['history'];
-        newData.push(row);
-        setTableData(newData);
+        row['coin'] = tableRow['coin']
+        row['price'] = price
+        row['amount'] = tableRow['amount']
+        row['next'] = tableRow['next']
+        row['live'] = tableRow['live']
+        row['history'] = tableRow['history']
+        newData.push(row)
+        setTableData(newData)
       })
     }
   }, [price])
