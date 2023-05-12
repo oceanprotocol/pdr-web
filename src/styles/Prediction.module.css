@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  z-index: 1;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  width: 120px;
+  height: 50px;
+  margin: auto;
+  background-color: gray;
+}
+
+.position {
+  font-size: 12px;
+}
+
+.confidence {
+  position: absolute;
+  z-index: -1;
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+}
