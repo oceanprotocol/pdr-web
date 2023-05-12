@@ -39,11 +39,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <WagmiConfig client={wagmiClient}>
         <OPFProvider provider={infuraProviderETH} wallet={predictoorWallet}>
-          <LocalEpochProvider>
-            <UserProvider>
+          <UserProvider>
+            <LocalEpochProvider>
               <Component {...pageProps} />
-            </UserProvider>
-          </LocalEpochProvider>
+            </LocalEpochProvider>
+          </UserProvider>
         </OPFProvider>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
