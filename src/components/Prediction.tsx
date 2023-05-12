@@ -5,6 +5,7 @@ import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
 import Button from './Button'
+import ProgressBar from './PreogressBar'
 
 // 3 States => Defines how the Prediction component behaves
 // Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
@@ -103,6 +104,7 @@ export default function Prediction({
       ) : (
         <span className={styles.position}>PNL: N/A</span>
       )}
+      <ProgressBar completed={50} maxCompleted={300} />
     </div>
   )
 }
