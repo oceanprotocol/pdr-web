@@ -49,7 +49,10 @@ export default function PredictionsTable() {
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
+      
       row['price'] = `$${tokenData.price}`
+      updatePrice(tokenData.price);
+
       row['amount'] = <AmountInput />
       row['next'] = (
         <Prediction
@@ -73,7 +76,8 @@ export default function PredictionsTable() {
         />
       )
 
-      // TODO - Make Init Work
+      // TODO - Init local settings if it's not initiaized
+      // If in local mode, we want to use the mock data & implementation
       // if (process.env.NEXT_PUBLIC_ENV == 'local') {
       //   if( price == 0) {
       //     console.log("init local price")
@@ -102,7 +106,6 @@ export default function PredictionsTable() {
 
   useEffect(() => {
     if( tableData ) {
-      // console.log(">> Trigger price change <<");
       tableData?.forEach(async (tableRow) => {
         let newData: any = [];
         let row: any = {}

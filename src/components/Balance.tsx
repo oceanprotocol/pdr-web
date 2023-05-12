@@ -12,22 +12,14 @@ export default function Balance() {
   const initComponent = () => {
     setBalance(userBalance);
     
+    // TODO - Init local settings if it's not initiaized
     // If in local mode, we want to use the mock data & implementation
-    if (process.env.NEXT_PUBLIC_ENV == 'local') {
-      setBalance(localBalance);
-    }
-
-    // TODO - Make Init Work
     // if (process.env.NEXT_PUBLIC_ENV == 'local') {
-    //   if(localBalance == 0) {
-    //     console.log("init localBalance")
-    //     updateBalance(100);
-    //     setBalance(100);
-    //   }
-    //   else {
-    //     setBalance(localBalance);
-    //   }
-    // }
+    //   console.log("init localBalance", localBalance)
+    //   const initBalance = 100;
+    //   updateBalance(initBalance);
+    //   setBalance(initBalance);
+    // } 
   }
 
   useEffect(() => {
