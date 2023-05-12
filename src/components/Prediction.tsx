@@ -125,6 +125,7 @@ export default function Prediction({
         completed={timePassed}
         setCompleted={setTimePassed}
         maxCompleted={maxDurationTime}
+        startProgress={state == PredictionState.Live}
       />
     </div>
   )

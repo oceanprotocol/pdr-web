@@ -5,17 +5,19 @@ import styles from '../styles/ProgressBar.module.css'
 interface ProgressBarProps {
   completed: number
   maxCompleted: number
+  startProgress: boolean
   setCompleted: (number: number) => void
 }
 
 export default function ProgressBar({
   completed,
   maxCompleted,
+  startProgress,
   setCompleted
 }: ProgressBarProps) {
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (completed < maxCompleted) {
+      if (completed < maxCompleted && startProgress) {
         setCompleted(completed + 1)
       } else {
         clearInterval(intervalId)
