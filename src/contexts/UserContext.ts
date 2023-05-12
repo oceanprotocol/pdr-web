@@ -7,7 +7,7 @@ import {
   useState
 } from 'react'
 import { useAccount, useContractRead } from 'wagmi'
-import tokenABI from '../metadata/abis/tokenABI'
+import { tokenABI } from '../metadata/abis/tokenABI'
 
 type UserType = {
   balance: number
