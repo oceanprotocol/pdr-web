@@ -1,0 +1,6 @@
+.button {
+  background: linear-gradient(to right bottom, #7b1173, #ff4092);
+  border: 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+}

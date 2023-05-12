@@ -1,10 +1,10 @@
-import { Web3Button } from '@web3modal/react'
 import styles from '@/styles/Header.module.css'
+import { Web3Button } from '@web3modal/react'
 
 export default function Home() {
   return (
     <div className={styles.container}>
-      <span>LOGO</span>
+      <h1>PREDICTOOR</h1>
       <Web3Button />
     </div>
   )
