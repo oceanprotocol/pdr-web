@@ -1,4 +1,4 @@
-import { createContext, createElement, useContext, useEffect, useState } from "react";
+import { createContext, createElement, useContext, useEffect, useRef, useState } from "react";
 
 // TODO - Expand LocalEpochContext to support additional logic
 // TODO - Add price
@@ -41,20 +41,28 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
   const [price, setPrice] = useState<number>(0);
   const [balance, setBalance] = useState<number>(0);
 
-  useEffect(() => {
-    console.log("LocalEpochContext.initLocalStorage()");
-    const cachedIndex = parseInt(localStorage.getItem("epochIndex") || "0");
-    const cachedPrice = parseInt(localStorage.getItem("price") || "0");
-    const cachedBalance = parseInt(localStorage.getItem("balance") || "0");
+  const initializedRef = useRef(false);
 
-    // TODO - Look @ logs... why is this being executed twice in parallel?
-    // - Checked everything + React Dev Tools
-    console.log(`cachedBalance ${cachedBalance} times: ${times}`);
-    setTimes(times+1);
-    
-    setEpochIndex(cachedIndex);
-    setPrice(cachedPrice);    
-    setBalance(cachedBalance);
+  useEffect(() => {
+    if (!initializedRef.current) {
+      console.log("LocalEpochContext.initLocalStorage()");
+      console.trace();
+
+      const cachedIndex = parseInt(localStorage.getItem("epochIndex") || "0");
+      const cachedPrice = parseInt(localStorage.getItem("price") || "0");
+      const cachedBalance = parseInt(localStorage.getItem("balance") || "0");
+
+      // TODO - Look @ logs... why is this being executed twice in parallel?
+      // - Checked everything + React Dev Tools
+      console.log(`cachedBalance ${cachedBalance} times: ${times}`);
+      setTimes(times+1);
+      
+      setEpochIndex(cachedIndex);
+      setPrice(cachedPrice);    
+      setBalance(cachedBalance);
+
+      initializedRef.current = true;
+    }
   }, []);
 
   useEffect(() => {
