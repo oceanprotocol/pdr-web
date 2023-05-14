@@ -19,17 +19,19 @@ export enum PredictionState {
 export default function Prediction({
   state,
   epochOffset,
-  predictoorContractAddress
+  predictoorContractAddress,
+  config
 }: {
   state: PredictionState
   epochOffset: number // offset from epoch index
   predictoorContractAddress: string // predictoor contract address
+  config: any
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
-  const { epochIndex, price, incrementEpochIndex, updatePrice, updateBalance } =
+  const { epochIndex, price, balance: localBalance, incrementEpochIndex, updatePrice, updateBalance } =
     useLocalEpochContext()
-  const { balance, amount } = useUserContext()
+  const { balance: userBalance, amount } = useUserContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -44,16 +46,6 @@ export default function Prediction({
 
   useEffect(() => {
     if (provider) {
-      // If in local mode, we want to use the mock data & implementation
-      if (process.env.NEXT_PUBLIC_ENV == 'local') {
-        let randomConfidence = parseFloat(Math.random().toFixed(2))
-        setEpoch(Number(epochIndex) + epochOffset)
-        setBlockNum(1)
-        setDirection(randomConfidence > 0.5 ? 1 : 0)
-        setConfidence(randomConfidence)
-        setStake(100)
-        return
-      }
       const fetchData = async () => {
         const curEpoch: number = await getEpoch(
           provider,
@@ -76,9 +68,10 @@ export default function Prediction({
         // If in local mode, we want to use the mock data & implementation
         if (process.env.NEXT_PUBLIC_ENV == 'local') {
           let randomConfidence = parseFloat(Math.random().toFixed(2))
+          const epochNum = Number(epochIndex) + epochOffset;
 
-          setEpoch(Number(epochIndex) + epochOffset)
-          setBlockNum(1)
+          setEpoch(epochNum)
+          setBlockNum(epochNum * config.blocks_per_epoch)
           setDirection(randomConfidence > 0.5 ? 1 : -1)
           setConfidence(randomConfidence)
           setStake(100)
@@ -88,10 +81,18 @@ export default function Prediction({
     }
   }, [wallet, provider, predictoorContractAddress, epochOffset, epochIndex])
 
-  console.log(blockNum, epoch, stake)
-
   const getDirectionText = (direction: number) => {
     return direction == 1 ? 'BULL' : 'BEAR'
+  }
+
+  const canBuyPrediction = () => {
+    let disabled = userBalance == 0 || amount <= 0
+
+    if (process.env.NEXT_PUBLIC_ENV == 'local') {
+      disabled = false;
+    }
+
+    return disabled == true ? true : false
   }
 
   const buyPrediction = () => {
@@ -101,10 +102,10 @@ export default function Prediction({
 
       incrementEpochIndex()
 
-      let newPrice = price + dir * 5.0
+      let newPrice = price + (dir * 5.0)
       updatePrice(newPrice)
 
-      let newBalance = balance + dir * 5.0
+      let newBalance = localBalance + (dir * 5.0)
       updateBalance(newBalance)
     }
   }
@@ -120,11 +121,18 @@ export default function Prediction({
         }}
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
+      {process.env.NEXT_PUBLIC_ENV == 'local' && (
+        <div>
+          Epoch: {epoch}<br/>
+          BlockNum: {blockNum}<br/>
+          Stake: {stake}<br/>
+        </div>
+      )}
       {state === PredictionState.Next ? (
         <Button
           onClick={buyPrediction}
           text={'BUY NOW'}
-          disabled={balance == 0 || amount <= 0}
+          disabled={canBuyPrediction()}
         />
       ) : (
         <span className={styles.position}>PNL: N/A</span>

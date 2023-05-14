@@ -8,6 +8,7 @@
     "exchange": "univ3",
     "predictoorContractAddress": "0x",
     "cg_id": "ethereum",
-    "cg_vs_currencies": "usd"
+    "cg_vs_currencies": "usd",
+    "blocks_per_epoch": 4000
   }
 ]

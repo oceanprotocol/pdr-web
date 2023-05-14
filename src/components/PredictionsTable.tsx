@@ -2,7 +2,7 @@ import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useEffect, useState } from 'react'
 import config from '../metadata/config.json'
 import styles from '../styles/PredictionsTable.module.css'
-import { TokenData, getTokenData } from '../utils/coin'
+import { getTokenData, TokenData } from '../utils/coin'
 import AmountInput from './AmountInput'
 import Coin from './Coin'
 import Prediction, { PredictionState } from './Prediction'
@@ -57,6 +57,7 @@ export default function PredictionsTable() {
           state={PredictionState.Next}
           epochOffset={+1}
           predictoorContractAddress={data.pairAddress}
+          config={data}
         />
       )
       row['live'] = (
@@ -64,6 +65,7 @@ export default function PredictionsTable() {
           state={PredictionState.Live}
           epochOffset={0}
           predictoorContractAddress={data.pairAddress}
+          config={data}
         />
       )
       row['history'] = (
@@ -71,6 +73,7 @@ export default function PredictionsTable() {
           state={PredictionState.History}
           epochOffset={-1}
           predictoorContractAddress={data.pairAddress}
+          config={data}
         />
       )
 

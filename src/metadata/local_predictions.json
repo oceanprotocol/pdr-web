@@ -1,0 +1,17 @@
+[
+  {"epoch": 0, "confidence": 0.9, "direction": 1, "stake": 500, "start_price": 1500, "end_price": 1525},
+  {"epoch": 1, "confidence": 0.6, "direction": -1, "stake": 600, "start_price": 1525, "end_price": 1500},
+  {"epoch": 2, "confidence": 0.8, "direction": 1, "stake": 700, "start_price": 1500, "end_price": 1525},
+  {"epoch": 3, "confidence": 0.3, "direction": -1, "stake": 800, "start_price": 1525, "end_price": 1500},
+  {"epoch": 4, "confidence": 0.7, "direction": 1, "stake": 900, "start_price": 1500, "end_price": 1525},
+  {"epoch": 5, "confidence": 0.4, "direction": -1, "stake": 1000, "start_price": 1525, "end_price": 1500},
+  {"epoch": 6, "confidence": 0.6, "direction": -1, "stake": 600, "start_price": 1500, "end_price": 1475},
+  {"epoch": 7, "confidence": 0.9, "direction": 1, "stake": 700, "start_price": 1475, "end_price": 1500},
+  {"epoch": 8, "confidence": 0.3, "direction": -1, "stake": 800, "start_price": 1500, "end_price": 1475},
+  {"epoch": 9, "confidence": 0.5, "direction": 1, "stake": 900, "start_price": 1475, "end_price": 1500},
+  {"epoch": 10, "confidence": 0.8, "direction": 1, "stake": 500, "start_price": 1500, "end_price": 1525},
+  {"epoch": 11, "confidence": 0.2, "direction": -1, "stake": 600, "start_price": 1525, "end_price": 1500},
+  {"epoch": 12, "confidence": 0.7, "direction": 1, "stake": 700, "start_price": 1500, "end_price": 1525},
+  {"epoch": 13, "confidence": 0.4, "direction": -1, "stake": 800, "start_price": 1525, "end_price": 1500},
+  {"epoch": 14, "confidence": 0.6, "direction": -1, "stake": 900, "start_price": 1500, "end_price": 1475}
+]
