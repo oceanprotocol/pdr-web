@@ -5,7 +5,7 @@ import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
 import Button from './Button'
-import ProgressBar from './PreogressBar'
+import ProgressBar from './ProgressBar'
 
 // 3 States => Defines how the Prediction component behaves
 // Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
@@ -52,11 +52,11 @@ export default function Prediction({
   const getTimeLeftInSeconds = () => {
     switch (state) {
       case PredictionState.Next:
-        return setTimePassed(0)
-      case PredictionState.History:
-        return setTimePassed(maxDurationTime)
+        return setTimePassed(200)
       case PredictionState.Live:
         return setTimePassed(200)
+      case PredictionState.History:
+        return setTimePassed(maxDurationTime)
     }
   }
 
@@ -158,12 +158,14 @@ export default function Prediction({
       ) : (
         <span className={styles.position}>PNL: N/A</span>
       )}
-      <ProgressBar
-        completed={timePassed}
-        setCompleted={setTimePassed}
-        maxCompleted={maxDurationTime}
-        startProgress={state == PredictionState.Live}
-      />
+      {state !== PredictionState.History &&
+        <ProgressBar
+          completed={timePassed}
+          setCompleted={setTimePassed}
+          maxCompleted={maxDurationTime}
+          startProgress={state == PredictionState.Live}
+        />
+      }
     </div>
   )
 }
