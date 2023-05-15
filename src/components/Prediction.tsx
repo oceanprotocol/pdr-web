@@ -98,6 +98,7 @@ export default function Prediction({
         }
         console.log(blockNum, epoch, stake)
       }
+      console.log(blockNum, epoch, stake)
       fetchData()
     }
   }, [wallet, provider, predictoorContractAddress, epochOffset, epochIndex])

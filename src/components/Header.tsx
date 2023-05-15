@@ -1,11 +1,11 @@
 import styles from '@/styles/Header.module.css'
-import { Web3Button } from '@web3modal/react'
+import Wallet from './Wallet'
 
 export default function Home() {
   return (
     <div className={styles.container}>
       <h1>PREDICTOOR</h1>
-      <Web3Button />
+      <Wallet />
     </div>
   )
 }
