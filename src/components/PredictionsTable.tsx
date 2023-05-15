@@ -57,21 +57,21 @@ export default function PredictionsTable() {
         <Prediction
           state={PredictionState.Next}
           epochOffset={+1}
-          predictoorContractAddress={data.pairAddress}
+          predictoorContractAddress={data.predictoorContractAddress}
         />
       )
       row['live'] = (
         <Prediction
           state={PredictionState.Live}
           epochOffset={0}
-          predictoorContractAddress={data.pairAddress}
+          predictoorContractAddress={data.predictoorContractAddress}
         />
       )
       row['history'] = (
         <Prediction
           state={PredictionState.History}
           epochOffset={-1}
-          predictoorContractAddress={data.pairAddress}
+          predictoorContractAddress={data.predictoorContractAddress}
         />
       )
       newData.push(row)

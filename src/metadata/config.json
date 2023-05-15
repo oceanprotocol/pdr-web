@@ -9,7 +9,7 @@
         "pairName": "USDC",
         "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         "exchange": "univ3",
-        "predictoorContractAddress": "0x",
+        "predictoorContractAddress": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
         "cg_id": "ethereum",
         "cg_vs_currencies": "usd"
       }
