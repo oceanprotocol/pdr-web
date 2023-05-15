@@ -49,11 +49,6 @@ export default function Prediction({
   const [timePassed, setTimePassed] = useState(0)
   const maxDurationTime = 300
 
-  // Next State Params
-  // Live State Params
-  // History State Params
-  console.log(blockNum, epoch, stake)
-
   const getTimeLeftInSeconds = () => {
     switch (state) {
       case PredictionState.Next:
@@ -101,6 +96,7 @@ export default function Prediction({
           setConfidence(randomConfidence)
           setStake(100)
         }
+        console.log(blockNum, epoch, stake)
       }
       fetchData()
     }
