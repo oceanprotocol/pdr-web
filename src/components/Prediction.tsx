@@ -91,11 +91,10 @@ export default function Prediction({
         setConfidence(Number(aggPredval?.confidence))
         setStake(Number(aggPredval?.stake))
       }
+      console.log(blockNum, epoch, stake)
       fetchData()
     }
   }, [wallet, provider, predictoorContractAddress, epochOffset, epochIndex])
-
-  console.log(blockNum, epoch, stake)
 
   const getDirectionText = (direction: number) => {
     return direction == 1 ? 'BULL' : 'BEAR'
