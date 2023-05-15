@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #2e6bac;
+  border-radius: 10px;
+}
+
+.chainName {
+  font-weight: bold;
+  margin: 0 10px;
+}

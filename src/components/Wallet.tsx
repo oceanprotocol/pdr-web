@@ -1,4 +1,4 @@
-import styles from '@/styles/Header.module.css'
+import styles from '@/styles/Wallet.module.css'
 import { Web3Button } from '@web3modal/react'
 import { useEffect } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
@@ -12,8 +12,7 @@ export default function Wallet() {
   }, [chain])
   return (
     <div className={styles.container}>
-      {chain && <div>Connected to {chain.name}</div>}
-      {parseInt(config[0].chainId) !== chain?.id && (
+      {chain && parseInt(config[0].chainId) !== chain?.id && (
         <button
           disabled={!switchNetwork || parseInt(config[0].chainId) === chain?.id}
           key={parseInt(config[0].chainId)}
@@ -25,7 +24,7 @@ export default function Wallet() {
             ' (switching)'}
         </button>
       )}
-
+      {chain && <span className={styles.chainName}>{chain.name}</span>}
       <div>{error && error.message}</div>
       <Web3Button />
     </div>
