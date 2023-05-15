@@ -108,17 +108,19 @@ export default function Prediction({
   }
 
   const canBuyPrediction = () => {
-    let disabled = userBalance == 0 || amount <= 0
+    let enabled = userBalance > 0.0 && amount > 0
 
-    if (process.env.NEXT_PUBLIC_ENV == 'local') {
-      disabled = false
+    if (process.env.NEXT_PUBLIC_ENV === 'local') {
+      enabled = true
     }
 
-    return disabled == true ? true : false
+    return enabled === false
   }
 
   const buyPrediction = () => {
-    if (process.env.NEXT_PUBLIC_ENV == 'local') {
+    //  axios.put(api_key, amount)
+
+    if (process.env.NEXT_PUBLIC_ENV === 'local') {
       let randomConfidence = parseFloat(Math.random().toFixed(2))
       const dir = randomConfidence > 0.5 ? 1 : -1
 
