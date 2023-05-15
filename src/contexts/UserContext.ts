@@ -11,7 +11,7 @@ import { tokenABI } from '../metadata/abis/tokenABI'
 
 type UserType = {
   balance: number
-  amount: number
+  amount: number // I'm not sure why amount is needed here? Isn't the only place needed within the row component?
   setAmount?: (value: number) => void
 }
 

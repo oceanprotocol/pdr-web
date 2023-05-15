@@ -43,6 +43,7 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
 
   useEffect(() => {
     if (!initializedRef.current) {
+      // Load epoch, price, and other data from local even if not used
       const cachedIndex = parseInt(localStorage.getItem("epochIndex") || "0");
       const cachedPrice = parseInt(localStorage.getItem("price") || "0");
       const cachedBalance = parseInt(localStorage.getItem("balance") || "0");
@@ -56,6 +57,7 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
   }, []);
 
   useEffect(() => {
+    // Save params to local
     localStorage.setItem("epochIndex", epochIndex.toString());
     localStorage.setItem("price", price.toString());      
     localStorage.setItem("balance", balance.toString());      
