@@ -42,7 +42,6 @@ export const UserProvider = ({ children }: UserProps) => {
     chainId: parseInt(currentConfig.chainId)
   })
   useEffect(() => {
-    console.log(data)
     data &&
       setBalance(
         parseInt(ethers.utils.formatEther(BigInt(data as string).toString(10)))
