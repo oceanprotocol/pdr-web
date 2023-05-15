@@ -121,13 +121,13 @@ export default function Prediction({
         }}
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
-      {process.env.NEXT_PUBLIC_ENV == 'local' && (
+      {/* {process.env.NEXT_PUBLIC_ENV == 'local' && (
         <div>
           Epoch: {epoch}<br/>
           BlockNum: {blockNum}<br/>
           Stake: {stake}<br/>
         </div>
-      )}
+      )} */}
       {state === PredictionState.Next ? (
         <Button
           onClick={buyPrediction}
