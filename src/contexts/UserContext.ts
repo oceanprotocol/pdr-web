@@ -8,6 +8,7 @@ import {
 } from 'react'
 import { useAccount, useContractRead } from 'wagmi'
 import tokenABI from '../metadata/abis/tokenABI'
+import config from '../metadata/config.json'
 
 type UserType = {
   balance: number
@@ -29,14 +30,19 @@ export const UserProvider = ({ children }: UserProps) => {
   const [balance, setBalance] = useState(0)
   const [amount, setAmount] = useState<number>(0)
 
+  const currentConfig = process.env.NEXT_PUBLIC_ENV
+    ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
+    : config['staging']
+
   const { data } = useContractRead({
-    address: '0xCfDdA22C9837aE76E0faA845354f33C62E03653a',
+    address: currentConfig.oceanAddress as `0x{string}`,
     abi: tokenABI,
     functionName: 'balanceOf',
     args: [address],
-    chainId: 5
+    chainId: parseInt(currentConfig.chainId)
   })
   useEffect(() => {
+    console.log(data)
     data &&
       setBalance(
         parseInt(ethers.utils.formatEther(BigInt(data as string).toString(10)))

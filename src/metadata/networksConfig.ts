@@ -11,7 +11,7 @@ export const oasis = {
   },
   rpcUrls: {
     public: { http: ['https://testnet.sapphire.oasis.dev'] },
-    default: { http: ['https://testnet.sapphire.oasis.devc'] }
+    default: { http: ['https://testnet.sapphire.oasis.dev'] }
   },
   blockExplorers: {
     etherscan: {

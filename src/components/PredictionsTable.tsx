@@ -46,7 +46,7 @@ export default function PredictionsTable() {
   const [tableData, setTableData] = useState<TableData[]>()
 
   const loadTableData = async () => {
-    currentConfig.forEach(async (data: any) => {
+    currentConfig.tokenPredictions.forEach(async (data: any) => {
       let newData: any = []
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
