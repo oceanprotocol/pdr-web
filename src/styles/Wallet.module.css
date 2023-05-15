@@ -2,8 +2,15 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.walletInfoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #2e6bac;
   border-radius: 10px;
+  margin-left: 20px;
 }
 
 .chainName {
