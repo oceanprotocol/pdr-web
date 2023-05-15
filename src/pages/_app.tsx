@@ -1,24 +1,22 @@
 import { LocalEpochProvider } from '@/contexts/LocalEpochContext'
 import { OPFProvider } from '@/contexts/OPFContext'
 import { UserProvider } from '@/contexts/UserContext'
+import { oasis } from '@/metadata/networksConfig'
 import '@/styles/globals.css'
 import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { ethers } from 'ethers'
 import type { AppProps } from 'next/app'
 import { WagmiConfig, configureChains, createClient } from 'wagmi'
-import { arbitrum, goerli, mainnet } from 'wagmi/chains'
-import { infuraProvider } from 'wagmi/providers/infura'
+import { publicProvider } from 'wagmi/providers/public'
 
-const chains = [arbitrum, mainnet, goerli]
+const chains = [oasis]
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
 const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
 const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
 
 // wagmi public provider
-const { provider } = configureChains(chains, [
-  infuraProvider({ apiKey: predictoorRPC })
-])
+const { provider } = configureChains(chains, [publicProvider()])
 
 // infura provider
 const infuraProviderETH = new ethers.providers.InfuraProvider(

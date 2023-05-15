@@ -39,10 +39,14 @@ export default function PredictionsTable() {
     [key: string]: any
   }
 
+  const currentConfig = process.env.NEXT_PUBLIC_ENV
+    ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
+    : config['staging']
+
   const [tableData, setTableData] = useState<TableData[]>()
 
   const loadTableData = async () => {
-    config.forEach(async (data) => {
+    currentConfig.tokenPredictions.forEach(async (data: any) => {
       let newData: any = []
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
@@ -53,21 +57,21 @@ export default function PredictionsTable() {
         <Prediction
           state={PredictionState.Next}
           epochOffset={+1}
-          predictoorContractAddress={data.pairAddress}
+          predictoorContractAddress={data.predictoorContractAddress}
         />
       )
       row['live'] = (
         <Prediction
           state={PredictionState.Live}
           epochOffset={0}
-          predictoorContractAddress={data.pairAddress}
+          predictoorContractAddress={data.predictoorContractAddress}
         />
       )
       row['history'] = (
         <Prediction
           state={PredictionState.History}
           epochOffset={-1}
-          predictoorContractAddress={data.pairAddress}
+          predictoorContractAddress={data.predictoorContractAddress}
         />
       )
       newData.push(row)

@@ -1,13 +1,51 @@
-[
-  {
-    "chainId": "1",
-    "tokenName": "ETH",
-    "tokenAddress": "0x",
-    "pairName": "USDC",
-    "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    "exchange": "univ3",
-    "predictoorContractAddress": "0x",
-    "cg_id": "ethereum",
-    "cg_vs_currencies": "usd"
+{
+  "staging": {
+    "chainId": "23295",
+    "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+    "tokenPredictions": [
+      {
+        "tokenName": "ETH",
+        "tokenAddress": "0x",
+        "pairName": "USDC",
+        "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "exchange": "univ3",
+        "predictoorContractAddress": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
+        "cg_id": "ethereum",
+        "cg_vs_currencies": "usd"
+      }
+    ]
+  },
+  "production": {
+    "chainId": "23295",
+    "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+    "tokenPredictions": [
+      {
+        "chainId": "1",
+        "tokenName": "ETH",
+        "tokenAddress": "0x",
+        "pairName": "USDC",
+        "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "exchange": "univ3",
+        "predictoorContractAddress": "0x",
+        "cg_id": "ethereum",
+        "cg_vs_currencies": "usd"
+      }
+    ]
+  },
+  "local": {
+    "chainId": "23295",
+    "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+    "tokenPredictions": [
+      {
+        "tokenName": "ETH",
+        "tokenAddress": "0x",
+        "pairName": "USDC",
+        "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "exchange": "univ3",
+        "predictoorContractAddress": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
+        "cg_id": "ethereum",
+        "cg_vs_currencies": "usd"
+      }
+    ]
   }
-]
+}
