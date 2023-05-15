@@ -114,7 +114,7 @@ export default function Prediction({
       enabled = true
     }
 
-    return enabled === false
+    return enabled
   }
 
   const buyPrediction = () => {
@@ -156,7 +156,7 @@ export default function Prediction({
         <Button
           onClick={buyPrediction}
           text={'BUY NOW'}
-          disabled={canBuyPrediction()}
+          disabled={canBuyPrediction() === false}
         />
       ) : (
         <span className={styles.position}>PNL: N/A</span>

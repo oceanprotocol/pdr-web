@@ -3,6 +3,17 @@ import Input from './Input'
 
 export default function AmountInput() {
   const { balance, amount, setAmount } = useUserContext()
+  
+  const isEnabled = () => {
+    let enabled = balance > 0
+
+    if (process.env.NEXT_PUBLIC_ENV === 'local') {
+      enabled = true
+    }
+
+    return enabled
+  }
+  
   return (
     <Input
       type="number"
@@ -14,7 +25,7 @@ export default function AmountInput() {
             }
           : undefined
       }
-      disabled={balance == 0}
+      disabled={isEnabled() === false}
       min={0}
       max={balance}
     />
