@@ -39,10 +39,14 @@ export default function PredictionsTable() {
     [key: string]: any
   }
 
+  const currentConfig = process.env.NEXT_PUBLIC_ENV
+    ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
+    : config['staging']
+
   const [tableData, setTableData] = useState<TableData[]>()
 
   const loadTableData = async () => {
-    config.forEach(async (data) => {
+    currentConfig.forEach(async (data: any) => {
       let newData: any = []
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
