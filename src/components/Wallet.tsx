@@ -22,7 +22,8 @@ export default function Wallet() {
   useEffect(() => {
     if (chain) {
       saveNetworkName()
-      setCurConfig(config[process.env.NEXT_PUBLIC_ENV])
+      
+      setCurConfig(config[process.env.NEXT_PUBLIC_ENV?.toString() as keyof typeof config]);
       setLoading(false)
     }
   }, [chain])
