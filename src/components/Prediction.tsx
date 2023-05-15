@@ -30,8 +30,14 @@ export default function Prediction({
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
-  const { epochIndex, price, balance: localBalance, incrementEpochIndex, updatePrice, updateBalance } =
-    useLocalEpochContext()
+  const {
+    epochIndex,
+    price,
+    balance: localBalance,
+    incrementEpochIndex,
+    updatePrice,
+    updateBalance
+  } = useLocalEpochContext()
   const { balance: userBalance, amount } = useUserContext()
 
   // Component Params
@@ -46,6 +52,7 @@ export default function Prediction({
   // Next State Params
   // Live State Params
   // History State Params
+  console.log(blockNum, epoch, stake)
 
   const getTimeLeftInSeconds = () => {
     switch (state) {
@@ -86,7 +93,7 @@ export default function Prediction({
         // If in local mode, we want to use the mock data & implementation
         if (process.env.NEXT_PUBLIC_ENV == 'local') {
           let randomConfidence = parseFloat(Math.random().toFixed(2))
-          const epochNum = Number(epochIndex) + epochOffset;
+          const epochNum = Number(epochIndex) + epochOffset
 
           setEpoch(epochNum)
           setBlockNum(epochNum * config.blocks_per_epoch)
@@ -107,7 +114,7 @@ export default function Prediction({
     let disabled = userBalance == 0 || amount <= 0
 
     if (process.env.NEXT_PUBLIC_ENV == 'local') {
-      disabled = false;
+      disabled = false
     }
 
     return disabled == true ? true : false
@@ -120,10 +127,10 @@ export default function Prediction({
 
       incrementEpochIndex()
 
-      let newPrice = price + (dir * 5.0)
+      let newPrice = price + dir * 5.0
       updatePrice(newPrice)
 
-      let newBalance = localBalance + (dir * 5.0)
+      let newBalance = localBalance + dir * 5.0
       updateBalance(newBalance)
     }
   }
