@@ -1,7 +1,8 @@
+import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useEffect, useState } from 'react'
 import config from '../metadata/config.json'
 import styles from '../styles/PredictionsTable.module.css'
-import { TokenData, getTokenData } from '../utils/coin'
+import { getTokenData, TokenData } from '../utils/coin'
 import AmountInput from './AmountInput'
 import Coin from './Coin'
 import Prediction, { PredictionState } from './Prediction'
@@ -45,12 +46,16 @@ export default function PredictionsTable() {
 
   const [tableData, setTableData] = useState<TableData[]>()
 
+  // TODO - Setup WSS/TWAP web3 databinding based on price feed
+  const { price, updatePrice } = useLocalEpochContext()
+
   const loadTableData = async () => {
     currentConfig.tokenPredictions.forEach(async (data: any) => {
       let newData: any = []
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
       row['coin'] = <Coin coinData={tokenData} />
+      
       row['price'] = `$${tokenData.price}`
       row['amount'] = <AmountInput />
       row['next'] = (
@@ -58,6 +63,7 @@ export default function PredictionsTable() {
           state={PredictionState.Next}
           epochOffset={+1}
           predictoorContractAddress={data.predictoorContractAddress}
+          config={data}
         />
       )
       row['live'] = (
@@ -65,6 +71,7 @@ export default function PredictionsTable() {
           state={PredictionState.Live}
           epochOffset={0}
           predictoorContractAddress={data.predictoorContractAddress}
+          config={data}
         />
       )
       row['history'] = (
@@ -72,12 +79,22 @@ export default function PredictionsTable() {
           state={PredictionState.History}
           epochOffset={-1}
           predictoorContractAddress={data.predictoorContractAddress}
+          config={data}
         />
       )
+
       newData.push(row)
       setTableData(newData)
+
+      // If in local mode, we want to use the mock data & implementation
+      if (process.env.NEXT_PUBLIC_ENV == 'mock') {
+        // Init the app w/ fresh CG data each time
+        updatePrice(tokenData.price);
+      }
     })
+    // console.log(newData)
   }
+
   useEffect(() => {
     loadTableData()
   }, [])
@@ -85,6 +102,23 @@ export default function PredictionsTable() {
   useEffect(() => {
     // console.log(tableData)
   }, [tableData])
+
+  useEffect(() => {
+    if (tableData) {
+      tableData?.forEach(async (tableRow) => {
+        let newData: any = []
+        let row: any = {}
+        row['coin'] = tableRow['coin']
+        row['price'] = price
+        row['amount'] = tableRow['amount']
+        row['next'] = tableRow['next']
+        row['live'] = tableRow['live']
+        row['history'] = tableRow['history']
+        newData.push(row)
+        setTableData(newData)
+      })
+    }
+  }, [price])
 
   return tableData ? (
     <div className={styles.container}>
