@@ -163,10 +163,13 @@ export default function Prediction({
       )}
       {state !== PredictionState.History &&
         <ProgressBar
-          completed={timePassed}
+          completed={maxDurationTime - timePassed}
           setCompleted={setTimePassed}
           maxCompleted={maxDurationTime}
-          startProgress={state == PredictionState.Live}
+          startProgress={
+            state === PredictionState.Next ||
+            state == PredictionState.Live
+          }
         />
       }
     </div>

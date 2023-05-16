@@ -28,7 +28,7 @@ export default function ProgressBar({
   }, [completed, maxCompleted])
   return (
     <ProgressBarComponent
-      completed={maxCompleted - completed}
+      completed={completed}
       maxCompleted={maxCompleted}
       bgColor="purple"
       baseBgColor="grey"
