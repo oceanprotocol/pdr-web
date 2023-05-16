@@ -163,7 +163,7 @@ export default function Prediction({
       )}
       {state !== PredictionState.History &&
         <ProgressBar
-          completed={maxDurationTime - timePassed}
+          completed={timePassed}
           setCompleted={setTimePassed}
           maxCompleted={maxDurationTime}
           startProgress={
