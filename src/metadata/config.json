@@ -34,7 +34,7 @@
       }
     ]
   },
-  "local": {
+  "mock": {
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     "tokenPredictions": [

@@ -87,7 +87,7 @@ export default function PredictionsTable() {
       setTableData(newData)
 
       // If in local mode, we want to use the mock data & implementation
-      if (process.env.NEXT_PUBLIC_ENV == 'local') {
+      if (process.env.NEXT_PUBLIC_ENV == 'mock') {
         // Init the app w/ fresh CG data each time
         updatePrice(tokenData.price);
       }

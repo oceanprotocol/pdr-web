@@ -86,7 +86,7 @@ export default function Prediction({
         setStake(Number(aggPredval?.stake))
 
         // If in local mode, we want to use the mock data & implementation
-        if (process.env.NEXT_PUBLIC_ENV == 'local') {
+        if (process.env.NEXT_PUBLIC_ENV == 'mock') {
           let randomConfidence = parseFloat(Math.random().toFixed(2))
           const epochNum = Number(epochIndex) + epochOffset
 
@@ -110,7 +110,7 @@ export default function Prediction({
   const canBuyPrediction = () => {
     let enabled = userBalance > 0.0 && amount > 0
 
-    if (process.env.NEXT_PUBLIC_ENV === 'local') {
+    if (process.env.NEXT_PUBLIC_ENV === 'mock') {
       enabled = true
     }
 
@@ -120,7 +120,7 @@ export default function Prediction({
   const buyPrediction = () => {
     //  axios.put(api_key, amount)
 
-    if (process.env.NEXT_PUBLIC_ENV === 'local') {
+    if (process.env.NEXT_PUBLIC_ENV === 'mock') {
       let randomConfidence = parseFloat(Math.random().toFixed(2))
       const dir = randomConfidence > 0.5 ? 1 : -1
 
@@ -145,7 +145,7 @@ export default function Prediction({
         }}
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
-      {/* {process.env.NEXT_PUBLIC_ENV == 'local' && (
+      {/* {process.env.NEXT_PUBLIC_ENV == 'mock' && (
         <div>
           Epoch: {epoch}<br/>
           BlockNum: {blockNum}<br/>

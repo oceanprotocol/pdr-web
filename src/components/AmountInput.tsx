@@ -7,7 +7,7 @@ export default function AmountInput() {
   const isEnabled = () => {
     let enabled = balance > 0
 
-    if (process.env.NEXT_PUBLIC_ENV === 'local') {
+    if (process.env.NEXT_PUBLIC_ENV === 'mock') {
       enabled = true
     }
 
