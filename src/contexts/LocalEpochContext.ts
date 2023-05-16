@@ -45,8 +45,8 @@ export const LocalEpochProvider = ({ children }: LocalEpochProviderProps) => {
     if (!initializedRef.current) {
       // Load epoch, price, and other data from local even if not used
       setEpochIndex(0);
-      setPrice(0);
-      setBalance(0);
+      setPrice(1750);
+      setBalance(100);
 
       initializedRef.current = true;
     }

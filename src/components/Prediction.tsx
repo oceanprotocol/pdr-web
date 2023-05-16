@@ -111,7 +111,7 @@ export default function Prediction({
     let enabled = userBalance > 0.0 && amount > 0
 
     if (process.env.NEXT_PUBLIC_ENV === 'mock') {
-      enabled = true
+      enabled = localBalance > 0.0 && amount > 0
     }
 
     return enabled
