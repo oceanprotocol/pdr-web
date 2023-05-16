@@ -24,3 +24,28 @@ export const oasis = {
     }
   }
 } as const satisfies Chain
+
+export const ganache = {
+  id: 8996,
+  name: 'Ganache',
+  network: 'Ganache',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ganache Token',
+    symbol: 'GNTK'
+  },
+  rpcUrls: {
+    public: { http: ['http://127.0.0.1:8545'] },
+    default: { http: ['http://127.0.0.1:8545'] }
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Ganache',
+      url: 'http://127.0.0.1:8545'
+    },
+    default: {
+      name: 'Ganache',
+      url: 'http://127.0.0.1:8545'
+    }
+  }
+} as const satisfies Chain

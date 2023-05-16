@@ -12,6 +12,10 @@ export default function Wallet() {
   const [networkName, setNetworkName] = useState<string | undefined>(undefined)
   const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
 
+  const currentConfig = process.env.NEXT_PUBLIC_ENV
+    ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
+    : config['staging']
+
   const saveNetworkName = async () => {
     if (!chain) return
     let name = await getNetworkName(chain.id)
@@ -26,12 +30,14 @@ export default function Wallet() {
   }, [chain])
   return (
     <div className={styles.container}>
-      {!loading && chain && parseInt(config[0].chainId) !== chain?.id && (
+      {!loading && chain && parseInt(currentConfig.chainId) !== chain?.id && (
         <Button
-          disabled={!switchNetwork || parseInt(config[0].chainId) === chain?.id}
-          onClick={() => switchNetwork?.(parseInt(config[0].chainId))}
+          disabled={
+            !switchNetwork || parseInt(currentConfig.chainId) === chain?.id
+          }
+          onClick={() => switchNetwork?.(parseInt(currentConfig.chainId))}
           text={
-            isLoading && pendingChainId === parseInt(config[0].chainId)
+            isLoading && pendingChainId === parseInt(currentConfig.chainId)
               ? 'Switching to Ethereum...'
               : 'Switch Network to Ethereum'
           }
