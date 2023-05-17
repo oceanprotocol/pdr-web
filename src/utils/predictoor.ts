@@ -256,8 +256,8 @@ async function consumePredictoor(
       return null;
     } catch (error) {
       // Handle any errors that occurred during the query
-      console.error('Error consuming predictoor feed.');
-      return Error('Error consuming predictoor feed.');
+      console.error('Error consuming predictoor datatoken.');
+      return Error('Error consuming predictoor datatoken.');
     }
 }
 

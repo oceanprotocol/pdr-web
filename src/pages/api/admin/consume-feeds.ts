@@ -3,8 +3,6 @@ import { ethers } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import config from '../../../metadata/config.json';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Set appropriate CORS headers to allow external requests
@@ -43,10 +41,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Send a JSON response
-    res.status(200).json({ message: 'Feeds updated successfully' });
+    res.status(200).json({ message: 'Feeds consumed successfully' });
   } catch (error) {
     // Handle any errors that occurred during the process
-    console.error('Error updating feeds:', error);
+    console.error('Error consuming feeds:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
