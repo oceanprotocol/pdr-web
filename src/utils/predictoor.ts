@@ -1,4 +1,4 @@
-// import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
 import { ethers } from 'ethers';
 import { IERC20ABI } from '../metadata/abis/IERC20ABI';
 import { predictoorABI } from '../metadata/abis/predictoorABI';
@@ -175,16 +175,18 @@ const datatoken = new ethers.Contract(
 }
 
 function buildQuery(datatokenId: string, userId: string): string {
+  
+  // TODO - Enable Filtering
+  // filter: {
+  //   datatoken: { id: "$datatokenId" }
+  //   consumer: { id: "$userId" }
+  // }
   const query = `
-    query GetFilteredOrders() {
+    query GetOrders {
       orders(
         orderBy: createdTimestamp
         orderDirection: desc
         first: 1000
-        filter: {
-          datatoken: { id: $datatokenId }
-          consumer: { id: $userId }
-        }
       ) {
         datatoken {
           id
@@ -197,11 +199,12 @@ function buildQuery(datatokenId: string, userId: string): string {
     }
   `;
   
+  // TODO - Enable Filtering
   // Replace the variables in the query string
-  let finalQuery = query.replace('$datatokenId', datatokenId);
-  finalQuery = finalQuery.replace('$userId', process.env.NEXT_PUBLIC_PREDICTOOR_ADDRESS?.toString() || '');
+  // let finalQuery = query.replace('$datatokenId', datatokenId);
+  // finalQuery = finalQuery.replace('$userId', process.env.NEXT_PUBLIC_PREDICTOOR_ADDRESS?.toString() || '');
 
-  return finalQuery;
+  return query;
 }
 
 const deltaTimeInHours = 24;
@@ -222,14 +225,25 @@ async function consumePredictoor(
     
     const query = buildQuery(tokenprediction.predictoorAddress, user.address);
 
-    // const client = new ApolloClient({
-    //   uri: chainConfig.subgraph,
-    //   cache: new InMemoryCache(),
-    // });
+    const client = new ApolloClient({
+      uri: chainConfig.subgraph,
+      cache: new InMemoryCache(),
+    });
   
-    // const { data } = await client.query({
-    //   query: gql(query)
-    // });
+    try {
+      const { data } = await client.query({
+        query: gql(query)
+      });
+    } catch (error) {
+      // Handle any errors that occurred during the process
+      console.error('Error consuming feeds:', error);
+      return {
+        error: error,
+        query: query,
+        chainConfig: chainConfig,
+        subgraph: chainConfig.subgraph,
+      }
+    }    
 
     // const orders: any = data.orders; // Replace `Order` with your specific type
 
@@ -258,7 +272,7 @@ async function consumePredictoor(
       query: query,
       data: null,
       chainConfig: chainConfig,
-      tokenprediction: tokenprediction,
+      // tokenprediction: tokenprediction,
     };
 }
 

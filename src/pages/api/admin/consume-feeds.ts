@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let results = [];
     for (const tokenPrediction of tokenPredictions) {
       const result = await consumePredictoor(
-        chainConfig, 
+        chainConfig.production,
         tokenPrediction, 
         predictoorWallet, 
         provider
