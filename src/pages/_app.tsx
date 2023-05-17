@@ -7,7 +7,7 @@ import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { ethers } from 'ethers'
 import type { AppProps } from 'next/app'
-import { WagmiConfig, configureChains, createClient } from 'wagmi'
+import { configureChains, createClient, WagmiConfig } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
 
 const chains = [oasis]

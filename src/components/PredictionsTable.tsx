@@ -62,7 +62,7 @@ export default function PredictionsTable() {
         <Prediction
           state={PredictionState.Next}
           epochOffset={+1}
-          predictoorContractAddress={data.predictoorContractAddress}
+          predictoorAddress={data.predictoorAddress}
           config={data}
         />
       )
@@ -70,7 +70,7 @@ export default function PredictionsTable() {
         <Prediction
           state={PredictionState.Live}
           epochOffset={0}
-          predictoorContractAddress={data.predictoorContractAddress}
+          predictoorAddress={data.predictoorAddress}
           config={data}
         />
       )
@@ -78,7 +78,7 @@ export default function PredictionsTable() {
         <Prediction
           state={PredictionState.History}
           epochOffset={-1}
-          predictoorContractAddress={data.predictoorContractAddress}
+          predictoorAddress={data.predictoorAddress}
           config={data}
         />
       )

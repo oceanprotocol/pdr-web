@@ -20,12 +20,12 @@ export enum PredictionState {
 export default function Prediction({
   state,
   epochOffset,
-  predictoorContractAddress,
+  predictoorAddress,
   config
 }: {
   state: PredictionState
   epochOffset: number // offset from epoch index
-  predictoorContractAddress: string // predictoor contract address
+  predictoorAddress: string // predictoor contract address
   config: any
 }) {
   // Contexts
@@ -69,14 +69,14 @@ export default function Prediction({
       const fetchData = async () => {
         const curEpoch: number = await getEpoch(
           provider,
-          predictoorContractAddress
+          predictoorAddress
         )
         const newEpoch: number = curEpoch + epochOffset
         setEpoch(newEpoch)
 
         const aggPredval = await get_agg_predval(
           provider,
-          predictoorContractAddress,
+          predictoorAddress,
           newEpoch
         )
 
@@ -101,7 +101,7 @@ export default function Prediction({
       console.log(blockNum, epoch, stake)
       fetchData()
     }
-  }, [wallet, provider, predictoorContractAddress, epochOffset, epochIndex])
+  }, [wallet, provider, predictoorAddress, epochOffset, epochIndex])
 
   const getDirectionText = (direction: number) => {
     return direction == 1 ? 'BULL' : 'BEAR'
