@@ -1,4 +1,4 @@
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+// import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
 import { ethers } from 'ethers';
 import { IERC20ABI } from '../metadata/abis/IERC20ABI';
 import { predictoorABI } from '../metadata/abis/predictoorABI';
@@ -175,9 +175,17 @@ const datatoken = new ethers.Contract(
 }
 
 function buildQuery(datatokenId: string, userId: string): string {
-  let query = `
-    query GetOrders {
-      orders(orderBy: createdTimestamp, orderDirection: desc, first: 1000) {
+  const query = `
+    query GetFilteredOrders() {
+      orders(
+        orderBy: createdTimestamp
+        orderDirection: desc
+        first: 1000
+        filter: {
+          datatoken: { id: $datatokenId }
+          consumer: { id: $userId }
+        }
+      ) {
         datatoken {
           id
         }
@@ -188,18 +196,12 @@ function buildQuery(datatokenId: string, userId: string): string {
       }
     }
   `;
+  
+  // Replace the variables in the query string
+  let finalQuery = query.replace('$datatokenId', datatokenId);
+  finalQuery = finalQuery.replace('$userId', process.env.NEXT_PUBLIC_PREDICTOOR_ADDRESS?.toString() || '');
 
-  if (datatokenId || userId) {
-    query = query.replace('GetOrders', 'GetFilteredOrders');
-    query += `
-      filter: {
-        ${datatokenId ? `datatoken: { id: "${datatokenId}" }` : ''}
-        ${userId ? `consumer: { id: "${userId}" }` : ''}
-      }
-    `;
-  }
-
-  return query;
+  return finalQuery;
 }
 
 const deltaTimeInHours = 24;
@@ -212,53 +214,52 @@ function canStartOrder(lastOrderTimestamp: number, deltaTime: number): boolean {
 }
 
 async function consumePredictoor(
-  config: any,
+  chainConfig: any,
+  tokenprediction: any,
   user: ethers.Wallet, 
   provider: ethers.providers.JsonRpcProvider
-  ): Promise<OrderStartedEvent|Error|null> {
-    const userId = 'your-user-id';
+  ): Promise<OrderStartedEvent|Error|null|object> {
+    
+    const query = buildQuery(tokenprediction.predictoorAddress, user.address);
 
-    const query = buildQuery(config.predictoorAddress, user.address);
-
-    const client = new ApolloClient({
-      uri: config.subgraph,
-      cache: new InMemoryCache(),
-    });
+    // const client = new ApolloClient({
+    //   uri: chainConfig.subgraph,
+    //   cache: new InMemoryCache(),
+    // });
   
-    try {
-      const { data } = await client.query({
-        query: gql(query),
-      });
-  
-      const orders: any = data.orders; // Replace `Order` with your specific type
-  
-      // Find the latest order from the user
-      const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
-      const lastOrderTimestamp: any = latestOrder ? latestOrder.createdTimestamp : 0;
+    // const { data } = await client.query({
+    //   query: gql(query)
+    // });
 
-      const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
-      if (canStartAnotherOrder) {
-        // Calculate the time remaining until the next order can be placed with the overlap
-        const nextOrderTimestamp = lastOrderTimestamp + deltaTimeInMillis + scheduleOverlapInMillis;
-        const timeRemainingInMillis = nextOrderTimestamp - Date.now();
+    // const orders: any = data.orders; // Replace `Order` with your specific type
 
-        if (timeRemainingInMillis <= 0) {
-          const results = await startOrder(
-            config.predictoorAddress,
-            user,
-            provider
-          );
+    // // Find the latest order from the user
+    // const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
+    // const lastOrderTimestamp: any = latestOrder ? latestOrder.createdTimestamp : 0;
 
-          return results;
-        }
-      }
+    // const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
+    // if (canStartAnotherOrder) {
+    //   // Calculate the time remaining until the next order can be placed with the overlap
+    //   const nextOrderTimestamp = lastOrderTimestamp + deltaTimeInMillis + scheduleOverlapInMillis;
+    //   const timeRemainingInMillis = nextOrderTimestamp - Date.now();
 
-      return null;
-    } catch (error) {
-      // Handle any errors that occurred during the query
-      console.error('Error consuming predictoor datatoken.');
-      return Error('Error consuming predictoor datatoken.');
-    }
+    //   if (timeRemainingInMillis <= 0) {
+    //     const results = await startOrder(
+    //       tokenprediction.predictoorAddress,
+    //       user,
+    //       provider
+    //     );
+
+    //     return results;
+    //   }
+    // }
+
+    return {
+      query: query,
+      data: null,
+      chainConfig: chainConfig,
+      tokenprediction: tokenprediction,
+    };
 }
 
 export {

@@ -1,7 +1,7 @@
-// import { consumePredictoor } from '@/utils/predictoor';
+import { consumePredictoor } from '@/utils/predictoor';
 import { ethers } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
-import config from '../../../metadata/config.json';
+import chainConfig from '../../../metadata/config.json';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Limit the number of entries to process
     const maxEntries = 20;
-    const tokenPredictions = config.production.tokenPredictions.slice(0, maxEntries);
+    const tokenPredictions = chainConfig.production.tokenPredictions.slice(0, maxEntries);
 
     const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
     const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
@@ -36,18 +36,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const predictoorWallet = new ethers.Wallet(predictoorPK, infuraProviderETH)
 
     // Loop through each tokenPrediction object and call consumePredictoor
+    let results = [];
     for (const tokenPrediction of tokenPredictions) {
-      // await consumePredictoor(tokenPrediction, predictoorWallet, provider);
+      const result = await consumePredictoor(
+        chainConfig, 
+        tokenPrediction, 
+        predictoorWallet, 
+        provider
+      );
+      
+      if(result) {
+        results.push(result);
+      }
     }
 
     // Send a JSON response
     res.status(200).json({ 
       message: 'Feeds consumed successfully', 
-      predictoorRPC: predictoorRPC, 
-      predictoorPK: predictoorPK,
-      provider: provider,
-      infuraProviderETH: infuraProviderETH,
-      predictoorWallet: predictoorWallet
+      // predictoorRPC: predictoorRPC, 
+      // predictoorPK: predictoorPK,
+      // provider: provider,
+      // infuraProviderETH: infuraProviderETH,
+      // predictoorWallet: predictoorWallet,
+      results: results
     });
 
   } catch (error) {
