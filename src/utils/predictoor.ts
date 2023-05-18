@@ -1,4 +1,5 @@
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+// import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+import axios from 'axios';
 import { ethers } from 'ethers';
 import { IERC20ABI } from '../metadata/abis/IERC20ABI';
 import { predictoorABI } from '../metadata/abis/predictoorABI';
@@ -174,13 +175,13 @@ const datatoken = new ethers.Contract(
   }
 }
 
-function buildQuery(datatokenId: string, userId: string): string {
-  
-  // TODO - Enable Filtering
+function buildQuery(datatokenId:string, userId:string): string {
+  // query GetOrders($datatokenId: String, $userId: String) {
   // filter: {
-  //   datatoken: { id: "$datatokenId" }
-  //   consumer: { id: "$userId" }
+  //   datatoken: { id: $datatokenId }
+  //   consumer: { id: $userId }
   // }
+
   const query = `
     query GetOrders {
       orders(
@@ -198,12 +199,11 @@ function buildQuery(datatokenId: string, userId: string): string {
       }
     }
   `;
-  
-  // TODO - Enable Filtering
+
   // Replace the variables in the query string
   // let finalQuery = query.replace('$datatokenId', datatokenId);
   // finalQuery = finalQuery.replace('$userId', process.env.NEXT_PUBLIC_PREDICTOOR_ADDRESS?.toString() || '');
-
+   
   return query;
 }
 
@@ -223,50 +223,53 @@ async function consumePredictoor(
   provider: ethers.providers.JsonRpcProvider
   ): Promise<OrderStartedEvent|Error|null|object> {
     
-    const query = buildQuery(tokenprediction.predictoorAddress, user.address);
+    const query = buildQuery(
+      tokenprediction.predictoorAddress, 
+      "0x4aaeac3e0ccde7c1a40d983af8465a33c52e9622"
+    );
 
-    const client = new ApolloClient({
-      uri: chainConfig.subgraph,
-      cache: new InMemoryCache(),
-    });
-  
     try {
-      const { data } = await client.query({
-        query: gql(query)
+      const response = await axios.post(
+        chainConfig.subgraph,
+        {
+          query: query,
+          headers: {'Content-Type': 'application/json'}
       });
-    } catch (error) {
-      // Handle any errors that occurred during the process
-      console.error('Error consuming feeds:', error);
+    
+      const data = response.data;
+      
+      // Process the query result as needed
+      console.log('Query result:', data);
+
+      // const orders: any = data.orders; // Replace `Order` with your specific type
+
+      // // Find the latest order from the user
+      // const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
+      // const lastOrderTimestamp: any = latestOrder ? latestOrder.createdTimestamp : 0;
+
+      // const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
+      // if (canStartAnotherOrder) {
+      //   // Calculate the time remaining until the next order can be placed with the overlap
+      //   const nextOrderTimestamp = lastOrderTimestamp + deltaTimeInMillis + scheduleOverlapInMillis;
+      //   const timeRemainingInMillis = nextOrderTimestamp - Date.now();
+
+      //   if (timeRemainingInMillis <= 0) {
+      //     const results = await startOrder(
+      //       tokenprediction.predictoorAddress,
+      //       user,
+      //       provider
+      //     );
+
+      //     return results;
+      //   }
+      // }
+
       return {
-        error: error,
-        query: query,
-        chainConfig: chainConfig,
-        subgraph: chainConfig.subgraph,
+        data: data
       }
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }    
-
-    // const orders: any = data.orders; // Replace `Order` with your specific type
-
-    // // Find the latest order from the user
-    // const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
-    // const lastOrderTimestamp: any = latestOrder ? latestOrder.createdTimestamp : 0;
-
-    // const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
-    // if (canStartAnotherOrder) {
-    //   // Calculate the time remaining until the next order can be placed with the overlap
-    //   const nextOrderTimestamp = lastOrderTimestamp + deltaTimeInMillis + scheduleOverlapInMillis;
-    //   const timeRemainingInMillis = nextOrderTimestamp - Date.now();
-
-    //   if (timeRemainingInMillis <= 0) {
-    //     const results = await startOrder(
-    //       tokenprediction.predictoorAddress,
-    //       user,
-    //       provider
-    //     );
-
-    //     return results;
-    //   }
-    // }
 
     return {
       query: query,
@@ -281,3 +284,4 @@ export {
   get_agg_predval,
   consumePredictoor
 };
+

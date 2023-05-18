@@ -2,7 +2,7 @@
   "staging": {
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
-    "subgraph": "https://v4.subgraph.goerli.oceanprotocol.com/",
+    "subgraph": "https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
     "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
@@ -25,7 +25,7 @@
   "production": {
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
-    "subgraph": "https://v4.subgraph.mainnet.oceanprotocol.com/",
+    "subgraph": "https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
     "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
@@ -48,7 +48,7 @@
   "mock": {
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
-    "subgraph": "http://localhost:9000/",
+    "subgraph": "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
     "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
