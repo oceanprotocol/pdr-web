@@ -205,8 +205,6 @@ function buildQuery(datatokenId:string, userId:string): string {
   return finalQuery;
 }
 
-const deltaTimeInHours = 24;
-const deltaTimeInMillis = deltaTimeInHours * 60 * 60 * 1000;
 const scheduleOverlapInMillis = 5 * 60 * 1000;
 
 function canStartOrder(lastOrderTimestamp: number, deltaTime: number): boolean {
@@ -250,6 +248,8 @@ async function consumePredictoor(
       // const latestOrder: any = orders.find((order: any) => order.consumer.id === "0x529043886f21d9bc1ae0fedb751e34265a246e47");
       // const lastOrderTimestamp: any = 1684126889000;
 
+      // Calculate next consume based on tokenPrediction.subscription_lifetime_hours
+      const deltaTimeInMillis = tokenPrediction.subscription_lifetime_hours * 60 * 60 * 1000;
       const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
       if (canStartAnotherOrder) {
         
