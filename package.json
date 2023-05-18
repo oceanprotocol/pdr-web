@@ -10,7 +10,6 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "@apollo/client": "^3.7.14",
     "@ramonak/react-progress-bar": "^5.0.3",
     "@openzeppelin/test-helpers": "^0.5.15",
     "@types/node": "18.16.3",
@@ -21,6 +20,7 @@
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.4",
     "ethers": "^5.7.2",
+    "moment": "^2.29.4",
     "next": "13.3.4",
     "prettier": "^2.8.8",
     "react": "18.2.0",

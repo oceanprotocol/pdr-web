@@ -1,6 +1,6 @@
-// import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
 import axios from 'axios';
 import { ethers } from 'ethers';
+import moment from 'moment';
 import { IERC20ABI } from '../metadata/abis/IERC20ABI';
 import { predictoorABI } from '../metadata/abis/predictoorABI';
 const { web3 } = require("@openzeppelin/test-helpers/src/setup");
@@ -216,15 +216,21 @@ function canStartOrder(lastOrderTimestamp: number, deltaTime: number): boolean {
 
 async function consumePredictoor(
   chainConfig: any,
-  tokenprediction: any,
+  tokenPrediction: any,
   user: ethers.Wallet, 
   provider: ethers.providers.JsonRpcProvider
   ): Promise<OrderStartedEvent|Error|null|object> {
     
     const query = buildQuery(
-      "0x663a099a8539065850f2c5c47ba2aebcbe4b3593", 
-      "0x529043886f21d9bc1ae0fedb751e34265a246e47"
+      tokenPrediction.predictoorAddress,
+      user.address
     );
+    
+    // IN PROGRESS/TEST
+    // const query = buildQuery(
+    //   "0x663a099a8539065850f2c5c47ba2aebcbe4b3593", 
+    //   "0x529043886f21d9bc1ae0fedb751e34265a246e47"
+    // );
 
     try {
       const response = await axios.post(
@@ -236,40 +242,46 @@ async function consumePredictoor(
     
       const orders: any = response.data.data.orders;
 
-      // // Find the latest order from the user
-      // const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
-      // const lastOrderTimestamp: any = latestOrder ? latestOrder.createdTimestamp : 0;
+      // Find the latest order from the user
+      const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
+      const lastOrderTimestamp: any = latestOrder ? moment.unix(latestOrder.createdTimestamp) : null;
+      
+      // IN PROGRESS/TEST
+      // const latestOrder: any = orders.find((order: any) => order.consumer.id === "0x529043886f21d9bc1ae0fedb751e34265a246e47");
+      // const lastOrderTimestamp: any = 1684126889000;
 
-      // const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
-      // if (canStartAnotherOrder) {
-      //   // Calculate the time remaining until the next order can be placed with the overlap
-      //   const nextOrderTimestamp = lastOrderTimestamp + deltaTimeInMillis + scheduleOverlapInMillis;
-      //   const timeRemainingInMillis = nextOrderTimestamp - Date.now();
+      const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
+      if (canStartAnotherOrder) {
+        
+        // Calculate the time remaining until the next order can be placed with the overlap
+        const nextOrderTimestamp = moment(lastOrderTimestamp).add(deltaTimeInMillis, 'milliseconds').subtract(scheduleOverlapInMillis, 'milliseconds');
+        const timeRemainingInMillis = nextOrderTimestamp.diff(moment(), 'milliseconds');
 
-      //   if (timeRemainingInMillis <= 0) {
-      //     const results = await startOrder(
-      //       tokenprediction.predictoorAddress,
-      //       user,
-      //       provider
-      //     );
-
-      //     return results;
-      //   }
-      // }
-
-      return {
-        orders: orders
+        if (timeRemainingInMillis <= 0) {
+          // IN PROGRESS/TEST
+          // const results = await startOrder(
+          //   tokenPrediction.predictoorAddress,
+          //   user,
+          //   provider
+          // );
+          // return results;
+          
+          return {
+            orders: orders,
+            latestOrder: latestOrder,
+            lastOrderTimestamp: lastOrderTimestamp,
+            nextOrderTimestamp: nextOrderTimestamp,
+            canStartAnotherOrder: canStartAnotherOrder,
+            timeRemainingInHours: timeRemainingInMillis / (60 * 60 * 1000),
+            timeRemainingInDays: timeRemainingInMillis / deltaTimeInMillis
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     }    
 
-    return {
-      query: query,
-      data: null,
-      chainConfig: chainConfig,
-      // tokenprediction: tokenprediction,
-    };
+    return null;
 }
 
 export {
