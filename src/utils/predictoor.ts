@@ -176,15 +176,13 @@ const datatoken = new ethers.Contract(
 }
 
 function buildQuery(datatokenId:string, userId:string): string {
-  // query GetOrders($datatokenId: String, $userId: String) {
-  // filter: {
-  //   datatoken: { id: $datatokenId }
-  //   consumer: { id: $userId }
-  // }
-
   const query = `
-    query GetOrders {
+    query GetFilteredOrders {
       orders(
+        where: {
+          datatoken_in: ["$datatokenId"]
+          consumer_in: ["$userId"]
+        }
         orderBy: createdTimestamp
         orderDirection: desc
         first: 1000
@@ -201,10 +199,10 @@ function buildQuery(datatokenId:string, userId:string): string {
   `;
 
   // Replace the variables in the query string
-  // let finalQuery = query.replace('$datatokenId', datatokenId);
-  // finalQuery = finalQuery.replace('$userId', process.env.NEXT_PUBLIC_PREDICTOOR_ADDRESS?.toString() || '');
-   
-  return query;
+  let finalQuery = query.replace('$datatokenId', datatokenId);
+  finalQuery = finalQuery.replace('$userId', userId);
+
+  return finalQuery;
 }
 
 const deltaTimeInHours = 24;
@@ -224,8 +222,8 @@ async function consumePredictoor(
   ): Promise<OrderStartedEvent|Error|null|object> {
     
     const query = buildQuery(
-      tokenprediction.predictoorAddress, 
-      "0x4aaeac3e0ccde7c1a40d983af8465a33c52e9622"
+      "0x663a099a8539065850f2c5c47ba2aebcbe4b3593", 
+      "0x529043886f21d9bc1ae0fedb751e34265a246e47"
     );
 
     try {
@@ -236,12 +234,7 @@ async function consumePredictoor(
           headers: {'Content-Type': 'application/json'}
       });
     
-      const data = response.data;
-      
-      // Process the query result as needed
-      console.log('Query result:', data);
-
-      // const orders: any = data.orders; // Replace `Order` with your specific type
+      const orders: any = response.data.data.orders;
 
       // // Find the latest order from the user
       // const latestOrder: any = orders.find((order: any) => order.consumer.id === user.address);
@@ -265,7 +258,7 @@ async function consumePredictoor(
       // }
 
       return {
-        data: data
+        orders: orders
       }
     } catch (error) {
       console.error('Error fetching data:', error);

@@ -17,9 +17,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
+    const config = chainConfig[process.env.NEXT_PUBLIC_ENV?.toString() as keyof typeof chainConfig];
+
     // Limit the number of entries to process
     const maxEntries = 20;
-    const tokenPredictions = chainConfig.production.tokenPredictions.slice(0, maxEntries);
+    const tokenPredictions = config.tokenPredictions.slice(0, maxEntries);
 
     const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
     const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
@@ -39,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let results = [];
     for (const tokenPrediction of tokenPredictions) {
       const result = await consumePredictoor(
-        chainConfig.production,
+        config,
         tokenPrediction, 
         predictoorWallet, 
         provider
