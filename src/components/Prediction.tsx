@@ -5,7 +5,7 @@ import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
 import Button from './Button'
-import ProgressBar from './PreogressBar'
+import ProgressBar from './ProgressBar'
 
 // 3 States => Defines how the Prediction component behaves
 // Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
@@ -20,16 +20,25 @@ export enum PredictionState {
 export default function Prediction({
   state,
   epochOffset,
-  predictoorContractAddress
+  predictoorContractAddress,
+  config
 }: {
   state: PredictionState
   epochOffset: number // offset from epoch index
   predictoorContractAddress: string // predictoor contract address
+  config: any
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
-  const { epochIndex, incrementEpochIndex } = useLocalEpochContext()
-  const { balance, amount } = useUserContext()
+  const {
+    epochIndex,
+    price,
+    balance: localBalance,
+    incrementEpochIndex,
+    updatePrice,
+    updateBalance
+  } = useLocalEpochContext()
+  const { balance: userBalance, amount } = useUserContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -40,18 +49,14 @@ export default function Prediction({
   const [timePassed, setTimePassed] = useState(0)
   const maxDurationTime = 300
 
-  // Next State Params
-  // Live State Params
-  // History State Params
-
   const getTimeLeftInSeconds = () => {
     switch (state) {
       case PredictionState.Next:
-        return setTimePassed(0)
-      case PredictionState.History:
-        return setTimePassed(maxDurationTime)
+        return setTimePassed(200)
       case PredictionState.Live:
         return setTimePassed(200)
+      case PredictionState.History:
+        return setTimePassed(maxDurationTime)
     }
   }
 
@@ -61,17 +66,6 @@ export default function Prediction({
 
   useEffect(() => {
     if (provider) {
-      // If in local mode, we want to use the mock data & implementation
-      if (process.env.NEXT_PUBLIC_ENV == 'local') {
-        let randomConfidence = parseFloat(Math.random().toFixed(2))
-        setEpoch(Number(epochIndex) + epochOffset)
-        setBlockNum(1)
-        setDirection(randomConfidence > 0.5 ? 1 : 0)
-        setConfidence(randomConfidence)
-        setStake(100)
-        return
-      }
-
       const fetchData = async () => {
         const curEpoch: number = await getEpoch(
           provider,
@@ -90,6 +84,19 @@ export default function Prediction({
         setDirection(Number(aggPredval?.dir))
         setConfidence(Number(aggPredval?.confidence))
         setStake(Number(aggPredval?.stake))
+
+        // If in local mode, we want to use the mock data & implementation
+        if (process.env.NEXT_PUBLIC_ENV == 'mock') {
+          let randomConfidence = parseFloat(Math.random().toFixed(2))
+          const epochNum = Number(epochIndex) + epochOffset
+
+          setEpoch(epochNum)
+          setBlockNum(epochNum * config.blocks_per_epoch)
+          setDirection(randomConfidence > 0.5 ? 1 : -1)
+          setConfidence(randomConfidence)
+          setStake(100)
+        }
+        console.log(blockNum, epoch, stake)
       }
       console.log(blockNum, epoch, stake)
       fetchData()
@@ -98,6 +105,33 @@ export default function Prediction({
 
   const getDirectionText = (direction: number) => {
     return direction == 1 ? 'BULL' : 'BEAR'
+  }
+
+  const canBuyPrediction = () => {
+    let enabled = userBalance > 0.0 && amount > 0
+
+    if (process.env.NEXT_PUBLIC_ENV === 'mock') {
+      enabled = localBalance > 0.0 && amount > 0
+    }
+
+    return enabled
+  }
+
+  const buyPrediction = () => {
+    //  axios.put(api_key, amount)
+
+    if (process.env.NEXT_PUBLIC_ENV === 'mock') {
+      let randomConfidence = parseFloat(Math.random().toFixed(2))
+      const dir = randomConfidence > 0.5 ? 1 : -1
+
+      incrementEpochIndex()
+
+      let newPrice = price + dir * 5.0
+      updatePrice(newPrice)
+
+      let newBalance = localBalance + dir * 5.0
+      updateBalance(newBalance)
+    }
   }
 
   return (
@@ -111,21 +145,33 @@ export default function Prediction({
         }}
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
+      {/* {process.env.NEXT_PUBLIC_ENV == 'mock' && (
+        <div>
+          Epoch: {epoch}<br/>
+          BlockNum: {blockNum}<br/>
+          Stake: {stake}<br/>
+        </div>
+      )} */}
       {state === PredictionState.Next ? (
         <Button
-          onClick={incrementEpochIndex}
+          onClick={buyPrediction}
           text={'BUY NOW'}
-          disabled={balance == 0 || amount <= 0}
+          disabled={canBuyPrediction() === false}
         />
       ) : (
         <span className={styles.position}>PNL: N/A</span>
       )}
-      <ProgressBar
-        completed={timePassed}
-        setCompleted={setTimePassed}
-        maxCompleted={maxDurationTime}
-        startProgress={state == PredictionState.Live}
-      />
+      {state !== PredictionState.History &&
+        <ProgressBar
+          completed={timePassed}
+          setCompleted={setTimePassed}
+          maxCompleted={maxDurationTime}
+          startProgress={
+            state === PredictionState.Next ||
+            state == PredictionState.Live
+          }
+        />
+      }
     </div>
   )
 }

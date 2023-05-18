@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import predictoorABI from '../metadata/abis/predictoorABI'
+import { predictoorABI } from '../metadata/abis/predictoorABI'
 
 export async function epoch(
   rpcProvider: ethers.providers.JsonRpcProvider,

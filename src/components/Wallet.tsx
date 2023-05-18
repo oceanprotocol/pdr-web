@@ -24,10 +24,11 @@ export default function Wallet() {
 
   useEffect(() => {
     if (chain) {
-      setLoading(false)
       saveNetworkName()
+      setLoading(false)
     }
   }, [chain])
+
   return (
     <div className={styles.container}>
       {!loading && chain && parseInt(currentConfig.chainId) !== chain?.id && (

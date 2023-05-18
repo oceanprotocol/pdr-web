@@ -11,7 +11,8 @@
         "exchange": "univ3",
         "predictoorContractAddress": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
         "cg_id": "ethereum",
-        "cg_vs_currencies": "usd"
+        "cg_vs_currencies": "usd",
+        "blocks_per_epoch": 4000
       }
     ]
   },
@@ -28,11 +29,12 @@
         "exchange": "univ3",
         "predictoorContractAddress": "0x",
         "cg_id": "ethereum",
-        "cg_vs_currencies": "usd"
+        "cg_vs_currencies": "usd",
+        "blocks_per_epoch": 4000
       }
     ]
   },
-  "local": {
+  "mock": {
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     "tokenPredictions": [
@@ -44,7 +46,8 @@
         "exchange": "univ3",
         "predictoorContractAddress": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
         "cg_id": "ethereum",
-        "cg_vs_currencies": "usd"
+        "cg_vs_currencies": "usd",
+        "blocks_per_epoch": 4000
       }
     ]
   },
