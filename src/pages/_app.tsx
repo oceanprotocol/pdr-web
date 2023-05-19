@@ -1,7 +1,7 @@
 import { LocalEpochProvider } from '@/contexts/LocalEpochContext'
 import { OPFProvider } from '@/contexts/OPFContext'
 import { UserProvider } from '@/contexts/UserContext'
-import { oasis } from '@/metadata/networksConfig'
+import { ganache, oasis } from '@/metadata/networksConfig'
 import '@/styles/globals.css'
 import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
@@ -10,7 +10,7 @@ import type { AppProps } from 'next/app'
 import { WagmiConfig, configureChains, createClient } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
 
-const chains = [oasis]
+const chains = [oasis, ganache]
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
 const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
 const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
