@@ -1,7 +1,10 @@
 .container {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 20px;
+  position: relative;
 }
 
 .walletInfoContainer {
@@ -10,10 +13,14 @@
   align-items: center;
   background-color: #2e6bac;
   border-radius: 10px;
-  margin-left: 20px;
 }
 
 .chainName {
   font-weight: bold;
   margin: 0 10px;
+}
+
+.switchNetwork {
+  position: absolute;
+  top: 50px;
 }

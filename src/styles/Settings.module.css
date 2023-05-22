@@ -1,0 +1,33 @@
+.container {
+  position: relative;
+}
+
+.container:hover {
+  cursor: pointer;
+}
+
+.modal {
+  position: absolute;
+  z-index: 2;
+  border-radius: 3px;
+  color: black;
+  background-color: white;
+  padding: 10px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputSection {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.button {
+  width: 100%;
+}
