@@ -33,7 +33,14 @@ export default function Settings() {
             <div className={styles.inputSection}>
               <Input
                 label="Private Key"
-                value={privateKey}
+                value={
+                  krakenPrivateKey
+                    ? `${privateKey?.substring(0, 4)}...${privateKey?.substring(
+                        privateKey.length - 4,
+                        privateKey.length
+                      )}`
+                    : privateKey
+                }
                 type="text"
                 disabled={krakenPrivateKey !== undefined}
                 onChange={setPrivateKey}
