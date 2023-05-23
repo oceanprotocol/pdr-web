@@ -8,13 +8,17 @@ import Input from './Input'
 
 export default function Settings() {
   const [open, setOpen] = useState<boolean>(false)
-  const [privateKey, setPrivateKey] = useState<string>()
-  const { krakenPrivateKey, setKrakenPrivateKey } = useUserContext()
+  const [apiKey, setApiKey] = useState<string>()
+  const [secretKey, setSecretKey] = useState<string>()
+  const { krakenApiKey, krakenSecretKey, setKrakenApiKey, setKrakenSecretKey } =
+    useUserContext()
   return (
     <div
-      className={`${styles.container} ${!krakenPrivateKey && styles.warning}`}
+      className={`${styles.container} ${
+        (!krakenApiKey || !krakenSecretKey) && styles.warning
+      }`}
     >
-      {!krakenPrivateKey ? (
+      {!krakenApiKey || !krakenSecretKey ? (
         <p className={styles.message}>
           Trading disabled. Kraken private key not configured.
         </p>
@@ -32,26 +36,48 @@ export default function Settings() {
             <span className={styles.title}>Kraken Config</span>
             <div className={styles.inputSection}>
               <Input
-                label="Private Key"
+                label="API Key"
                 value={
-                  krakenPrivateKey
-                    ? `${privateKey?.substring(0, 4)}...${privateKey?.substring(
-                        privateKey.length - 4,
-                        privateKey.length
+                  krakenApiKey
+                    ? `${krakenApiKey?.substring(
+                        0,
+                        4
+                      )}...${krakenApiKey?.substring(
+                        krakenApiKey.length - 4,
+                        krakenApiKey.length
                       )}`
-                    : privateKey
+                    : apiKey
                 }
                 type="text"
-                disabled={krakenPrivateKey !== undefined}
-                onChange={setPrivateKey}
+                disabled={krakenApiKey !== undefined}
+                onChange={setApiKey}
+              />
+              <Input
+                label="Secret Key"
+                value={
+                  krakenApiKey
+                    ? `${krakenSecretKey?.substring(
+                        0,
+                        4
+                      )}...${krakenSecretKey?.substring(
+                        krakenSecretKey.length - 4,
+                        krakenSecretKey.length
+                      )}`
+                    : secretKey
+                }
+                type="text"
+                disabled={krakenSecretKey !== undefined}
+                onChange={setSecretKey}
               />
             </div>
             <Button
-              text={krakenPrivateKey ? 'REMOVE' : 'SAVE'}
-              onClick={() =>
-                setKrakenPrivateKey &&
-                setKrakenPrivateKey(krakenPrivateKey ? undefined : privateKey)
-              }
+              text={krakenApiKey && krakenSecretKey ? 'REMOVE' : 'SAVE'}
+              onClick={() => {
+                setKrakenApiKey &&
+                  setKrakenApiKey(krakenApiKey ? undefined : apiKey)
+                setKrakenSecretKey &&
+                  setKrakenSecretKey(krakenSecretKey ? undefined : secretKey)
+              }}
               className={styles.button}
             />
           </div>
