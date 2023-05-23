@@ -1,3 +1,4 @@
+import { getAssetBalance } from '@/utils/exchange'
 import { ethers } from 'ethers'
 import {
   createContext,
@@ -44,6 +45,10 @@ export const UserProvider = ({ children }: UserProps) => {
   })
 
   useEffect(() => {
+    getAssetBalance(
+      process.env.NEXT_PUBLIC_EXCHANGE_KEY || '',
+      process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || ''
+    ).then((resp) => console.log(resp))
     data &&
       setBalance(
         parseInt(ethers.utils.formatEther(BigInt(data as string).toString(10)))
