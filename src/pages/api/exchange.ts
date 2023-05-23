@@ -19,9 +19,6 @@ const getMessageSignature = (
 }
 
 export default async function handler(req: any, res: any) {
-  /*const apiKey = 'x7NvADBhCHO+xoQuTrYAcoPHb7eRzRshO1EjRscpQSVokeTa4GqQuJIE'
-  const apiSecret =
-    '+NjFWaDXuT+Da9wsRbG2I0lbaZl+nwXKXOwuQC0QAEqUAFsk41Od7I1VIfZtqFhOzt7fB8XqSRZnAREeDYnB9A=='*/
   const baseUrl = 'https://api.kraken.com'
   const endpoint = '/0/private/Balance'
 
