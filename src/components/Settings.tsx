@@ -20,7 +20,7 @@ export default function Settings() {
     >
       {!krakenApiKey || !krakenSecretKey ? (
         <p className={styles.message}>
-          Trading disabled. Kraken private key not configured.
+          Trading disabled. Kraken private keys not configured.
         </p>
       ) : (
         ''
