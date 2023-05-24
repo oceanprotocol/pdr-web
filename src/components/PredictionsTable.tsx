@@ -1,8 +1,9 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
+import { getAssetPairPrice } from '@/utils/exchange'
 import { useEffect, useState } from 'react'
 import config from '../metadata/config.json'
 import styles from '../styles/PredictionsTable.module.css'
-import { getTokenData, TokenData } from '../utils/coin'
+import { TokenData, getTokenData } from '../utils/coin'
 import AmountInput from './AmountInput'
 import Coin from './Coin'
 import Prediction, { PredictionState } from './Prediction'
@@ -54,9 +55,9 @@ export default function PredictionsTable() {
       let newData: any = []
       let row: any = {}
       let tokenData: TokenData = await getTokenData(data.cg_id)
+      let price = await getAssetPairPrice(data.tokenName + data.pairName)
       row['coin'] = <Coin coinData={tokenData} />
-      
-      row['price'] = `$${tokenData.price}`
+      row['price'] = `$${parseFloat(price).toFixed(2)}`
       row['amount'] = <AmountInput />
       row['next'] = (
         <Prediction
@@ -89,7 +90,7 @@ export default function PredictionsTable() {
       // If in local mode, we want to use the mock data & implementation
       if (process.env.NEXT_PUBLIC_ENV == 'mock') {
         // Init the app w/ fresh CG data each time
-        updatePrice(tokenData.price);
+        updatePrice(tokenData.price)
       }
     })
     // console.log(newData)
