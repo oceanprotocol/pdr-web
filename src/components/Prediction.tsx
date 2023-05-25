@@ -1,7 +1,7 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
-import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
+import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
 import Button from './Button'
@@ -67,7 +67,7 @@ export default function Prediction({
   useEffect(() => {
     if (provider) {
       const fetchData = async () => {
-        const curEpoch: number = await getEpoch(
+        const curEpoch: number = await getCurrentEpoch(
           provider,
           predictoorAddress
         )

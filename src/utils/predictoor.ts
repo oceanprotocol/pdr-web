@@ -1,17 +1,20 @@
+import { ERC20Template3ABI } from '@/metadata/abis/ERC20Template3ABI';
+import { IERC20ABI } from '@/metadata/abis/IERC20ABI';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import moment from 'moment';
-import { IERC20ABI } from '../metadata/abis/IERC20ABI';
-import { predictoorABI } from '../metadata/abis/predictoorABI';
+
 const { web3 } = require("@openzeppelin/test-helpers/src/setup");
 
-async function epoch(
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+
+async function getCurrentEpoch(
   rpcProvider: ethers.providers.JsonRpcProvider,
   address: string
 ) {
   try {
-    const contract = new ethers.Contract(address, predictoorABI, rpcProvider)
-    const epoch = await contract.epoch()
+    const contract = new ethers.Contract(address, ERC20Template3ABI, rpcProvider)
+    const epoch = await contract.curEpoch()
     return epoch
   } catch (e: any) {
     console.log(`ERROR: Failed to get epoch: ${e.message}`)
@@ -24,7 +27,7 @@ async function get_agg_predval(
   epoch: number
 ) {
   try {
-    const contract = new ethers.Contract(address, predictoorABI, rpcProvider)
+    const contract = new ethers.Contract(address, ERC20Template3ABI, rpcProvider)
     const blocks_per_epoch: number = await contract.blocks_per_epoch
     const blockNum: number = epoch * blocks_per_epoch
 
@@ -43,6 +46,69 @@ async function get_agg_predval(
     console.log(`ERROR: Failed to get epoch: ${e.message}`)
   }
 }
+
+// function getEmptyProviderFee(): any {
+//   return {
+//       providerFeeAddress: ZERO_ADDRESS,
+//       providerFeeToken: ZERO_ADDRESS,
+//       providerFeeAmount: 0,
+//       v: 0,
+//       r: 0,
+//       s: 0,
+//       validUntil: 0,
+//       providerData: 0,
+//   };
+// }
+
+// function stringToBytes32(data: string): string {
+//   if (data.length > 32) {
+//       return data.slice(0, 32);
+//   } else {
+//       return data.padEnd(32, '0');
+//   }
+// }
+
+// async function getExchanges(
+//   rpcProvider: ethers.providers.JsonRpcProvider,
+//   address: string
+// ): Promise<[string, number][] | any> {
+//   try {
+//     const contract = new ethers.Contract(address, ERC20Template3ABI, rpcProvider)
+//     const fixedRates: [string, number][] = await contract.getFixedRates()
+//     return fixedRates;
+//   } catch (e: any) {
+//     console.log(`ERROR: Failed to get epoch: ${e.message}`)
+//     return e;
+//   }
+// }
+
+// async function getStakeToken(
+//   rpcProvider: ethers.providers.JsonRpcProvider,
+//   address: string
+// ): Promise<string | undefined> {
+//   try {
+//     const contract = new ethers.Contract(address, ERC20Template3ABI, rpcProvider)
+//     const stakeToken = await contract.stakeToken()
+//     return stakeToken;
+//   } catch (e: any) {
+//     console.log(`ERROR: Failed to get epoch: ${e.message}`)
+//     return e;
+//   }
+// }
+
+// async function getBlocksPerEpoch(
+//   rpcProvider: ethers.providers.JsonRpcProvider,
+//   address: string
+// ): Promise<number | undefined> {
+//   try {
+//     const contract = new ethers.Contract(address, ERC20Template3ABI, rpcProvider)
+//     const epoch: number = await contract.blocksPerEpoch()
+//     return epoch
+//   } catch (e: any) {
+//     console.log(`ERROR: Failed to get epoch: ${e.message}`)
+//     return e;
+//   }
+// }
 
 interface OrderStartedEvent {
   datatoken: string;
@@ -208,6 +274,10 @@ function buildQuery(datatokenId:string, userId:string): string {
 const scheduleOverlapInMillis = 5 * 60 * 1000;
 
 function canStartOrder(lastOrderTimestamp: number, deltaTime: number): boolean {
+  if(lastOrderTimestamp === null) {
+    return true;
+  }
+
   const currentTime = Date.now();
   return currentTime - lastOrderTimestamp >= deltaTime;
 }
@@ -252,7 +322,6 @@ async function consumePredictoor(
       const deltaTimeInMillis = tokenPrediction.subscription_lifetime_hours * 60 * 60 * 1000;
       const canStartAnotherOrder: boolean = canStartOrder(lastOrderTimestamp, deltaTimeInMillis);
       if (canStartAnotherOrder) {
-        
         // Calculate the time remaining until the next order can be placed with the overlap
         const nextOrderTimestamp = moment(lastOrderTimestamp).add(deltaTimeInMillis, 'milliseconds').subtract(scheduleOverlapInMillis, 'milliseconds');
         const timeRemainingInMillis = nextOrderTimestamp.diff(moment(), 'milliseconds');
@@ -276,6 +345,15 @@ async function consumePredictoor(
             timeRemainingInDays: timeRemainingInMillis / deltaTimeInMillis
           }
         }
+      } else {
+        return {
+          orders: orders,
+          latestOrder: latestOrder,
+          lastOrderTimestamp: lastOrderTimestamp,
+          canStartAnotherOrder: canStartAnotherOrder,
+          timeRemainingInHours: null,
+          timeRemainingInDays: null
+        }
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -284,9 +362,14 @@ async function consumePredictoor(
     return null;
 }
 
-export {
-  epoch,
-  get_agg_predval,
-  consumePredictoor
-};
 
+export {
+  getCurrentEpoch,
+  get_agg_predval,
+  consumePredictoor,
+  // getEmptyProviderFee,
+  // stringToBytes32,
+  // getExchanges,
+  // getStakeToken,
+  // getBlocksPerEpoch
+};

@@ -1,8 +1,36 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+### Setup Barge Env
 
-First, run the development server:
+#### Deploy Barge
+Use [this readme](https://github.com/oceanprotocol/pdr-trueval/blob/main/README_local_full_flow.md#full-barge) to setup your barge.
+You should now have:
+- Barge
+- Ganache
+- Subgraph
+- All pdr-dockers running: pdr-predictoor, pdr-trader, pdr-publisher, pdr-trueval
+
+
+<!-- #### Copy the address.json file into metadata
+// Use sed to update address.json rather than copying things manually
+
+At this point, you want to copy the address from your local system `~/.ocean/ocean-contracts/` to this projects `src/metadata/` folder.
+
+```
+$ cp ~/.ocean/ocean-contracts/artifacts/address.json src/metadata/
+``` -->
+
+#### Update ABIs from barge
+You can update the project ABIs by running the following commands in the console/root folder.
+
+```
+cat ~/.ocean/ocean-contracts/artifacts/contracts/templates/ERC20Template3.sol/ERC20Template3.json | jq .abi | sed '1s/^/export const ERC20Template3ABI = /' > src/metadata/abis/ERC20Template3ABI.js
+cat ~/.ocean/ocean-contracts/artifacts/contracts/pools/fixedRate/FixedRateExchange.sol/FixedRateExchange.json | jq .abi | sed '1s/^/export const FixedRateExchangeABI = /' > src/metadata/abis/FixedRateExchangeABI.js
+```
+
+## Run the App
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -12,7 +40,9 @@ yarn dev
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Running the App
+
+Open [http://localhost:3000](http://localhost:3000) to visit the app.
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 

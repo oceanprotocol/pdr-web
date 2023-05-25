@@ -45,6 +45,29 @@
       }
     ]
   },
+  "barge": {
+    "chainId": "8996",
+    "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+    "subgraph": "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
+    "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
+    "tokenPredictions": [
+      {
+        "blocks_per_epoch": 4000,
+        "tokenName": "ETH",
+        "tokenAddress": "0x",
+        "pairName": "USDC",
+        "pairAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "exchange": "univ3",
+        "serviceIndex": 1,
+        "subscription_lifetime_hours": 24,
+        "predictoorAddress": "0x28a6873c1145326bb0d79f904b107fd91bd668ad",
+        "predictoorAddressWithPublishFee": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
+        "predictoorFeeToken": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+        "cg_id": "ethereum",
+        "cg_vs_currencies": "usd"
+      }
+    ]
+  },
   "mock": {
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
