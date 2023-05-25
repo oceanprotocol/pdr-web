@@ -1,5 +1,5 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
-import { getAssetPairPrice } from '@/utils/exchange'
+import { getAssetPairPrice } from '@/utils/kraken'
 import { useEffect, useState } from 'react'
 import config from '../metadata/config.json'
 import styles from '../styles/PredictionsTable.module.css'

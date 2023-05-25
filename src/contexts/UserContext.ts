@@ -1,4 +1,4 @@
-import { getAssetBalance } from '@/utils/exchange'
+import { getAssetBalance } from '@/utils/kraken'
 import {
   createContext,
   createElement,

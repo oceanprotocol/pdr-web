@@ -13,7 +13,7 @@ export const getAssetPairPrice = async (assetPair: string) => {
 export const getAssetBalance = async (apiKey: string, apiSecret: string) => {
   var response
   try {
-    response = await axios.get(`api/exchange`, {
+    response = await axios.get(`api/kraken`, {
       params: { apiKey: apiKey, apiSecret: apiSecret }
     })
   } catch (e) {
