@@ -13,13 +13,21 @@ import config from '../metadata/config.json'
 type UserType = {
   balance: number
   amount: number // I'm not sure why amount is needed here? Isn't the only place needed within the row component?
+  krakenApiKey: string | undefined
   setAmount?: (value: number) => void
+  krakenSecretKey: string | undefined
+  setKrakenSecretKey?: (value: string | undefined) => void
+  setKrakenApiKey?: (value: string | undefined) => void
 }
 
 export const UserContext = createContext<UserType>({
   balance: 0,
   amount: 0,
-  setAmount: undefined
+  krakenApiKey: undefined,
+  krakenSecretKey: undefined,
+  setAmount: undefined,
+  setKrakenApiKey: undefined,
+  setKrakenSecretKey: undefined
 })
 
 type UserProps = {
@@ -30,6 +38,8 @@ export const UserProvider = ({ children }: UserProps) => {
   const { address } = useAccount()
   const [balance, setBalance] = useState(0)
   const [amount, setAmount] = useState<number>(0)
+  const [krakenApiKey, setKrakenApiKey] = useState<string>()
+  const [krakenSecretKey, setKrakenSecretKey] = useState<string>()
 
   const currentConfig = process.env.NEXT_PUBLIC_ENV
     ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
@@ -56,7 +66,17 @@ export const UserProvider = ({ children }: UserProps) => {
 
   return createElement(
     UserContext.Provider,
-    { value: { balance, amount, setAmount } },
+    {
+      value: {
+        balance,
+        amount,
+        krakenApiKey,
+        krakenSecretKey,
+        setAmount,
+        setKrakenApiKey,
+        setKrakenSecretKey
+      }
+    },
     children
   )
 }

@@ -6,3 +6,9 @@
   justify-content: space-between;
   margin-bottom: 50px;
 }
+
+.connections {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
