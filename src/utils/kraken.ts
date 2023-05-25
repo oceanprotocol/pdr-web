@@ -44,7 +44,6 @@ export const getAssetBalance = async (
   } catch (e) {
     console.log(e)
   }
-  console.log(response)
   return response?.data
 }
 
