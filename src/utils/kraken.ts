@@ -72,3 +72,25 @@ export const setTrade = async (
   }
   return response?.data
 }
+
+export const setTrade = async (
+  apiKey: string,
+  apiSecret: string,
+  assetPair: string,
+  type: string,
+  amount: number
+) => {
+  var response
+  try {
+    response = await axios.post(`api/krakenTrade`, {
+      apiKey: apiKey,
+      apiSecret: apiSecret,
+      type: type,
+      volume: amount,
+      pair: assetPair
+    })
+  } catch (e) {
+    console.log(e)
+  }
+  return response?.data
+}
