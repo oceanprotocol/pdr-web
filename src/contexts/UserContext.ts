@@ -16,6 +16,7 @@ type UserType = {
   krakenSecretKey: string | undefined
   setKrakenSecretKey?: (value: string | undefined) => void
   setKrakenApiKey?: (value: string | undefined) => void
+  getBalance?:() => void
 }
 
 export const UserContext = createContext<UserType>({
@@ -25,7 +26,8 @@ export const UserContext = createContext<UserType>({
   krakenSecretKey: undefined,
   setAmount: undefined,
   setKrakenApiKey: undefined,
-  setKrakenSecretKey: undefined
+  setKrakenSecretKey: undefined,
+  getBalance: undefined
 })
 
 type UserProps = {
@@ -51,7 +53,7 @@ export const UserProvider = ({ children }: UserProps) => {
     chainId: parseInt(currentConfig.chainId)
   })*/
 
-  useEffect(() => {
+  const getBalance = () => {
     getAssetBalance(
       process.env.NEXT_PUBLIC_EXCHANGE_KEY || krakenApiKey,
       process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || krakenSecretKey
@@ -59,6 +61,10 @@ export const UserProvider = ({ children }: UserProps) => {
       setBalance(resp?.result['USDC'] ? resp?.result['USDC'] : 0)
       console.log(resp)
     })
+  }
+
+  useEffect(() => {
+    getBalance()
   }, [krakenApiKey, krakenSecretKey])
 
   /*useEffect(() => {
@@ -82,7 +88,8 @@ export const UserProvider = ({ children }: UserProps) => {
         krakenSecretKey,
         setAmount,
         setKrakenApiKey,
-        setKrakenSecretKey
+        setKrakenSecretKey,
+        getBalance
       }
     },
     children

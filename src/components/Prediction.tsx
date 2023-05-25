@@ -43,7 +43,8 @@ export default function Prediction({
     balance: userBalance,
     amount,
     krakenApiKey,
-    krakenSecretKey
+    krakenSecretKey,
+    getBalance
   } = useUserContext()
 
   // Component Params
@@ -144,7 +145,10 @@ export default function Prediction({
         `${config.tokenName}${config.pairName}`,
         'buy',
         amount
-      ).then((resp) => console.log(resp))
+      ).then((resp) => {
+        console.log(resp)
+        getBalance && getBalance()
+      })
     }
   }
 
