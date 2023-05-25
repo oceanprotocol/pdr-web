@@ -39,7 +39,12 @@ export default function Prediction({
     updatePrice,
     updateBalance
   } = useLocalEpochContext()
-  const { balance: userBalance, amount } = useUserContext()
+  const {
+    balance: userBalance,
+    amount,
+    krakenApiKey,
+    krakenSecretKey
+  } = useUserContext()
 
   // Component Params
   const [blockNum, setBlockNum] = useState(0)
@@ -134,8 +139,8 @@ export default function Prediction({
       updateBalance(newBalance)
     } else {
       setTrade(
-        process.env.NEXT_PUBLIC_EXCHANGE_KEY || '',
-        process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || '',
+        process.env.NEXT_PUBLIC_EXCHANGE_KEY || krakenApiKey,
+        process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || krakenSecretKey,
         `${config.tokenName}${config.pairName}`,
         'buy',
         amount

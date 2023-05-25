@@ -28,7 +28,14 @@ export const getAssetPairPrice = async (assetPair: string) => {
   return response.data.result[assetPair].a[0]
 }
 
-export const getAssetBalance = async (apiKey: string, apiSecret: string) => {
+export const getAssetBalance = async (
+  apiKey: string | undefined,
+  apiSecret: string | undefined
+) => {
+  if (!apiKey || !apiSecret) {
+    console.error('Kraken API keys not configured')
+    return undefined
+  }
   var response
   try {
     response = await axios.get(`api/krakenBalance`, {
@@ -42,12 +49,16 @@ export const getAssetBalance = async (apiKey: string, apiSecret: string) => {
 }
 
 export const setTrade = async (
-  apiKey: string,
-  apiSecret: string,
+  apiKey: string | undefined,
+  apiSecret: string | undefined,
   assetPair: string,
   type: string,
   amount: number
 ) => {
+  if (!apiKey || !apiSecret) {
+    console.error('Kraken API keys not configured')
+    return undefined
+  }
   var response
   try {
     response = await axios.post(`api/krakenTrade`, {

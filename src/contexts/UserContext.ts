@@ -53,13 +53,13 @@ export const UserProvider = ({ children }: UserProps) => {
 
   useEffect(() => {
     getAssetBalance(
-      process.env.NEXT_PUBLIC_EXCHANGE_KEY || '',
-      process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || ''
+      process.env.NEXT_PUBLIC_EXCHANGE_KEY || krakenApiKey,
+      process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || krakenSecretKey
     ).then((resp) => {
       setBalance(resp?.result['USDC'] ? resp?.result['USDC'] : 0)
       console.log(resp)
     })
-  }, [])
+  }, [krakenApiKey, krakenSecretKey])
 
   /*useEffect(() => {
     data &&
