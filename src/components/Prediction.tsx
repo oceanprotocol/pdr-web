@@ -1,6 +1,7 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
+import { setTrade } from '@/utils/kraken'
 import { epoch as getEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
@@ -131,6 +132,14 @@ export default function Prediction({
 
       let newBalance = localBalance + dir * 5.0
       updateBalance(newBalance)
+    } else {
+      setTrade(
+        process.env.NEXT_PUBLIC_EXCHANGE_KEY || '',
+        process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || '',
+        `${config.tokenName}${config.pairName}`,
+        'buy',
+        amount
+      ).then((resp) => console.log(resp))
     }
   }
 
@@ -145,13 +154,6 @@ export default function Prediction({
         }}
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
-      {/* {process.env.NEXT_PUBLIC_ENV == 'mock' && (
-        <div>
-          Epoch: {epoch}<br/>
-          BlockNum: {blockNum}<br/>
-          Stake: {stake}<br/>
-        </div>
-      )} */}
       {state === PredictionState.Next ? (
         <Button
           onClick={buyPrediction}
@@ -161,17 +163,16 @@ export default function Prediction({
       ) : (
         <span className={styles.position}>PNL: N/A</span>
       )}
-      {state !== PredictionState.History &&
+      {state !== PredictionState.History && (
         <ProgressBar
           completed={timePassed}
           setCompleted={setTimePassed}
           maxCompleted={maxDurationTime}
           startProgress={
-            state === PredictionState.Next ||
-            state == PredictionState.Live
+            state === PredictionState.Next || state == PredictionState.Live
           }
         />
-      }
+      )}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import Input from './Input'
 
 export default function AmountInput() {
   const { balance, amount, setAmount } = useUserContext()
-  
+
   const isEnabled = () => {
     let enabled = balance > 0
 
@@ -13,7 +13,7 @@ export default function AmountInput() {
 
     return enabled
   }
-  
+
   return (
     <Input
       type="number"
