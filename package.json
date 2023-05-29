@@ -10,8 +10,8 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "@ramonak/react-progress-bar": "^5.0.3",
     "@openzeppelin/test-helpers": "^0.5.15",
+    "@ramonak/react-progress-bar": "^5.0.3",
     "@types/node": "18.16.3",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",
@@ -22,9 +22,9 @@
     "ethers": "^5.7.2",
     "fs": "0.0.1-security",
     "glob": "10.2.6",
-    "path": "0.12.7",
     "moment": "^2.29.4",
     "next": "13.3.4",
+    "path": "0.12.7",
     "prettier": "^2.8.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",

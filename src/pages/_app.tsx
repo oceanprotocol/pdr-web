@@ -7,7 +7,7 @@ import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { ethers } from 'ethers'
 import type { AppProps } from 'next/app'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { WagmiConfig, configureChains, createClient } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
 
 const chains = [oasis]
@@ -19,6 +19,8 @@ const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
 const { provider } = configureChains(chains, [publicProvider()])
 
 // infura provider
+// TODO - We cannoot assume user wants to connect w/ mainnet
+// Please see utils/network.ts
 const infuraProviderETH = new ethers.providers.InfuraProvider(
   'homestead',
   predictoorRPC

@@ -1,7 +1,7 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
-import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
+// import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import styles from '../styles/Prediction.module.css'
 import Button from './Button'
@@ -67,18 +67,25 @@ export default function Prediction({
   useEffect(() => {
     if (provider) {
       const fetchData = async () => {
-        const curEpoch: number = await getCurrentEpoch(
-          provider,
-          predictoorAddress
-        )
-        const newEpoch: number = curEpoch + epochOffset
-        setEpoch(newEpoch)
+        const curEpoch: number = 0;
+        const aggPredval = {
+          blockNum: 0,
+          dir: 0,
+          confidence: 0,
+          stake: 0
+        }
+        // const curEpoch: number = await getCurrentEpoch(
+        //   provider,
+        //   predictoorAddress
+        // )
+        // const newEpoch: number = curEpoch + epochOffset
+        // setEpoch(newEpoch)
 
-        const aggPredval = await get_agg_predval(
-          provider,
-          predictoorAddress,
-          newEpoch
-        )
+        // const aggPredval = await get_agg_predval(
+        //   provider,
+        //   predictoorAddress,
+        //   newEpoch
+        // )
 
         setBlockNum(Number(aggPredval?.blockNum))
         setDirection(Number(aggPredval?.dir))
@@ -96,9 +103,8 @@ export default function Prediction({
           setConfidence(randomConfidence)
           setStake(100)
         }
-        console.log(blockNum, epoch, stake)
+        console.log("fetchData:", blockNum, epoch, stake)
       }
-      console.log(blockNum, epoch, stake)
       fetchData()
     }
   }, [wallet, provider, predictoorAddress, epochOffset, epochIndex])

@@ -1,4 +1,4 @@
-import { FixedRateExchangeABI } from '@/metadata/abis/fixedRateExchangeABI';
+import { FixedRateExchangeABI } from '@/metadata/abis/FixedRateExchangeABI';
 import { ethers } from 'ethers';
 
 class FixedRate {
@@ -16,7 +16,7 @@ class FixedRate {
     );
   }
 
-  async getDtPrice(exchangeId: string): Promise<number | Error> {
+  async getDtPrice(exchangeId: string): Promise<any | Error> {
     try {
       const result = await this.contractInstance.calcBaseInGivenOutDT(
         exchangeId, 
@@ -29,17 +29,25 @@ class FixedRate {
     }
   }
 
-  async buyDt(exchangeId: string, baseTokenAmount: number): Promise<ethers.ContractReceipt | Error> {
+  async buyDt(user: ethers.Wallet, exchangeId: string, baseTokenAmount: number): Promise<ethers.ContractReceipt | Error> {
     try {
-      const tx = await this.contractInstance.buyDT(
-          exchangeId,
-          ethers.utils.parseEther('1'), 
-          baseTokenAmount, 
-          ethers.constants.AddressZero, 
-          0)
-        .connect(ethers.provider.getSigner())
-        .gasPrice(gasPrice)
-        .transact();
+      // TODO - Fix gas estimation
+      // const gasPrice: BigNumber = await this.provider.getGasPrice();
+      // const gasLimit: BigNumber = await this.contractInstance.estimateGas.buyDT(
+      //   exchangeId,
+      //   ethers.utils.parseEther('1'), 
+      //   baseTokenAmount, 
+      //   ethers.constants.AddressZero, 
+      //   0);
+
+      const tx = await this.contractInstance.connect(user).buyDT(
+        exchangeId,
+        ethers.utils.parseEther('1'),
+        baseTokenAmount, 
+        ethers.constants.AddressZero, 
+        0
+        // {gasLimit: gasLimit, gasPrice: gasPrice}
+      );
       console.log(`Bought 1 DT tx: ${tx.hash}`);
       const receipt = await tx.wait();
       return receipt;

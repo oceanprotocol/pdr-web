@@ -1,37 +1,45 @@
 import { ERC20Template3ABI } from '@/metadata/abis/ERC20Template3ABI';
 import { ethers } from 'ethers';
+import { getEventFromTx, stringToBytes32 } from "../utils";
 import FixedRate from './fixedRate';
 import Token from './token';
 
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
-const user = process.env.NEXT_PUBLIC_USER_ADDRESS;
-
 class PredictorContract {
-    public provider: ethers.providers.Provider;
+    public provider: ethers.providers.JsonRpcProvider;
     public contractAddress: string;
-    public contractInstance: ethers.Contract;
-    public token: Token;
+    public contractInstance: ethers.Contract|null;
+    public token: Token|null;
 
-    constructor(address: string, provider: ethers.providers.Provider) {
+    public constructor(
+        address: string, 
+        provider: ethers.providers.JsonRpcProvider) {
+        this.token = null;
         this.provider = provider;
-        this.contractAddress = ethers.utils.getAddress(address);
-        this.contractInstance = new ethers.Contract(
-            address, 
-            ERC20Template3ABI,
-            provider
-        );
-        const stakeToken = this.getStakeToken();
-        this.token = new Token(stakeToken, provider);
+        this.contractAddress = address;
+        this.contractInstance = null;
     }
 
-    async isValidSubscription(): Promise<boolean> {
-        return await this.contractInstance.isValidSubscription(user);
+    async init() {
+        this.contractInstance = new ethers.Contract(
+            this.contractAddress,
+            ERC20Template3ABI,
+            this.provider
+        );
+          
+        const stakeToken = await this.contractInstance?.stakeToken();
+        this.token = new Token(stakeToken, this.provider);
+        // const blocksPerEpoch = await this.contractInstance?.blocksPerEpoch()
+        // console.log("blocksPerEpoch: ", blocksPerEpoch);
+    }
+
+    async isValidSubscription(address: string): Promise<boolean> {
+        return this.contractInstance?.isValidSubscription(address);
     }
 
     getEmptyProviderFee(): any {
         return {
-            providerFeeAddress: ZERO_ADDRESS,
-            providerFeeToken: ZERO_ADDRESS,
+            providerFeeAddress: ethers.constants.AddressZero,
+            providerFeeToken: ethers.constants.AddressZero,
             providerFeeAmount: 0,
             v: 0,
             r: 0,
@@ -41,90 +49,123 @@ class PredictorContract {
         };
     }
 
-    stringToBytes32(data: string): string {
-        if (data.length > 32) {
-            return data.slice(0, 32);
-        } else {
-            return data.padEnd(32, '0');
-        }
-    }
-
-    async buyAndStartSubscription(
-        user: ethers.Wallet, 
-        provider: ethers.providers.Provider
-    ): Promise<any> {
-        const fixedRates = this.getExchanges();
+    // TODO - Change to buyDT & startOrder, then offer a wrapper
+    async buyAndStartSubscription(user: ethers.Wallet): Promise<any> {
+        const fixedRates = await this.getExchanges();
         if (!fixedRates) {
             return;
         }
-        const [
-            fixedRateAddress, 
-            exchangeId
-        ]: [string, number] = fixedRates[0];
-        const exchange = new FixedRate(fixedRateAddress);
-        const baseTokenAmount: number = await exchange.getDtPrice(exchangeId);
-        console.log(`Buying 1.0 DT with price: ${baseTokenAmount}`);
-        await this.token.approve(fixedRateAddress, baseTokenAmount);
-        await exchange.buyDt(exchangeId, baseTokenAmount);
-        const gasPrice = await provider.getGasPrice();
-        const providerFees = this.getEmptyProviderFee();
+        console.log("FREs: ", fixedRates);
+        
         try {
-            console.log("Calling startOrder");
-            const tx = await this.contractInstance.startOrder(
-                user, 
-                0, 
+            const [fixedRateAddress, exchangeId]: [string, number] = fixedRates[0];
+            const exchange = new FixedRate(fixedRateAddress, this.provider);
+            const dtPrice: any = await exchange.getDtPrice(exchangeId.toString());
+            const baseTokenAmount = dtPrice.baseTokenAmount;
+            
+            if( !baseTokenAmount || 
+                baseTokenAmount instanceof Error ||
+                !this.token ) {
+                return Error("Assert token requirements.");
+            }
+            
+            console.log("dtPrice: ", dtPrice);
+            console.log("Buying 1.0 DT with price: ", ethers.utils.formatEther(baseTokenAmount));
+            await this.token.approve(
+                user,
+                fixedRateAddress,
+                ethers.utils.formatEther(baseTokenAmount),
+                this.provider
+            );
+            console.log(">>>> Buy DT Now...! <<<<");
+            const result = await exchange.buyDt(
+                user,
+                exchangeId.toString(), 
+                baseTokenAmount
+            );
+            
+            console.log(">>>> Bought DT! <<<<", result);
+            const providerFees = this.getEmptyProviderFee();
+            
+            // TODO - FIX ESTIMATE GAS
+            // console.log("call Estimate Gas...");
+            // const gasLimit: BigNumber|undefined = await this.contractInstance?.estimateGas.startOrder(
+            //     user, 
+            //     0, 
+            //     [
+            //         ZERO_ADDRESS, 
+            //         ZERO_ADDRESS, 
+            //         0, 
+            //         0, 
+            //         stringToBytes32(''), 
+            //         stringToBytes32(''),
+            //         providerFees.validUntil,
+            //         ethers.constants.HashZero
+            //     ],
+            //     [
+            //         ZERO_ADDRESS, 
+            //         ZERO_ADDRESS, 
+            //         0
+            //     ], 
+            //     { gasPrice }
+            // );
+    
+            console.log(">>> startOrder");
+            const tx = await this.contractInstance?.connect(user).startOrder(
+                user.address, 
+                0,
                 [
-                    ZERO_ADDRESS, 
-                    ZERO_ADDRESS, 
+                    ethers.constants.AddressZero,
+                    ethers.constants.AddressZero,
                     0, 
                     0, 
-                    this.stringToBytes32(''), 
-                    this.stringToBytes32(''),
+                    stringToBytes32(''), 
+                    stringToBytes32(''),
                     providerFees.validUntil,
                     ethers.constants.HashZero
                 ],
                 [
-                    ZERO_ADDRESS, 
-                    ZERO_ADDRESS, 
+                    ethers.constants.AddressZero,
+                    ethers.constants.AddressZero,
                     0
-                ], 
-                { gasPrice }
+                ]
             );
-            console.log(`Subscription tx: ${tx.hash}`);
+            
+            console.log("Subscription tx:", tx.hash);
             const receipt = await tx.wait();
+            console.log("Receipt receipt: ", receipt);
+            let event = getEventFromTx(receipt, 'OrderStarted')
+            console.log("event: ", event);
+            
             return receipt;
-        } catch (e) {
-            console.log(e);
+        } catch (e: any) {
+            console.error(e);
             return null;
         }
     }
 
-    getExchanges(): [string, number][] {
-        return this.contractInstance.getFixedRates();
+    getExchanges(): Promise<[string, number][]> {
+        return this.contractInstance?.getFixedRates();
     }
 
-    getStakeToken(): string {
-        return this.contractInstance.stakeToken();
+    getStakeToken(): Promise<string> {
+        return this.contractInstance?.stakeToken();
     }
 
     getCurrentEpoch(): Promise<number> {
-        return this.contractInstance.curEpoch();
+        return this.contractInstance?.curEpoch();
     }
 
     getBlocksPerEpoch(): Promise<number> {
-        return this.contractInstance.blocksPerEpoch();
+        return this.contractInstance?.blocksPerEpoch();
     }
 
-    async getAggPredval(block: number): Promise<object | null> {
-        if (!(await this.isValidSubscription())) {
-            console.log("Buying a new subscription...");
-            await this.buyAndStartSubscription();
-            await sleep(1000);
-        }
+    async getAggPredval(block: number, user: ethers.Wallet): Promise<object | null> {
         try {
             console.log("Reading contract values...");
-            const [nom, denom] = await this.contractInstance.getAggPredval(block);
+            const [nom, denom] = await this.contractInstance?.getAggPredval(block);
             console.log(`Got ${nom} and ${denom}`);
+            
             if (denom === 0) {
                 return null;
             }

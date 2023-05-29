@@ -3,7 +3,6 @@
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     "subgraph": "https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
-    "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,
@@ -26,7 +25,6 @@
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     "subgraph": "https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
-    "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,
@@ -47,9 +45,8 @@
   },
   "barge": {
     "chainId": "8996",
-    "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+    "oceanAddress": "0x9A677a02a1Aa03d8798F4a7be9425E5d6d919fFc",
     "subgraph": "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
-    "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,
@@ -60,9 +57,9 @@
         "exchange": "univ3",
         "serviceIndex": 1,
         "subscription_lifetime_hours": 24,
-        "predictoorAddress": "0x28a6873c1145326bb0d79f904b107fd91bd668ad",
-        "predictoorAddressWithPublishFee": "0x9497d1d64F2aFeBcd4f9916Eef3d9094E5Df962f",
-        "predictoorFeeToken": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
+        "predictoorAddress": "0x1733696512e69cd0c4430f909dcbf54c54c15441",
+        "predictoorAddressWithPublishFee": "0x1733696512e69cd0c4430f909dcbf54c54c15441",
+        "predictoorFeeToken": "0x1733696512e69cd0c4430f909dcbf54c54c15441",
         "cg_id": "ethereum",
         "cg_vs_currencies": "usd"
       }
@@ -72,7 +69,6 @@
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     "subgraph": "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
-    "OPFCommunityFeeCollector": "0x49E35cd2bAE043Abd9074B6e5a649a5AdEB05C33",
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,

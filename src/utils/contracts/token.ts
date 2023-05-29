@@ -1,4 +1,4 @@
-import { ERC20Template3ABI } from '@/metadata/abis/ERC20Template3ABI';
+import { IERC20ABI } from '@/metadata/abis/IERC20ABI';
 import { Contract, ethers } from 'ethers';
 
 class Token {
@@ -11,35 +11,37 @@ class Token {
     this.contractAddress = ethers.utils.getAddress(address);
     this.contractInstance = new ethers.Contract(
       this.contractAddress,
-      ERC20Template3ABI,
+      IERC20ABI,
       provider
     );
   }
 
   async allowance(account: string, spender: string): Promise<string> {
-    return await this.contractInstance.functions.allowance(
+    return await this.contractInstance.allowance(
         account, 
         spender
     );
   }
 
   async balanceOf(account: string): Promise<string> {
-    return await this.contractInstance.functions.balanceOf(
+    return await this.contractInstance.balanceOf(
         account
     );
   }
 
-  async approve(spender: string, amount: string, provider: ethers.providers.Provider): Promise<ethers.providers.TransactionReceipt | null> {
+  async approve(user: ethers.Wallet, spender: string, amount: string, provider: ethers.providers.JsonRpcProvider): Promise<ethers.providers.TransactionReceipt | null> {
     try {
-      const estGas = await this.contractInstance.estimateGas.approve(
-        spender, 
-        amount
-      );
+      // TODO - Gas estimation
+      // const gasPrice: BigNumber = await this.provider.getGasPrice();
+      // const gasLimit: BigNumber = await this.contractInstance.estimateGas.approve(
+      //   spender, 
+      //   ethers.utils.parseEther(amount)
+      // );
 
-      const tx = await this.contractInstance.approve(
+      const tx = await this.contractInstance.connect(user).approve(
         spender, 
-        amount, 
-        {estGas}
+        ethers.utils.parseEther(amount)
+        // {gasLimit: gasLimit, gasPrice: gasPrice}
       );
       console.log(`Approval tx: ${tx.hash}.`);
 
