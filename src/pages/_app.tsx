@@ -1,3 +1,4 @@
+import { ContractsProvider } from '@/contexts/ContractsContext'
 import { LocalEpochProvider } from '@/contexts/LocalEpochContext'
 import { OPFProvider } from '@/contexts/OPFContext'
 import { UserProvider } from '@/contexts/UserContext'
@@ -7,24 +8,27 @@ import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { ethers } from 'ethers'
 import type { AppProps } from 'next/app'
-import { WagmiConfig, configureChains, createClient } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
+import { WagmiConfig, createClient } from 'wagmi'
+import chainConfig from '../metadata/config.json'
+import { getProvider } from '../utils/network'
 
 const chains = [oasis]
+const env = process.env.NEXT_PUBLIC_ENV?.toString() as keyof typeof chainConfig;
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
 const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
 const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
 
 // wagmi public provider
-const { provider } = configureChains(chains, [publicProvider()])
+// const { provider } = configureChains(chains, [publicProvider()])
 
 // infura provider
-// TODO - We cannoot assume user wants to connect w/ mainnet
-// Please see utils/network.ts
-const infuraProviderETH = new ethers.providers.InfuraProvider(
-  'homestead',
-  predictoorRPC
-)
+// TODO - We cannot assume user wants to connect w/ mainnet
+// const infuraProviderETH = new ethers.providers.InfuraProvider(
+//   'homestead',
+//   predictoorRPC
+// )
+
+const provider = getProvider(env);
 
 const wagmiClient = createClient({
   autoConnect: true,
@@ -32,18 +36,20 @@ const wagmiClient = createClient({
   provider
 })
 const ethereumClient = new EthereumClient(wagmiClient, chains)
-const predictoorWallet = new ethers.Wallet(predictoorPK, infuraProviderETH)
+const predictoorWallet = new ethers.Wallet(predictoorPK, provider)
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <WagmiConfig client={wagmiClient}>
-        <OPFProvider provider={infuraProviderETH} wallet={predictoorWallet}>
-          <UserProvider>
-            <LocalEpochProvider>
-              <Component {...pageProps} />
-            </LocalEpochProvider>
-          </UserProvider>
+        <OPFProvider provider={provider} wallet={predictoorWallet}>
+          <ContractsProvider>
+            <UserProvider>
+              <LocalEpochProvider>
+                <Component {...pageProps} />
+              </LocalEpochProvider>
+            </UserProvider>
+          </ContractsProvider>
         </OPFProvider>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />

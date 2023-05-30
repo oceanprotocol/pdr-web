@@ -1,8 +1,8 @@
 import { ERC20Template3ABI } from '@/metadata/abis/ERC20Template3ABI';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { getEventFromTx, stringToBytes32 } from "../utils";
-import FixedRate from './fixedRate';
-import Token from './token';
+import FixedRate from './FixedRate';
+import Token from './Token';
 
 class PredictorContract {
     public provider: ethers.providers.JsonRpcProvider;
@@ -25,6 +25,8 @@ class PredictorContract {
             ERC20Template3ABI,
             this.provider
         );
+
+        // console.log("init contractInstance: ", this.contractInstance);
           
         const stakeToken = await this.contractInstance?.stakeToken();
         this.token = new Token(stakeToken, this.provider);
@@ -33,6 +35,8 @@ class PredictorContract {
     }
 
     async isValidSubscription(address: string): Promise<boolean> {
+        console.log("isValidSubscription: ", this.contractInstance);
+
         return this.contractInstance?.isValidSubscription(address);
     }
 
@@ -51,6 +55,8 @@ class PredictorContract {
 
     // TODO - Change to buyDT & startOrder, then offer a wrapper
     async buyAndStartSubscription(user: ethers.Wallet): Promise<any> {
+        console.log("buyAndStartSubscription: ", this.contractInstance);
+
         const fixedRates = await this.getExchanges();
         if (!fixedRates) {
             return;
@@ -144,7 +150,7 @@ class PredictorContract {
         }
     }
 
-    getExchanges(): Promise<[string, number][]> {
+    getExchanges(): Promise<[string, BigNumber][]> {
         return this.contractInstance?.getFixedRates();
     }
 
@@ -152,18 +158,18 @@ class PredictorContract {
         return this.contractInstance?.stakeToken();
     }
 
-    getCurrentEpoch(): Promise<number> {
+    getCurrentEpoch(): Promise<BigNumber> {
         return this.contractInstance?.curEpoch();
     }
 
-    getBlocksPerEpoch(): Promise<number> {
+    getBlocksPerEpoch(): Promise<BigNumber> {
         return this.contractInstance?.blocksPerEpoch();
     }
 
     async getAggPredval(block: number, user: ethers.Wallet): Promise<object | null> {
         try {
             console.log("Reading contract values...");
-            const [nom, denom] = await this.contractInstance?.getAggPredval(block);
+            const [nom, denom] = await this.contractInstance?.connect(user).getAggPredval(block);
             console.log(`Got ${nom} and ${denom}`);
             
             if (denom === 0) {
@@ -174,7 +180,13 @@ class PredictorContract {
             const dir: number = confidence > 0.5 ? 1 : 0
             const stake: number = denom
         
-            return { block, confidence, dir, stake };
+            return { 
+                nom: nom,
+                denom: denom,
+                confidence: confidence,
+                dir: dir,
+                stake: stake
+            };
         } catch (e) {
             console.log("Failed to call getAggPredval");
             console.log(e);

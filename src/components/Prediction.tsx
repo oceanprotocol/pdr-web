@@ -2,7 +2,9 @@ import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
 // import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
+import { BigNumber, ethers } from 'ethers'
 import { useEffect, useState } from 'react'
+import { PredictoorContracts } from '../contexts/ContractsContext'
 import styles from '../styles/Prediction.module.css'
 import Button from './Button'
 import ProgressBar from './ProgressBar'
@@ -20,13 +22,11 @@ export enum PredictionState {
 export default function Prediction({
   state,
   epochOffset,
-  predictoorAddress,
-  config
+  predictoorContracts
 }: {
   state: PredictionState
   epochOffset: number // offset from epoch index
-  predictoorAddress: string // predictoor contract address
-  config: any
+  predictoorContracts: PredictoorContracts // predictoor contract address
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
@@ -41,7 +41,9 @@ export default function Prediction({
   const { balance: userBalance, amount } = useUserContext()
 
   // Component Params
+  const [loading, setLoading] = useState(true)
   const [blockNum, setBlockNum] = useState(0)
+  const [blocksLeft, setBlocksLeft] = useState(0)
   const [epoch, setEpoch] = useState(0)
   const [confidence, setConfidence] = useState(0)
   const [direction, setDirection] = useState(0)
@@ -60,54 +62,78 @@ export default function Prediction({
     }
   }
 
+  const updateComponent = async () => {
+    console.log("fetching data from predictoor contract");
+    const curEpoch: BigNumber = await predictoorContracts.predictoorContract.getCurrentEpoch();
+    const blocksPerEpoch: BigNumber = await predictoorContracts.predictoorContract.getBlocksPerEpoch();
+    const calculatedEpoch = parseInt(ethers.utils.formatUnits(curEpoch,0)) + epochOffset;
+    const calculatedEpochNum = calculatedEpoch * parseInt(ethers.utils.formatUnits(blocksPerEpoch,0));
+    
+    setEpoch(calculatedEpoch)
+    setBlockNum(calculatedEpochNum)
+    
+    const blockNumber = await provider.getBlockNumber();
+    const nextEpochBlockNum = parseInt(ethers.utils.formatUnits(blocksPerEpoch,0))*(calculatedEpoch+1);
+    setBlocksLeft(nextEpochBlockNum-blockNumber);
+
+    // TODO - Enable this once we have the predictoors submitting predVals
+    // const aggPredval: any = await predictoorContracts.predictoorContract.getAggPredval(
+    //   blockNum,
+    //   wallet
+    // );
+    // console.log("aggPredval:", aggPredval);
+    // console.log("aggPredval nom:", ethers.utils.formatUnits(aggPredval.nom, 0));
+    // console.log("aggPredval denom:", ethers.utils.formatUnits(aggPredval.denom, 0));
+    // console.log("aggPredval confidence:", aggPredval.confidence);
+    // console.log("aggPredval dir:", aggPredval.dir, 0);
+    // console.log("aggPredval stake:", ethers.utils.formatUnits(aggPredval.stake, 0));
+    
+    // setConfidence(Number(aggPredval?.confidence))
+    // setDirection(Number(aggPredval?.dir))
+    // setStake(Number(aggPredval?.stake))
+
+    // If in local mode, we want to use the mock data & implementation
+    if (process.env.NEXT_PUBLIC_ENV == 'mock') {
+      let randomConfidence = parseFloat(Math.random().toFixed(2))
+      const epochNum = Number(epochIndex) + epochOffset
+      
+      setEpoch(epochNum)
+      setBlockNum(epochNum * 60)
+      setDirection(randomConfidence > 0.5 ? 1 : -1)
+      setConfidence(randomConfidence)
+      setStake(100)
+    }
+  }
+
+  // We want to update the component when the epoch index changes
   useEffect(() => {
-    getTimeLeftInSeconds()
+    try{
+      getTimeLeftInSeconds()
+      updateComponent()
+
+      provider.on('block', async (blockNumber) => {
+        const curEpoch: BigNumber = await predictoorContracts.predictoorContract.getCurrentEpoch();
+        const blocksPerEpoch: BigNumber = await predictoorContracts.predictoorContract.getBlocksPerEpoch();
+        const calculatedEpoch = parseInt(ethers.utils.formatUnits(curEpoch,0)) + epochOffset;
+        setEpoch(calculatedEpoch);
+        setBlockNum(blockNumber);
+        
+        const nextEpochBlockNum = parseInt(ethers.utils.formatUnits(blocksPerEpoch,0))*(calculatedEpoch+1);
+        setBlocksLeft(nextEpochBlockNum-blockNumber);
+      });
+
+      setLoading(false);
+    } catch (e) {
+      console.log("Error initializing prediction component:", e);
+    }
   }, [])
 
   useEffect(() => {
-    if (provider) {
-      const fetchData = async () => {
-        const curEpoch: number = 0;
-        const aggPredval = {
-          blockNum: 0,
-          dir: 0,
-          confidence: 0,
-          stake: 0
-        }
-        // const curEpoch: number = await getCurrentEpoch(
-        //   provider,
-        //   predictoorAddress
-        // )
-        // const newEpoch: number = curEpoch + epochOffset
-        // setEpoch(newEpoch)
-
-        // const aggPredval = await get_agg_predval(
-        //   provider,
-        //   predictoorAddress,
-        //   newEpoch
-        // )
-
-        setBlockNum(Number(aggPredval?.blockNum))
-        setDirection(Number(aggPredval?.dir))
-        setConfidence(Number(aggPredval?.confidence))
-        setStake(Number(aggPredval?.stake))
-
-        // If in local mode, we want to use the mock data & implementation
-        if (process.env.NEXT_PUBLIC_ENV == 'mock') {
-          let randomConfidence = parseFloat(Math.random().toFixed(2))
-          const epochNum = Number(epochIndex) + epochOffset
-
-          setEpoch(epochNum)
-          setBlockNum(epochNum * config.blocks_per_epoch)
-          setDirection(randomConfidence > 0.5 ? 1 : -1)
-          setConfidence(randomConfidence)
-          setStake(100)
-        }
-        console.log("fetchData:", blockNum, epoch, stake)
-      }
-      fetchData()
+    // Check loading. This gets hit many times when starting up.
+    if( !loading ) {
+      updateComponent()
     }
-  }, [wallet, provider, predictoorAddress, epochOffset, epochIndex])
+  }, [wallet, provider, epochOffset, epochIndex])
 
   const getDirectionText = (direction: number) => {
     return direction == 1 ? 'BULL' : 'BEAR'
@@ -151,13 +177,15 @@ export default function Prediction({
         }}
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
-      {/* {process.env.NEXT_PUBLIC_ENV == 'mock' && (
+      {process.env.NEXT_PUBLIC_ENV == 'mock' ||
+       process.env.NEXT_PUBLIC_ENV == 'barge' && (
         <div>
           Epoch: {epoch}<br/>
           BlockNum: {blockNum}<br/>
+          Left: {blocksLeft}<br/>
           Stake: {stake}<br/>
         </div>
-      )} */}
+      )}
       {state === PredictionState.Next ? (
         <Button
           onClick={buyPrediction}

@@ -2,13 +2,13 @@ import { ethers } from "ethers";
 import { createContext, createElement, useContext } from "react";
 
 type OPFContextType = {
-  wallet: ethers.Wallet | null;
-  provider: ethers.providers.JsonRpcProvider | null;
+  wallet: ethers.Wallet;
+  provider: ethers.providers.JsonRpcProvider;
 };
 
 export const OPFContext = createContext<OPFContextType>({
-  wallet: null,
-  provider: null
+  wallet: ethers.Wallet.createRandom(),
+  provider: new ethers.providers.JsonRpcProvider()
 });
 
 type OPFProviderProps = {
