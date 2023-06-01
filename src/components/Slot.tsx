@@ -2,31 +2,30 @@ import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
 // import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
-import { BigNumber, ethers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { PredictoorContracts } from '../contexts/ContractsContext'
-import styles from '../styles/Prediction.module.css'
-import Button from './Button'
-import ProgressBar from './ProgressBar'
+import Button from '../elements/Button'
+import ProgressBar from '../elements/ProgressBar'
+import styles from '../styles/Slot.module.css'
+import Predictoor from '../utils/contracts/Predictoor'
 
-// 3 States => Defines how the Prediction component behaves
+// 3 States => Defines how the Slot component behaves
 // Disable eslint because async nature of code, esp. config.forEach(async (data) => {...})
 /* eslint-disable no-unused-vars */
-export enum PredictionState {
-  Next = 'next',
-  Live = 'live',
-  History = 'history'
+export enum SlotState {
+  NextPrediction = 'next',
+  LivePrediction = 'live',
+  HistoricalPrediction = 'history'
 }
 /* eslint-enable no-unused-vars */
 
-export default function Prediction({
+export default function Slot({
   state,
   epochOffset,
-  predictoorContracts
+  predictoor
 }: {
-  state: PredictionState
+  state: SlotState
   epochOffset: number // offset from epoch index
-  predictoorContracts: PredictoorContracts // predictoor contract address
+  predictoor: Predictoor // predictoor contract address
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
@@ -43,41 +42,43 @@ export default function Prediction({
   // Component Params
   const [loading, setLoading] = useState(true)
   const [blockNum, setBlockNum] = useState(0)
+  const [blocksPerEpoch, setBlocksPerEpoch] = useState(0)
   const [blocksLeft, setBlocksLeft] = useState(0)
   const [epoch, setEpoch] = useState(0)
   const [confidence, setConfidence] = useState(0)
   const [direction, setDirection] = useState(0)
   const [stake, setStake] = useState(0)
-  const [timePassed, setTimePassed] = useState(0)
-  const maxDurationTime = 300
+  // const [timePassed, setTimePassed] = useState(0)
+  // const maxDurationTime = 300
 
-  const getTimeLeftInSeconds = () => {
-    switch (state) {
-      case PredictionState.Next:
-        return setTimePassed(200)
-      case PredictionState.Live:
-        return setTimePassed(200)
-      case PredictionState.History:
-        return setTimePassed(maxDurationTime)
-    }
-  }
+  // const getTimeLeftInSeconds = () => {
+  //   switch (state) {
+  //     case SlotState.NextPrediction:
+  //       return setTimePassed(0)
+  //     case SlotState.LivePrediction:
+  //       return setTimePassed(0)
+  //     case SlotState.HistoricalPrediction:
+  //       return setTimePassed(0)
+  //   }
+  // }
 
-  const updateComponent = async () => {
-    console.log("fetching data from predictoor contract");
-    const curEpoch: BigNumber = await predictoorContracts.predictoorContract.getCurrentEpoch();
-    const blocksPerEpoch: BigNumber = await predictoorContracts.predictoorContract.getBlocksPerEpoch();
-    const calculatedEpoch = parseInt(ethers.utils.formatUnits(curEpoch,0)) + epochOffset;
-    const calculatedEpochNum = calculatedEpoch * parseInt(ethers.utils.formatUnits(blocksPerEpoch,0));
+  const updateComponentParams = async () => {
+    const curEpoch: number = await predictoor.getCurrentEpoch();
+    const BPE: number = await predictoor.getBlocksPerEpoch();
+    
+    const calculatedEpoch: number = curEpoch + epochOffset;
+    const blockNumber:number = await provider.getBlockNumber();
     
     setEpoch(calculatedEpoch)
-    setBlockNum(calculatedEpochNum)
+    setBlockNum(blockNumber)
+    setBlocksPerEpoch(BPE);
     
-    const blockNumber = await provider.getBlockNumber();
-    const nextEpochBlockNum = parseInt(ethers.utils.formatUnits(blocksPerEpoch,0))*(calculatedEpoch+1);
-    setBlocksLeft(nextEpochBlockNum-blockNumber);
+    const nextEpochBlockNum = BPE * (calculatedEpoch+1);
+    const nBlocksLeft = nextEpochBlockNum - blockNumber
+    setBlocksLeft(nBlocksLeft > BPE ? nBlocksLeft - BPE : nBlocksLeft);
 
     // TODO - Enable this once we have the predictoors submitting predVals
-    // const aggPredval: any = await predictoorContracts.predictoorContract.getAggPredval(
+    // const aggPredval: any = await predictoor.predictoorContract.getAggPredval(
     //   blockNum,
     //   wallet
     // );
@@ -91,7 +92,9 @@ export default function Prediction({
     // setConfidence(Number(aggPredval?.confidence))
     // setDirection(Number(aggPredval?.dir))
     // setStake(Number(aggPredval?.stake))
+  }
 
+  const updateMockComponentParams = async () => {
     // If in local mode, we want to use the mock data & implementation
     if (process.env.NEXT_PUBLIC_ENV == 'mock') {
       let randomConfidence = parseFloat(Math.random().toFixed(2))
@@ -105,26 +108,24 @@ export default function Prediction({
     }
   }
 
+  const updateComponent = async () => {
+    await updateComponentParams();
+    await updateMockComponentParams();
+  }
+
   // We want to update the component when the epoch index changes
   useEffect(() => {
     try{
-      getTimeLeftInSeconds()
+      // getTimeLeftInSeconds()
       updateComponent()
 
       provider.on('block', async (blockNumber) => {
-        const curEpoch: BigNumber = await predictoorContracts.predictoorContract.getCurrentEpoch();
-        const blocksPerEpoch: BigNumber = await predictoorContracts.predictoorContract.getBlocksPerEpoch();
-        const calculatedEpoch = parseInt(ethers.utils.formatUnits(curEpoch,0)) + epochOffset;
-        setEpoch(calculatedEpoch);
-        setBlockNum(blockNumber);
-        
-        const nextEpochBlockNum = parseInt(ethers.utils.formatUnits(blocksPerEpoch,0))*(calculatedEpoch+1);
-        setBlocksLeft(nextEpochBlockNum-blockNumber);
+        await updateComponentParams();
       });
 
       setLoading(false);
     } catch (e) {
-      console.log("Error initializing prediction component:", e);
+      console.log("Error initializing slot component:", e);
     }
   }, [])
 
@@ -186,7 +187,7 @@ export default function Prediction({
           Stake: {stake}<br/>
         </div>
       )}
-      {state === PredictionState.Next ? (
+      {state === SlotState.NextPrediction ? (
         <Button
           onClick={buyPrediction}
           text={'BUY NOW'}
@@ -195,15 +196,10 @@ export default function Prediction({
       ) : (
         <span className={styles.position}>PNL: N/A</span>
       )}
-      {state !== PredictionState.History &&
+      {state === SlotState.NextPrediction &&
         <ProgressBar
-          completed={timePassed}
-          setCompleted={setTimePassed}
-          maxCompleted={maxDurationTime}
-          startProgress={
-            state === PredictionState.Next ||
-            state == PredictionState.Live
-          }
+          progress={blocksLeft}
+          max={blocksPerEpoch}
         />
       }
     </div>

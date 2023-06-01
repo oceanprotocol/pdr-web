@@ -2,16 +2,17 @@ import { useContractsContext } from '@/contexts/ContractsContext'
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useEffect, useState } from 'react'
-import { PredictoorContracts } from '../contexts/ContractsContext'
+import Predictoor from '../utils/contracts/Predictoor'
+// import { PredictoorContracts } from '../contexts/ContractsContext'
+import Table from '../elements/Table'
 import config from '../metadata/config.json'
-import styles from '../styles/PredictionsTable.module.css'
+import styles from '../styles/AssetsTable.module.css'
 import { TokenData, getTokenData } from '../utils/coin'
 import { updatePredictoorSubscriptions } from '../utils/predictoors'
 import { getAllInterestingPredictionContracts } from '../utils/subgraph'
 import AmountInput from './AmountInput'
 import Coin from './Coin'
-import Prediction, { PredictionState } from './Prediction'
-import Table from './Table'
+import Slot, { SlotState } from './Slot'
 
 const tableColumns = [
   {
@@ -56,28 +57,27 @@ export default function PredictionsTable() {
   const { provider, wallet } = useOPFContext();
   const { data, addContract } = useContractsContext();
 
-  const loadTableData = async (predictoors: Record<string, any>) => {
+  const loadAssets = async (contracts: Record<string, any>) => {
     // Get the base configuration ETH-USD, coingecko, kraken/binance, etc..
     const predictoorsConfig = currentConfig.tokenPredictions[0];
     
-    console.log("loadTableData: ", predictoors);
-    for (const [key, predictoorProps] of Object.entries(predictoors)) {
+    console.log("contracts: ", contracts);
+    for (const [key, contract] of Object.entries(contracts)) {
       console.log("key: ", key);
-      console.log("predictoorProps: ", predictoorProps);
-      console.log("data: ", data);
-
+      console.log("contract: ", contract);
+      
       // Instantiate contract wrappers and initialize components
-      let predictoorContracts: PredictoorContracts = data[predictoorProps.address];
-      if( !predictoorContracts ) {
-        predictoorContracts = await addContract(
-          predictoorProps.address, 
+      let predictoor: Predictoor = data[contract.address];
+      if( !predictoor ) {
+        predictoor = await addContract(
+          contract.address, 
           provider, 
-          predictoorProps.address
+          contract.address
         );
       }
-      console.log("contracts: ", predictoorContracts);
+      console.log("predictoor: ", predictoor);
     
-      if(predictoorContracts) {
+      if(predictoor) {
         let newData: any = []
         let row: any = {}
         let tokenData: TokenData = await getTokenData(predictoorsConfig.cg_id)
@@ -86,24 +86,24 @@ export default function PredictionsTable() {
         row['price'] = `$${tokenData.price}`
         row['amount'] = <AmountInput />
         row['next'] = (
-          <Prediction
-            state={PredictionState.Next}
+          <Slot
+            state={SlotState.NextPrediction}
             epochOffset={+1}
-            predictoorContracts={predictoorContracts}
+            predictoor={predictoor}
           />
         )
         row['live'] = (
-          <Prediction
-            state={PredictionState.Live}
+          <Slot
+            state={SlotState.LivePrediction}
             epochOffset={0}
-            predictoorContracts={predictoorContracts}
+            predictoor={predictoor}
           />
         )
         row['history'] = (
-          <Prediction
-            state={PredictionState.History}
+          <Slot
+            state={SlotState.HistoricalPrediction}
             epochOffset={-1}
-            predictoorContracts={predictoorContracts}
+            predictoor={predictoor}
           />
         )
 
@@ -121,7 +121,7 @@ export default function PredictionsTable() {
     console.log("complete loadTableData");
   }
 
-  const loadSubgraphTable = async () => {
+  const initTable = async () => {
     await updatePredictoorSubscriptions(
       currentConfig,
       wallet,
@@ -131,11 +131,11 @@ export default function PredictionsTable() {
     const predictoorContracts: Record<string, any> = await getAllInterestingPredictionContracts(
       currentConfig.subgraph
     );
-    await loadTableData(predictoorContracts);
+    await loadAssets(predictoorContracts);
   }
 
   useEffect(() => {
-    loadSubgraphTable()
+    initTable()
   }, [])
 
   useEffect(() => {

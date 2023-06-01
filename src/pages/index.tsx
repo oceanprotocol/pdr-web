@@ -1,4 +1,4 @@
-import PredictionsTable from '@/components/PredictionsTable'
+import AssetsTable from '@/components/AssetsTable'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -19,7 +19,7 @@ export default function Home() {
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
         <Balance />
-        <PredictionsTable />
+        <AssetsTable />
       </main>
     </>
   )

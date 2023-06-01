@@ -1,4 +1,4 @@
-import PredictorContract from '@/utils/contracts/Predictoor';
+import Predictor from '@/utils/contracts/Predictoor';
 import { ethers } from 'ethers';
 import moment from 'moment';
 import { getAllInterestingPredictionContracts, getFilteredOrders } from './subgraph';
@@ -37,7 +37,7 @@ async function consumePredictoorSubscription(
     
     try {
       // console.log("init PredictoorContract: ", predictoorProps, provider ); 
-      const predictorContract = new PredictorContract(
+      const predictorContract = new Predictor(
         predictoorProps.address,
         provider
       );

@@ -1,16 +1,16 @@
 import { FixedRateExchangeABI } from '@/metadata/abis/FixedRateExchangeABI';
 import { ethers } from 'ethers';
 
-class FixedRate {
+class FixedRateExchange {
   public provider: ethers.providers.Provider;
-  public contractAddress: string;
-  public contractInstance: ethers.Contract;
+  public address: string;
+  public instance: ethers.Contract;
 
   constructor(address: string, provider: ethers.providers.Provider) {
     this.provider = provider
-    this.contractAddress = ethers.utils.getAddress(address);
-    this.contractInstance = new ethers.Contract(
-      this.contractAddress,
+    this.address = ethers.utils.getAddress(address);
+    this.instance = new ethers.Contract(
+      this.address,
       FixedRateExchangeABI,
       provider
     );
@@ -18,7 +18,7 @@ class FixedRate {
 
   async getDtPrice(exchangeId: string): Promise<any | Error> {
     try {
-      const result = await this.contractInstance.calcBaseInGivenOutDT(
+      const result = await this.instance.calcBaseInGivenOutDT(
         exchangeId, 
         ethers.utils.parseEther('1'), 
         0);
@@ -33,14 +33,14 @@ class FixedRate {
     try {
       // TODO - Fix gas estimation
       // const gasPrice: BigNumber = await this.provider.getGasPrice();
-      // const gasLimit: BigNumber = await this.contractInstance.estimateGas.buyDT(
+      // const gasLimit: BigNumber = await this.instance.estimateGas.buyDT(
       //   exchangeId,
       //   ethers.utils.parseEther('1'), 
       //   baseTokenAmount, 
       //   ethers.constants.AddressZero, 
       //   0);
 
-      const tx = await this.contractInstance.connect(user).buyDT(
+      const tx = await this.instance.connect(user).buyDT(
         exchangeId,
         ethers.utils.parseEther('1'),
         baseTokenAmount, 
@@ -58,4 +58,4 @@ class FixedRate {
   }
 }
 
-export default FixedRate;
+export default FixedRateExchange;

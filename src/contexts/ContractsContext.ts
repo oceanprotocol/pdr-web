@@ -1,32 +1,23 @@
 import { ethers } from 'ethers';
 import React, { createElement, useContext, useState } from "react";
-import FixedRate from "../utils/contracts/FixedRate";
-import PredictorContract from "../utils/contracts/Predictoor";
-import Token from "../utils/contracts/Token";
+import Predictoor from "../utils/contracts/Predictoor";
 
-// Define contracts data structure
-export interface PredictoorContracts {
-  predictoorContract: PredictorContract;
-  fixedRateContract: FixedRate;
-  tokenContract: Token;
-}
-
-// Define contracts initial data
-const initialData: Record<string, PredictoorContracts> = {};
+// Define contracts we'll be exposing to ReactContext
+const contracts: Record<string, Predictoor> = {};
 
 const ContractsContext = React.createContext<{
-  data: Record<string, PredictoorContracts>;
+  data: Record<string, Predictoor>;
   addContract: (key: string, 
     provider: ethers.providers.JsonRpcProvider,
     predictoorAddress: string
-  ) => PredictoorContracts;
+  ) => Predictoor;
   addItem: (
     key: string, 
-    item: PredictoorContracts
+    item: Predictoor
   ) => void;
   removeItem: (key: string) => void;
 }>({
-  data: initialData,
+  data: contracts,
   addContract: () => {
     throw new Error("addContract() not implemented");
   },
@@ -39,7 +30,7 @@ export const ContractsProvider = ({
 }: {
   children: any
 }) => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(contracts);
 
   // Implement Provider Functions
   const addContract = async (
@@ -47,28 +38,28 @@ export const ContractsProvider = ({
     provider: ethers.providers.JsonRpcProvider,
     predictoorAddress: string
   ) => {
-    const predictoorContract = new PredictorContract(predictoorAddress, provider);
-    await predictoorContract.init();
-    const fixedRateContract = new FixedRate(predictoorAddress, provider);
-    const tokenContract = new Token(predictoorAddress, provider);
+    const predictoor = new Predictoor(predictoorAddress, provider);
+    await predictoor.init();
+    // const fixedRateContract = new FixedRateExchange(predictoorAddress, provider);
+    // const tokenContract = new Token(predictoorAddress, provider);
 
     console.log("addContract")
-    console.log("predictoorContract: ", predictoorContract)
+    console.log("predictoor: ", predictoor)
 
     // 1. Create new PredictoorContracts object
-    const newPredictoorContracts: PredictoorContracts = {
-      predictoorContract,
-      fixedRateContract,
-      tokenContract
-    };
+    // const newPredictoorContracts: PredictoorContracts = {
+    //   predictoorContract,
+    //   fixedRateContract,
+    //   tokenContract
+    // };
     // 2. Add it to the data
-    addItem(key, newPredictoorContracts);
+    addItem(key, predictoor);
 
-    return newPredictoorContracts;
+    return predictoor;
   };
 
   // Implement Provider Functions
-  const addItem = (key: string, item: PredictoorContracts) => {
+  const addItem = (key: string, item: Predictoor) => {
     setData((prevData) => ({ ...prevData, [key]: item }));
   };
 

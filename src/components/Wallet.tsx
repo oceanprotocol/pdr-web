@@ -3,8 +3,8 @@ import { getNetworkName } from '@/utils/network'
 import { Web3Button } from '@web3modal/react'
 import { useEffect, useState } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
+import Button from '../elements/Button'
 import config from '../metadata/config.json'
-import Button from './Button'
 
 export default function Wallet() {
   const {chain} = useNetwork()
