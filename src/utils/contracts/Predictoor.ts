@@ -15,9 +15,9 @@ class Predictoor {
     public constructor(
         address: string, 
         provider: ethers.providers.JsonRpcProvider) {
+        this.address = address;
         this.token = null;
         this.provider = provider;
-        this.address = address;
         this.instance = null;
         this.FRE = null;
         this.exchangeId = BigNumber.from(0);
@@ -177,25 +177,29 @@ class Predictoor {
 
     async getAggPredval(block: number, user: ethers.Wallet): Promise<object | null> {
         try {
-            console.log("Reading contract values...");
-            const [nom, denom] = await this.instance?.connect(user).getAggPredval(block);
-            console.log(`Got ${nom} and ${denom}`);
+            if( this.instance ) {
+                console.log("Reading contract values...");
+                const [nom, denom] = await this.instance.connect(user).getAggPredval(block);
+                console.log(`Got ${nom} and ${denom}`);
+                
+                if (denom === 0) {
+                    return null;
+                }
+
+                const confidence: number = nom / denom
+                const dir: number = confidence > 0.5 ? 1 : 0
+                const stake: number = denom
             
-            if (denom === 0) {
-                return null;
+                return { 
+                    nom: nom,
+                    denom: denom,
+                    confidence: confidence,
+                    dir: dir,
+                    stake: stake
+                };
             }
 
-            const confidence: number = nom / denom
-            const dir: number = confidence > 0.5 ? 1 : 0
-            const stake: number = denom
-        
-            return { 
-                nom: nom,
-                denom: denom,
-                confidence: confidence,
-                dir: dir,
-                stake: stake
-            };
+            return null;
         } catch (e) {
             console.log("Failed to call getAggPredval");
             console.log(e);

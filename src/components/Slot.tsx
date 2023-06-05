@@ -1,6 +1,7 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
+import { setTrade } from '@/utils/kraken'
 // import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
 import { useEffect, useState } from 'react'
 import Button from '../elements/Button'
@@ -21,11 +22,15 @@ export enum SlotState {
 export default function Slot({
   state,
   epochOffset,
-  predictoor
+  predictoor,
+  tokenName,
+  pairName
 }: {
   state: SlotState
   epochOffset: number // offset from epoch index
   predictoor: Predictoor // predictoor contract address
+  tokenName: string
+  pairName: string
 }) {
   // Contexts
   const { wallet, provider } = useOPFContext()
@@ -37,7 +42,13 @@ export default function Slot({
     updatePrice,
     updateBalance
   } = useLocalEpochContext()
-  const { balance: userBalance, amount } = useUserContext()
+  const { 
+    balance: userBalance, 
+    amount,
+    krakenApiKey,
+    krakenSecretKey,
+    getBalance
+  } = useUserContext()
 
   // Component Params
   const [loading, setLoading] = useState(true)
@@ -164,6 +175,17 @@ export default function Slot({
 
       let newBalance = localBalance + dir * 5.0
       updateBalance(newBalance)
+    } else {
+      setTrade(
+        process.env.NEXT_PUBLIC_EXCHANGE_KEY || krakenApiKey,
+        process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || krakenSecretKey,
+        `${tokenName}${pairName}`,
+        'buy',
+        amount
+      ).then((resp) => {
+        console.log(resp)
+        getBalance && getBalance()
+      })
     }
   }
 

@@ -134,7 +134,7 @@ async function updatePredictoorSubscriptions(
 
       // iterate through all deployed predictoors and buy a subscription
       let results = [];
-      for (const [key, predictoorProps] of Object.entries(predictoorContract)) {
+      for (const predictoorProps of Object.values(predictoorContract)) {
         const result = await consumePredictoorSubscription(
           config,
           predictoorProps,

@@ -17,7 +17,8 @@ async function getAllInterestingPredictionContracts(
     let offset = 0;
     const contracts: Record<string, any> = {};
     
-    while (true) {
+    const getAllContracts = true;
+    while (getAllContracts === true) {
       const query = `
         {
           predictContracts(skip: ${offset}, first: ${chunkSize}) {

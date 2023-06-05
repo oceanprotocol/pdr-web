@@ -15,7 +15,7 @@ import { getProvider } from '../utils/network'
 const chains = [oasis, ganache]
 const env = process.env.NEXT_PUBLIC_ENV?.toString() as keyof typeof chainConfig;
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
-const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
+// const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
 const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
 
 // wagmi public provider

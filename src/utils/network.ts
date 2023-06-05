@@ -6,24 +6,23 @@ export const getNetworkName = async (chainId: number) => {
 }
 
 export const getProvider = (env: string) => {
-  let url: string = '';
-  let networkName: string = '';
-  
-  if( env == 'mock' || env == 'development' ) {
-    url = 'http://localhost:8545';
-    networkName = '';
-  } else if( env == 'staging' ) {
-    url = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || '';
-    networkName = 'goerli';
-  }
-  else if( env == 'production' ) {
-    url = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || '';
-    networkName = 'homstead';
-  }
-  
-  return new ethers.providers.JsonRpcProvider("http://localhost:8545");
   
   // TODO - Create appropriate RPC Provider for network
+  // let url: string = '';
+  // let networkName: string = '';
+  
+  // if( env == 'mock' || env == 'development' ) {
+  //   url = 'http://localhost:8545';
+  //   networkName = '';
+  // } else if( env == 'staging' ) {
+  //   url = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || '';
+  //   networkName = 'goerli';
+  // }
+  // else if( env == 'production' ) {
+  //   url = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || '';
+  //   networkName = 'homstead';
+  // }
+  
   // const rpcProvider = new ethers.providers.JsonRpcProvider();
 
   // if (networkName != '') {
@@ -37,4 +36,6 @@ export const getProvider = (env: string) => {
   // }
   
   // return rpcProvider;
+
+  return new ethers.providers.JsonRpcProvider("http://localhost:8545");
 }

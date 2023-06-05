@@ -7,9 +7,10 @@ const contracts: Record<string, Predictoor> = {};
 
 const ContractsContext = React.createContext<{
   data: Record<string, Predictoor>;
-  addContract: (key: string, 
+  addContract: (
+    key: string, 
     provider: ethers.providers.JsonRpcProvider,
-    predictoorAddress: string
+    address: string
   ) => Predictoor;
   addItem: (
     key: string, 
@@ -36,25 +37,14 @@ export const ContractsProvider = ({
   const addContract = async (
     key: string, 
     provider: ethers.providers.JsonRpcProvider,
-    predictoorAddress: string
+    address: string
   ) => {
-    const predictoor = new Predictoor(predictoorAddress, provider);
+    const predictoor = new Predictoor(
+      address,
+      provider);
+    
     await predictoor.init();
-    // const fixedRateContract = new FixedRateExchange(predictoorAddress, provider);
-    // const tokenContract = new Token(predictoorAddress, provider);
-
-    console.log("addContract")
-    console.log("predictoor: ", predictoor)
-
-    // 1. Create new PredictoorContracts object
-    // const newPredictoorContracts: PredictoorContracts = {
-    //   predictoorContract,
-    //   fixedRateContract,
-    //   tokenContract
-    // };
-    // 2. Add it to the data
     addItem(key, predictoor);
-
     return predictoor;
   };
 

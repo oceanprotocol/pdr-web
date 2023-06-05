@@ -31,12 +31,19 @@ export default function Wallet() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.walletInfoContainer}>
+        {!loading && chain && networkName && (
+          <span className={styles.chainName}>{networkName}</span>
+        )}
+        <Web3Button />
+      </div>
       {!loading && chain && parseInt(currentConfig.chainId) !== chain?.id && (
         <Button
           disabled={
             !switchNetwork || parseInt(currentConfig.chainId) === chain?.id
           }
           onClick={() => switchNetwork?.(parseInt(currentConfig.chainId))}
+          className={styles.switchNetwork}
           text={
             isLoading && pendingChainId === parseInt(currentConfig.chainId)
               ? 'Switching to Ethereum...'
@@ -44,12 +51,6 @@ export default function Wallet() {
           }
         />
       )}
-      <div className={styles.walletInfoContainer}>
-        {!loading && chain && networkName && (
-          <span className={styles.chainName}>{networkName}</span>
-        )}
-        <Web3Button />
-      </div>
     </div>
   )
 }

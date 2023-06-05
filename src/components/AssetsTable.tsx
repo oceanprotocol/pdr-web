@@ -1,6 +1,7 @@
 import { useContractsContext } from '@/contexts/ContractsContext'
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
+import { getAssetPairPrice } from '@/utils/kraken'
 import { useEffect, useState } from 'react'
 import Predictoor from '../utils/contracts/Predictoor'
 // import { PredictoorContracts } from '../contexts/ContractsContext'
@@ -81,15 +82,17 @@ export default function AssetsTable() {
         let newData: any = []
         let row: any = {}
         let tokenData: TokenData = await getTokenData(predictoorsConfig.cg_id)
+        let price = await getAssetPairPrice(predictoorsConfig.tokenName + predictoorsConfig.pairName)
         row['coin'] = <Coin coinData={tokenData} />
-        
-        row['price'] = `$${tokenData.price}`
+        row['price'] = `$${parseFloat(price).toFixed(2)}`
         row['amount'] = <AmountInput />
         row['next'] = (
           <Slot
             state={SlotState.NextPrediction}
             epochOffset={+1}
             predictoor={predictoor}
+            tokenName={predictoorsConfig.tokenName}
+            pairName={predictoorsConfig.pairName}
           />
         )
         row['live'] = (
@@ -97,6 +100,8 @@ export default function AssetsTable() {
             state={SlotState.LivePrediction}
             epochOffset={0}
             predictoor={predictoor}
+            tokenName={predictoorsConfig.tokenName}
+            pairName={predictoorsConfig.pairName}
           />
         )
         row['history'] = (
@@ -104,6 +109,8 @@ export default function AssetsTable() {
             state={SlotState.HistoricalPrediction}
             epochOffset={-1}
             predictoor={predictoor}
+            tokenName={predictoorsConfig.tokenName}
+            pairName={predictoorsConfig.pairName}
           />
         )
 

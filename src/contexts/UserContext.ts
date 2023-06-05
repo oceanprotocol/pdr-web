@@ -1,24 +1,36 @@
-// import { ethers } from 'ethers'
+import { getAssetBalance } from '@/utils/kraken'
 import {
   createContext,
   createElement,
   useContext,
+  useEffect,
   useState
 } from 'react'
 // import { useAccount, useContractRead } from 'wagmi'
 // import { tokenABI } from '../metadata/abis/tokenABI'
-import config from '../metadata/config.json'
+// import { ethers } from 'ethers'
+// import config from '../metadata/config.json'
 
 type UserType = {
   balance: number
   amount: number // I'm not sure why amount is needed here? Isn't the only place needed within the row component?
+  krakenApiKey: string | undefined
   setAmount?: (value: number) => void
+  krakenSecretKey: string | undefined
+  setKrakenSecretKey?: (value: string | undefined) => void
+  setKrakenApiKey?: (value: string | undefined) => void
+  getBalance?:() => void
 }
 
 export const UserContext = createContext<UserType>({
   balance: 0,
   amount: 0,
-  setAmount: undefined
+  krakenApiKey: undefined,
+  krakenSecretKey: undefined,
+  setAmount: undefined,
+  setKrakenApiKey: undefined,
+  setKrakenSecretKey: undefined,
+  getBalance: undefined
 })
 
 type UserProps = {
@@ -29,10 +41,12 @@ export const UserProvider = ({ children }: UserProps) => {
   // const { address } = useAccount()
   const [balance, setBalance] = useState(0)
   const [amount, setAmount] = useState<number>(0)
+  const [krakenApiKey, setKrakenApiKey] = useState<string>()
+  const [krakenSecretKey, setKrakenSecretKey] = useState<string>()
 
-  const currentConfig = process.env.NEXT_PUBLIC_ENV
+  /*const currentConfig = process.env.NEXT_PUBLIC_ENV
     ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
-    : config['staging']
+    : config['staging']*/
 
   // TODO - Wagmi initialization was throwing errors
   // TODO - Fix useContractRead & Token/Balance
@@ -55,9 +69,34 @@ export const UserProvider = ({ children }: UserProps) => {
   //   !address && setBalance(0)
   // }, [address])
 
+  const getBalance = () => {
+    getAssetBalance(
+      process.env.NEXT_PUBLIC_EXCHANGE_KEY || krakenApiKey,
+      process.env.NEXT_PUBLIC_PRIVATE_EXCHANGE_KEY || krakenSecretKey
+    ).then((resp) => {
+      setBalance(resp?.result['USDC'] ? resp?.result['USDC'] : 0)
+      console.log(resp)
+    })
+  }
+
+  useEffect(() => {
+    getBalance()
+  }, [krakenApiKey, krakenSecretKey])
+
   return createElement(
     UserContext.Provider,
-    { value: { balance, amount, setAmount } },
+    {
+      value: {
+        balance,
+        amount,
+        krakenApiKey,
+        krakenSecretKey,
+        setAmount,
+        setKrakenApiKey,
+        setKrakenSecretKey,
+        getBalance
+      }
+    },
     children
   )
 }
