@@ -41,7 +41,7 @@ const tableColumns = [
   }
 ]
 
-export default function PredictionsTable() {
+export default function AssetsTable() {
   interface TableData {
     [key: string]: any
   }
