@@ -2,7 +2,7 @@ import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { useUserContext } from '@/contexts/UserContext'
 import { setTrade } from '@/utils/kraken'
-// import { getCurrentEpoch, get_agg_predval } from '@/utils/predictoor'
+import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import Button from '../elements/Button'
 import ProgressBar from '../elements/ProgressBar'
@@ -59,6 +59,8 @@ export default function Slot({
   const [confidence, setConfidence] = useState(0)
   const [direction, setDirection] = useState(0)
   const [stake, setStake] = useState(0)
+  
+  // TODO - Consider using timer in mock-implementation only.
   // const [timePassed, setTimePassed] = useState(0)
   // const maxDurationTime = 300
 
@@ -73,12 +75,37 @@ export default function Slot({
   //   }
   // }
 
-  const updateComponentParams = async () => {
+  const updateEpochParams = async () => {
+    // TODO - Cleanup epoch/epochOffset/blockNum/blockNumOffset
+    // TODO - Cleanup 100% Bull/Bear
+    const curEpoch: number = await predictoor.getCurrentEpoch();
+    const epochOffsetBlockNum = blocksPerEpoch * (curEpoch+epochOffset);
+    // console.log("epochOffset:", epochOffset);
+    // console.log("curEpoch+epochOffset:", curEpoch+epochOffset);
+    // console.log("epochOffsetBlockNum:", epochOffsetBlockNum);
+        
+    const aggPredval: any = await predictoor.getAggPredval(
+      epochOffsetBlockNum,
+      wallet
+    );
+    // console.log("aggPredval:", aggPredval);
+    // console.log("aggPredval nom:", ethers.utils.formatUnits(aggPredval.nom, 18));
+    // console.log("aggPredval denom:", ethers.utils.formatUnits(aggPredval.denom, 18));
+    // console.log("aggPredval confidence:", aggPredval.confidence);
+    // console.log("aggPredval dir:", aggPredval.dir);
+    // console.log("aggPredval stake:", ethers.utils.formatUnits(aggPredval.stake, 18));
+    
+    setConfidence(Number(aggPredval?.confidence))
+    setDirection(Number(aggPredval?.dir))
+    setStake(Number(ethers.utils.formatUnits(aggPredval?.stake, 18)))
+  }
+
+  const updateBlockParams = async () => {
     const curEpoch: number = await predictoor.getCurrentEpoch();
     const BPE: number = await predictoor.getBlocksPerEpoch();
     
     const calculatedEpoch: number = curEpoch + epochOffset;
-    const blockNumber:number = await provider.getBlockNumber();
+    const blockNumber:number = await provider.getBlockNumber() + (BPE * epochOffset);
     
     setEpoch(calculatedEpoch)
     setBlockNum(blockNumber)
@@ -87,22 +114,6 @@ export default function Slot({
     const nextEpochBlockNum = BPE * (calculatedEpoch+1);
     const nBlocksLeft = nextEpochBlockNum - blockNumber
     setBlocksLeft(nBlocksLeft > BPE ? nBlocksLeft - BPE : nBlocksLeft);
-
-    // TODO - Enable this once we have the predictoors submitting predVals
-    // const aggPredval: any = await predictoor.predictoorContract.getAggPredval(
-    //   blockNum,
-    //   wallet
-    // );
-    // console.log("aggPredval:", aggPredval);
-    // console.log("aggPredval nom:", ethers.utils.formatUnits(aggPredval.nom, 0));
-    // console.log("aggPredval denom:", ethers.utils.formatUnits(aggPredval.denom, 0));
-    // console.log("aggPredval confidence:", aggPredval.confidence);
-    // console.log("aggPredval dir:", aggPredval.dir, 0);
-    // console.log("aggPredval stake:", ethers.utils.formatUnits(aggPredval.stake, 0));
-    
-    // setConfidence(Number(aggPredval?.confidence))
-    // setDirection(Number(aggPredval?.dir))
-    // setStake(Number(aggPredval?.stake))
   }
 
   const updateMockComponentParams = async () => {
@@ -120,18 +131,20 @@ export default function Slot({
   }
 
   const updateComponent = async () => {
-    await updateComponentParams();
+    await updateBlockParams();
+    await updateEpochParams();
     await updateMockComponentParams();
   }
 
-  // We want to update the component when the epoch index changes
+  // We want to initialize the component
+  // We want to update the component whenever the block changes
   useEffect(() => {
     try{
       // getTimeLeftInSeconds()
       updateComponent()
 
       provider.on('block', async (blockNumber) => {
-        await updateComponentParams();
+        await updateBlockParams();
       });
 
       setLoading(false);
@@ -140,8 +153,15 @@ export default function Slot({
     }
   }, [])
 
+  // update component when epoch changes
   useEffect(() => {
-    // Check loading. This gets hit many times when starting up.
+    if( !loading ) {
+      updateEpochParams()
+    }
+  }, [epoch])
+
+  useEffect(() => {
+    // Check loading so it doesn't get hit during init
     if( !loading ) {
       updateComponent()
     }

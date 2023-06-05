@@ -186,8 +186,9 @@ class Predictoor {
                     return null;
                 }
 
-                const confidence: number = nom / denom
-                const dir: number = confidence > 0.5 ? 1 : 0
+                const confidence: number = parseFloat(nom) / parseFloat(denom)
+                console.log("confidence", confidence);
+                const dir: number = confidence >= 0.5 ? 1 : 0
                 const stake: number = denom
             
                 return { 
