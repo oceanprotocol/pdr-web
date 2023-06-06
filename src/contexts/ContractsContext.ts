@@ -11,7 +11,7 @@ const ContractsContext = React.createContext<{
     key: string, 
     provider: ethers.providers.JsonRpcProvider,
     address: string
-  ) => Predictoor;
+  ) => Promise<Predictoor>;
   addItem: (
     key: string, 
     item: Predictoor
@@ -38,7 +38,7 @@ export const ContractsProvider = ({
     key: string, 
     provider: ethers.providers.JsonRpcProvider,
     address: string
-  ) => {
+  ) : Promise<Predictoor> => {
     const predictoor = new Predictoor(
       address,
       provider);
