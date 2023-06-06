@@ -2,9 +2,9 @@ import { useUserContext } from '@/contexts/UserContext'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
+import Button from '../elements/Button'
+import Input from '../elements/Input'
 import styles from '../styles/Settings.module.css'
-import Button from './Button'
-import Input from './Input'
 
 export default function Settings() {
   const [open, setOpen] = useState<boolean>(false)

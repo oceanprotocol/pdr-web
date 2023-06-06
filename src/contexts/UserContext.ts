@@ -6,7 +6,10 @@ import {
   useEffect,
   useState
 } from 'react'
-import { useAccount } from 'wagmi'
+// import { useAccount, useContractRead } from 'wagmi'
+// import { tokenABI } from '../metadata/abis/tokenABI'
+// import { ethers } from 'ethers'
+// import config from '../metadata/config.json'
 
 type UserType = {
   balance: number
@@ -35,7 +38,7 @@ type UserProps = {
 }
 
 export const UserProvider = ({ children }: UserProps) => {
-  const { address } = useAccount()
+  // const { address } = useAccount()
   const [balance, setBalance] = useState(0)
   const [amount, setAmount] = useState<number>(0)
   const [krakenApiKey, setKrakenApiKey] = useState<string>()
@@ -43,15 +46,28 @@ export const UserProvider = ({ children }: UserProps) => {
 
   /*const currentConfig = process.env.NEXT_PUBLIC_ENV
     ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
-    : config['staging']
+    : config['staging']*/
 
-  const { data } = useContractRead({
-    address: currentConfig.oceanAddress as `0x{string}`,
-    abi: tokenABI,
-    functionName: 'balanceOf',
-    args: [address],
-    chainId: parseInt(currentConfig.chainId)
-  })*/
+  // TODO - Wagmi initialization was throwing errors
+  // TODO - Fix useContractRead & Token/Balance
+  // const { data } = useContractRead({
+  //   address: currentConfig.oceanAddress as `0x{string}`,
+  //   abi: tokenABI,
+  //   functionName: 'balanceOf',
+  //   args: [address],
+  //   chainId: parseInt(currentConfig.chainId)
+  // })
+
+  // useEffect(() => {
+  //   data &&
+  //     setBalance(
+  //       parseInt(ethers.utils.formatEther(BigInt(data as string).toString(10)))
+  //     )
+  // }, [data])
+
+  // useEffect(() => {
+  //   !address && setBalance(0)
+  // }, [address])
 
   const getBalance = () => {
     getAssetBalance(
@@ -66,17 +82,6 @@ export const UserProvider = ({ children }: UserProps) => {
   useEffect(() => {
     getBalance()
   }, [krakenApiKey, krakenSecretKey])
-
-  /*useEffect(() => {
-    data &&
-      setBalance(
-        parseInt(ethers.utils.formatEther(BigInt(data as string).toString(10)))
-      )
-  }, [data])*/
-
-  useEffect(() => {
-    !address && setBalance(0)
-  }, [address])
 
   return createElement(
     UserContext.Provider,

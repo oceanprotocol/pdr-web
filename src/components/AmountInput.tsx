@@ -1,5 +1,5 @@
 import { useUserContext } from '../contexts/UserContext'
-import Input from './Input'
+import Input from '../elements/Input'
 
 export default function AmountInput() {
   const { balance, amount, setAmount } = useUserContext()
