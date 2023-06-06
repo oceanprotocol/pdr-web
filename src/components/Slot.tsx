@@ -155,15 +155,23 @@ export default function Slot({
 
   // update component when epoch changes
   useEffect(() => {
-    if( !loading ) {
-      updateEpochParams()
+    try{
+      if( !loading ) {
+        updateEpochParams()
+      }
+    } catch (e) {
+      console.log("Error updating slot component:", e);
     }
   }, [epoch])
 
   useEffect(() => {
-    // Check loading so it doesn't get hit during init
-    if( !loading ) {
-      updateComponent()
+    try{
+      // Check loading so it doesn't get hit during init
+      if( !loading ) {
+        updateComponent()
+      }
+    } catch (e) {
+      console.log("Error updating slot component:", e);
     }
   }, [wallet, provider, epochOffset, epochIndex])
 
