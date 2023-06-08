@@ -11,7 +11,7 @@ type TContractsState = Awaited<
   ReturnType<typeof getAllInterestingPredictionContracts>
 >
 
-export default function AssetsTable() {
+export const AssetsContainer: React.FC = () => {
   const [contracts, setContracts] = useState<TContractsState>()
   // TODO - Setup WSS/TWAP web3 databinding based on price feed
   const { provider, wallet } = useOPFContext()
