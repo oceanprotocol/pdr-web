@@ -137,13 +137,9 @@ export default function Slot({
   }
 
   const initComponent = async () => {
-    console.log("Initializing slot component...")
-
     await updateComponent();
     setLoading(false);
-    
-    console.log("Completing initialization")
-
+        
     // Fixing mocking vs. barge
     // If we're not mocking, then we're going to use the chain data
     // If we're mocking, then we want to use a timer to handle progress
