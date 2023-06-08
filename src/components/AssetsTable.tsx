@@ -7,12 +7,12 @@ import { updatePredictoorSubscriptions } from '../utils/predictoors'
 import { getAllInterestingPredictionContracts } from '../utils/subgraph'
 import { AssetList } from './AssetList'
 
-type TConractsState = Awaited<
+type TContractsState = Awaited<
   ReturnType<typeof getAllInterestingPredictionContracts>
 >
 
 export default function AssetsTable() {
-  const [contracts, setContracts] = useState<TConractsState>()
+  const [contracts, setContracts] = useState<TContractsState>()
   // TODO - Setup WSS/TWAP web3 databinding based on price feed
   const { provider, wallet } = useOPFContext()
 

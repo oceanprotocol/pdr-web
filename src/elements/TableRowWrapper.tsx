@@ -13,22 +13,18 @@ type THTMLRowProps = React.DetailedHTMLProps<
 export type TTableRowWrapperProps = {
   cellProps?: THTMLCellProps
   children: Array<React.ReactNode>
+  cellType?: 'td' | 'th'
 } & THTMLRowProps
 
 export const TableRowWrapper: React.FC<TTableRowWrapperProps> = ({
   children,
   cellProps,
+  cellType = 'td',
   ...rest
 }) => {
   return (
     <tr {...rest}>
       {React.Children.map(children, (child, index) => {
-        return (
-          <td {...cellProps} key={index}>
-            {child}
-          </td>
-        )
-        /*
         const isHeader = cellType === 'th'
         const cellKeyIndex = {
           key: `${isHeader ? 'header' : 'cell'}${index}`
@@ -38,7 +34,6 @@ export const TableRowWrapper: React.FC<TTableRowWrapperProps> = ({
           { ...cellProps, ...cellKeyIndex },
           child
         )
-        */
       })}
     </tr>
   )

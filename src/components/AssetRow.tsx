@@ -36,7 +36,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
 
-  const checkOrAddConract = useCallback<
+  const checkOrAddContract = useCallback<
     (contract: TPredictionContract) => Promise<Predictoor>
   >(
     async (contract) => {
@@ -60,9 +60,9 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       Promise.all([
         getTokenData(tokenName as TCoinGeckoIdKeys),
         getAssetPairPrice(`${tokenName}${pairName}`),
-        checkOrAddConract(contract)
+        checkOrAddContract(contract)
       ]),
-    [checkOrAddConract]
+    [checkOrAddContract]
   )
 
   const loadData = useCallback<() => Promise<void>>(async () => {

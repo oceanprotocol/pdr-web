@@ -48,12 +48,13 @@ export const AssetList: React.FC<TAssetListProps> = ({ contracts }) => {
           cellProps={{
             className: styles.tableHeaderCell
           }}
+          cellType="th"
         >
-          {assetTableColumns.map((item, index) => item.Header)}
+          {assetTableColumns.map((item) => item.Header)}
         </TableRowWrapper>
       </thead>
       <tbody>
-        {assetsData.map((item, index) => (
+        {assetsData.map((item) => (
           <AssetRow key={`assetRow${item.contract.address}`} assetData={item} />
         ))}
       </tbody>
