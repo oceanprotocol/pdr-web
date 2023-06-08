@@ -49,16 +49,14 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     [data, provider, addContract]
   )
 
-  const getRemoteData = useCallback(
-    async ({
-      tokenName,
-      pairName,
-      contract
-    }: {
+  const getRemoteData = useCallback<
+    (args: {
       tokenName: string
       pairName: string
       contract: TPredictionContract
-    }) =>
+    }) => Promise<[TokenData, string, Predictoor]>
+  >(
+    async ({ tokenName, pairName, contract }) =>
       Promise.all([
         getTokenData(tokenName as TCoingGeckoIdKeys),
         getAssetPairPrice(`${tokenName}${pairName}`),
@@ -67,7 +65,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     [checkOrAddConract]
   )
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback<() => Promise<void>>(async () => {
     const [tokenData, price, predictoor] = await getRemoteData({
       tokenName,
       pairName,
