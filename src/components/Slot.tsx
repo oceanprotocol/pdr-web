@@ -155,21 +155,20 @@ export default function Slot({
 
   // update component when epoch changes
   useEffect(() => {
+    if( loading ) return;
+    
     try{
-      if( !loading ) {
-        updateEpochParams()
-      }
+      updateEpochParams()
     } catch (e) {
       console.log("Error updating slot component:", e);
     }
   }, [epoch])
 
   useEffect(() => {
-    try{
-      // Check loading so it doesn't get hit during init
-      if( !loading ) {
-        updateComponent()
-      }
+    if( loading ) return;
+      
+    try{  
+      updateComponent()
     } catch (e) {
       console.log("Error updating slot component:", e);
     }
