@@ -8,7 +8,7 @@ export enum ECoinGeckoIdList {
   ETH = 'ethereum'
 }
 
-export type TCoingGeckoIdKeys = keyof typeof ECoinGeckoIdList
+export type TCoinGeckoIdKeys = keyof typeof ECoinGeckoIdList
 
 export const assetTableColumns = [
   {

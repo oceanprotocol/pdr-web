@@ -6,7 +6,7 @@ import { useContractsContext } from '@/contexts/ContractsContext'
 import { useOPFContext } from '@/contexts/OPFContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { TCoingGeckoIdKeys } from '@/utils/appconstants'
+import { TCoinGeckoIdKeys } from '@/utils/appconstants'
 import Predictoor from '@/utils/contracts/Predictoor'
 import { getAssetPairPrice } from '@/utils/kraken'
 import { TPredictionContract } from '@/utils/subgraph'
@@ -58,7 +58,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   >(
     async ({ tokenName, pairName, contract }) =>
       Promise.all([
-        getTokenData(tokenName as TCoingGeckoIdKeys),
+        getTokenData(tokenName as TCoinGeckoIdKeys),
         getAssetPairPrice(`${tokenName}${pairName}`),
         checkOrAddConract(contract)
       ]),
