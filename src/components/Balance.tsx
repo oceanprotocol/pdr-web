@@ -1,6 +1,7 @@
 import { useLocalEpochContext } from '@/contexts/LocalEpochContext'
 import { useEffect, useState } from 'react'
 // import { useUserContext } from '../contexts/UserContext'
+import { BalanceCard } from '@/elements/BalanceCard'
 import styles from '../styles/Balance.module.css'
 
 // TODO - Fix balance component so it stops throwing errors into the console
@@ -21,5 +22,10 @@ export default function Balance() {
     }
   }, [localBalance])
 
-  return <div className={styles.container}>BALANCE: {balance} OCEAN</div>
+  return (
+    <div className={styles.container}>
+      <BalanceCard>Balance</BalanceCard>
+      <BalanceCard>{balance} OCEAN</BalanceCard>
+    </div>
+  )
 }

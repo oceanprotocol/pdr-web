@@ -42,8 +42,8 @@ export default function Slot({
     updatePrice,
     updateBalance
   } = useLocalEpochContext()
-  const { 
-    balance: userBalance, 
+  const {
+    balance: userBalance,
     amount,
     krakenApiKey,
     krakenSecretKey,
@@ -59,7 +59,7 @@ export default function Slot({
   const [confidence, setConfidence] = useState(0)
   const [direction, setDirection] = useState(0)
   const [stake, setStake] = useState(0)
-  
+
   // TODO - Consider using timer in mock-implementation only.
   // const [timePassed, setTimePassed] = useState(0)
   // const maxDurationTime = 300
@@ -78,42 +78,43 @@ export default function Slot({
   const updateEpochParams = async () => {
     // TODO - Cleanup epoch/epochOffset/blockNum/blockNumOffset
     // TODO - Cleanup 100% Bull/Bear
-    const curEpoch: number = await predictoor.getCurrentEpoch();
-    const epochOffsetBlockNum = blocksPerEpoch * (curEpoch+epochOffset);
+    const curEpoch: number = await predictoor.getCurrentEpoch()
+    const epochOffsetBlockNum = blocksPerEpoch * (curEpoch + epochOffset)
     // console.log("epochOffset:", epochOffset);
     // console.log("curEpoch+epochOffset:", curEpoch+epochOffset);
     // console.log("epochOffsetBlockNum:", epochOffsetBlockNum);
-        
+
     const aggPredval: any = await predictoor.getAggPredval(
       epochOffsetBlockNum,
       wallet
-    );
+    )
     // console.log("aggPredval:", aggPredval);
     // console.log("aggPredval nom:", ethers.utils.formatUnits(aggPredval.nom, 18));
     // console.log("aggPredval denom:", ethers.utils.formatUnits(aggPredval.denom, 18));
     // console.log("aggPredval confidence:", aggPredval.confidence);
     // console.log("aggPredval dir:", aggPredval.dir);
     // console.log("aggPredval stake:", ethers.utils.formatUnits(aggPredval.stake, 18));
-    
+
     setConfidence(Number(aggPredval?.confidence))
     setDirection(Number(aggPredval?.dir))
     setStake(Number(ethers.utils.formatUnits(aggPredval?.stake, 18)))
   }
 
   const updateBlockParams = async () => {
-    const curEpoch: number = await predictoor.getCurrentEpoch();
-    const BPE: number = await predictoor.getBlocksPerEpoch();
-    
-    const calculatedEpoch: number = curEpoch + epochOffset;
-    const blockNumber:number = await provider.getBlockNumber() + (BPE * epochOffset);
-    
+    const curEpoch: number = await predictoor.getCurrentEpoch()
+    const BPE: number = await predictoor.getBlocksPerEpoch()
+
+    const calculatedEpoch: number = curEpoch + epochOffset
+    const blockNumber: number =
+      (await provider.getBlockNumber()) + BPE * epochOffset
+
     setEpoch(calculatedEpoch)
     setBlockNum(blockNumber)
-    setBlocksPerEpoch(BPE);
-    
-    const nextEpochBlockNum = BPE * (calculatedEpoch+1);
+    setBlocksPerEpoch(BPE)
+
+    const nextEpochBlockNum = BPE * (calculatedEpoch + 1)
     const nBlocksLeft = nextEpochBlockNum - blockNumber
-    setBlocksLeft(nBlocksLeft > BPE ? nBlocksLeft - BPE : nBlocksLeft);
+    setBlocksLeft(nBlocksLeft > BPE ? nBlocksLeft - BPE : nBlocksLeft)
   }
 
   const updateMockComponentParams = async () => {
@@ -121,7 +122,7 @@ export default function Slot({
     if (process.env.NEXT_PUBLIC_ENV == 'mock') {
       let randomConfidence = parseFloat(Math.random().toFixed(2))
       const epochNum = Number(epochIndex) + epochOffset
-      
+
       setEpoch(epochNum)
       setBlockNum(epochNum * 60)
       setDirection(randomConfidence > 0.5 ? 1 : -1)
@@ -131,38 +132,38 @@ export default function Slot({
   }
 
   const updateComponent = async () => {
-    await updateBlockParams();
-    await updateEpochParams();
-    await updateMockComponentParams();
+    await updateBlockParams()
+    await updateEpochParams()
+    await updateMockComponentParams()
   }
 
   // We want to initialize the component
   // We want to update the component whenever the block changes
   useEffect(() => {
-    try{
+    try {
       // getTimeLeftInSeconds()
       updateComponent()
 
       provider.on('block', async (blockNumber) => {
-        await updateBlockParams();
-      });
+        await updateBlockParams()
+      })
 
-      setLoading(false);
+      setLoading(false)
     } catch (e) {
-      console.log("Error initializing slot component:", e);
+      console.log('Error initializing slot component:', e)
     }
   }, [])
 
   // update component when epoch changes
   useEffect(() => {
-    if( !loading ) {
+    if (!loading) {
       updateEpochParams()
     }
   }, [epoch])
 
   useEffect(() => {
     // Check loading so it doesn't get hit during init
-    if( !loading ) {
+    if (!loading) {
       updateComponent()
     }
   }, [wallet, provider, epochOffset, epochIndex])
@@ -221,14 +222,18 @@ export default function Slot({
       ></div>
       <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
       {process.env.NEXT_PUBLIC_ENV == 'mock' ||
-       process.env.NEXT_PUBLIC_ENV == 'barge' && (
-        <div>
-          Epoch: {epoch}<br/>
-          BlockNum: {blockNum}<br/>
-          Left: {blocksLeft}<br/>
-          Stake: {stake}<br/>
-        </div>
-      )}
+        (process.env.NEXT_PUBLIC_ENV == 'barge' && (
+          <div>
+            Epoch: {epoch}
+            <br />
+            BlockNum: {blockNum}
+            <br />
+            Left: {blocksLeft}
+            <br />
+            Stake: {stake}
+            <br />
+          </div>
+        ))}
       {state === SlotState.NextPrediction ? (
         <Button
           onClick={buyPrediction}
@@ -238,12 +243,9 @@ export default function Slot({
       ) : (
         <span className={styles.position}>PNL: N/A</span>
       )}
-      {state === SlotState.NextPrediction &&
-        <ProgressBar
-          progress={blocksLeft}
-          max={blocksPerEpoch}
-        />
-      }
+      {state === SlotState.NextPrediction && (
+        <ProgressBar progress={blocksLeft} max={blocksPerEpoch} />
+      )}
     </div>
   )
 }

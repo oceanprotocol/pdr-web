@@ -1,8 +1,9 @@
 .table {
   width: 100%;
-  color: white;
+  color: rgb(var(--text-color-rgb));
   border-spacing: 0;
-  border-top: 1px solid white;
+  border-top: 1px solid rgb(var(--table-row-border-rgb));
+  table-layout: fixed;
 }
 
 .tableHeader {
@@ -10,16 +11,15 @@
 
 .tableRow {
   border: 0;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid rgb(var(--table-row-border-rgb));
 }
 
 .tableHeaderCell,
 .tableRowCell {
-  background-color: black;
   text-align: center;
   padding: 15px 0;
   border: 0;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid rgb(var(--table-row-border-rgb));
 }
 
 .tableHeaderCell {

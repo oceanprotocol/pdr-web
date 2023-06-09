@@ -1,0 +1,24 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.list li {
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.list li a {
+  color: rgba(var(--menu-text-color-rgb));
+  font-weight: 600;
+}

@@ -50,7 +50,9 @@ export const AssetList: React.FC<TAssetListProps> = ({ contracts }) => {
           }}
           cellType="th"
         >
-          {assetTableColumns.map((item) => item.Header)}
+          {assetTableColumns.map((item) => (
+            <span key={`assetHeader${item.accessor}`}>{item.Header}</span>
+          ))}
         </TableRowWrapper>
       </thead>
       <tbody>

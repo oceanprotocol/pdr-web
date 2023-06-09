@@ -38,6 +38,14 @@
   --callout-border-rgb: 172, 175, 176;
   --card-rgb: 180, 185, 188;
   --card-border-rgb: 131, 134, 135;
+
+  --connect-button-border-rgb: 217, 217, 217;
+  --connect-button-color-rgb: 255, 66, 146;
+  --button-border-radius: 5px;
+  --menu-text-color-rgb: 111, 111, 111;
+  --balance-card-rgb: 234, 234, 234;
+  --text-color-rgb: 0, 0, 0;
+  --table-row-border-rgb: 0, 0, 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -70,6 +78,14 @@
     --callout-border-rgb: 108, 108, 108;
     --card-rgb: 100, 100, 100;
     --card-border-rgb: 200, 200, 200;
+
+    --connect-button-border-rgb: 217, 217, 217;
+    --connect-button-color-rgb: 255, 66, 146;
+    --button-border-radius: 5px;
+    --menu-text-color-rgb: 111, 111, 111;
+    --balance-card-rgb: 234, 234, 234;
+    --text-color: 0, 0, 0;
+    --table-row-border-rgb: 0, 0, 0;
   }
 }
 
@@ -87,12 +103,13 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
+  background-color: rgb(var(--background-end-rgb));
+  /*background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb));*/
 }
 
 a {
