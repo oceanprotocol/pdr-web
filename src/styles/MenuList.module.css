@@ -6,8 +6,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: var(--small-border-radius);
+  font-size: var(--regular-font-size);
   margin-left: 10px;
 }
 
