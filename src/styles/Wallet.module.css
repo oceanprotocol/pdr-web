@@ -27,8 +27,8 @@
 .button {
   /*border: 1px solid rgb(var(--connect-button-border-rgb));*/
   border: 0px none;
-  box-shadow: inset 0px 0px 1px 1px rgb(var(--connect-button-border-rgb));
-  color: rgb(var(--connect-button-color-rgb));
+  box-shadow: inset 0px 0px 1px 1px var(--border-color);
+  color: var(--primary-pink);
   border-radius: var(--button-border-radius);
   font-weight: 600;
   font-size: 14px;
