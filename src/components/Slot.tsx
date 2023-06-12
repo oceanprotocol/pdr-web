@@ -176,7 +176,11 @@ export default function Slot({
     if( loading || process.env.NEXT_PUBLIC_ENV == 'mock' )
       return;
     
-    updateEpochParams();
+    try{
+      updateEpochParams()
+    } catch (e) {
+      console.log("Error updating slot component:", e);
+    }
   }, [epoch])
 
   // Trigger: blocksLeft changes
@@ -185,8 +189,11 @@ export default function Slot({
     if( loading || process.env.NEXT_PUBLIC_ENV != 'mock')
       return;
       
-    if(blocksLeft <= 0) {
-      mockProgress();
+    try{
+      if(blocksLeft <= 0)
+        mockProgress();
+    } catch (e) {
+      console.log("Error updating slot component:", e);
     }
   }, [blocksLeft])
 
@@ -196,7 +203,11 @@ export default function Slot({
     if( loading )
       return;
       
-    updateComponent()
+    try{
+      updateComponent()
+    } catch (e) {
+      console.log("Error updating slot component:", e);
+    }
   }, [wallet, provider, epochOffset, epochIndex])
 
   const getDirectionText = (direction: number) => {

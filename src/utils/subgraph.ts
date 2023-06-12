@@ -1,25 +1,34 @@
-import axios from 'axios';
+import axios from 'axios'
 
 async function querySubgraph(subgraphUrl: string, query: string): Promise<any> {
   try {
-    const response = await axios.post(subgraphUrl, { query });
-    return response.data;
+    const response = await axios.post(subgraphUrl, { query })
+    return response.data
   } catch (error: any) {
-    console.error(`Query failed. Url: ${subgraphUrl}. Error: ${error}`);
-    throw new Error('Failed to query subgraph');
+    console.error(`Query failed. Url: ${subgraphUrl}. Error: ${error}`)
+    throw new Error('Failed to query subgraph')
   }
 }
 
+export type TPredictionContract = {
+  name: string
+  address: string
+  symbol: string
+  blocksPerEpoch: string
+  blocksPerSubscription: string
+  last_submitted_epoch: number
+}
+
 async function getAllInterestingPredictionContracts(
-  subgraphURL: string,
-): Promise<Record<string, any>> {
-    const chunkSize = 1000;
-    let offset = 0;
-    const contracts: Record<string, any> = {};
-    
-    const getAllContracts = true;
-    while (getAllContracts === true) {
-      const query = `
+  subgraphURL: string
+): Promise<Record<string, TPredictionContract>> {
+  const chunkSize = 1000
+  let offset = 0
+  const contracts: Record<string, any> = {}
+
+  const getAllContracts = true
+  while (getAllContracts === true) {
+    const query = `
         {
           predictContracts(skip: ${offset}, first: ${chunkSize}) {
             id
@@ -33,42 +42,42 @@ async function getAllInterestingPredictionContracts(
             truevalSubmitTimeoutBlock
           }
         }
-      `;
-      offset += chunkSize;
-      
-      try {
-        const result = await querySubgraph(subgraphURL, query);
-        const predictContracts = result.data.predictContracts;
-        
-        if (predictContracts.length === 0) {
-          break;
-        }
-        
-        for (const item of predictContracts) {
-          contracts[item.id] = {
-            name: item.token.name,
-            address: item.id,
-            symbol: item.token.symbol,
-            blocksPerEpoch: item.blocksPerEpoch,
-            blocksPerSubscription: item.blocksPerSubscription,
-            last_submitted_epoch: 0
-          };
-        }
-      } catch (e: any) {
-        console.error(e);
-        return {};
+      `
+    offset += chunkSize
+
+    try {
+      const result = await querySubgraph(subgraphURL, query)
+      const predictContracts = result.data.predictContracts
+
+      if (predictContracts.length === 0) {
+        break
       }
+
+      for (const item of predictContracts) {
+        contracts[item.id] = {
+          name: item.token.name,
+          address: item.id,
+          symbol: item.token.symbol,
+          blocksPerEpoch: item.blocksPerEpoch,
+          blocksPerSubscription: item.blocksPerSubscription,
+          last_submitted_epoch: 0
+        }
+      }
+    } catch (e: any) {
+      console.error(e)
+      return {}
     }
-    
-    return contracts;
   }
 
+  return contracts
+}
+
 async function getFilteredOrders(
-    subgraphURL: string,
-    datatokenId:string, 
-    userId:string
-): Promise<string|undefined> {
-    const query = `
+  subgraphURL: string,
+  datatokenId: string,
+  userId: string
+): Promise<string | undefined> {
+  const query = `
         query GetFilteredOrders {
             orders(
                 where: {
@@ -88,25 +97,21 @@ async function getFilteredOrders(
                 createdTimestamp
             }
         }
-    `;
+    `
 
-    // Replace the variables in the query string
-    let finalQuery = query.replace('$datatokenId', datatokenId.toLowerCase());
-    finalQuery = finalQuery.replace('$userId', userId.toLowerCase());
+  // Replace the variables in the query string
+  let finalQuery = query.replace('$datatokenId', datatokenId.toLowerCase())
+  finalQuery = finalQuery.replace('$userId', userId.toLowerCase())
 
-    try {
-        const result = await querySubgraph(subgraphURL, finalQuery);
-        const orders: any = result.data.orders;
-        return orders;
-    } catch (e: any) {
-    console.error(e);
-    }
-    
-    return undefined;
+  try {
+    const result = await querySubgraph(subgraphURL, finalQuery)
+    const orders: any = result.data.orders
+    return orders
+  } catch (e: any) {
+    console.error(e)
+  }
+
+  return undefined
 }
 
-export {
-  getAllInterestingPredictionContracts,
-  getFilteredOrders
-};
-
+export { getAllInterestingPredictionContracts, getFilteredOrders }
