@@ -46,9 +46,11 @@ export default function Wallet() {
         {!loading && chain && networkName && (
           <span className={styles.chainName}>{networkName}</span>
         )}
-        <button className={styles.button} onClick={() => open()}>
-          {buttonText}
-        </button>
+        <Button
+          className={styles.button}
+          onClick={() => open()}
+          text={buttonText}
+        />
       </div>
       {!loading && chain && parseInt(chainId) !== chain?.id && (
         <Button

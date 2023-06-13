@@ -1,8 +1,8 @@
 .table {
   width: 100%;
-  color: rgb(var(--text-color-rgb));
+  color: var(--primary-color);
   border-spacing: 0;
-  border-top: 1px solid rgb(var(--table-row-border-rgb));
+  border-top: 1px solid var(--primary-color);
   table-layout: fixed;
 }
 
@@ -11,7 +11,7 @@
 
 .tableRow {
   border: 0;
-  border-bottom: 1px solid rgb(var(--table-row-border-rgb));
+  border-bottom: 1px solid var(--primary-color);
 }
 
 .tableHeaderCell,
@@ -19,7 +19,7 @@
   text-align: center;
   padding: 15px 0;
   border: 0;
-  border-bottom: 1px solid rgb(var(--table-row-border-rgb));
+  border-bottom: 1px solid var(--primary-color);
 }
 
 .tableHeaderCell {
