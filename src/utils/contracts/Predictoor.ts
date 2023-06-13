@@ -30,13 +30,9 @@ class Predictoor {
             this.provider
         );
 
-        // console.log("init instance: ", this.instance);
-          
         const stakeToken = await this.instance?.stakeToken();
         this.token = new Token(stakeToken, this.provider);
-        // const blocksPerEpoch = await this.instance?.blocksPerEpoch()
-        // console.log("blocksPerEpoch: ", blocksPerEpoch);
-
+        
         const fixedRates = await this.getExchanges();
         if (fixedRates) {
             const [fixedRateAddress, exchangeId]: [string, BigNumber] = fixedRates[0];
@@ -178,22 +174,26 @@ class Predictoor {
     async getAggPredval(block: number, user: ethers.Wallet): Promise<object | null> {
         try {
             if( this.instance ) {
-                console.log("Reading contract values...");
                 const [nom, denom] = await this.instance.connect(user).getAggPredval(block);
-                console.log(`Got ${nom} and ${denom}`);
                 
-                if (denom === 0) {
-                    return null;
-                }
+                const nominator = ethers.utils.formatUnits(nom, 18)
+                const denominator = ethers.utils.formatUnits(nom, 18)
 
-                const confidence: number = parseFloat(nom) / parseFloat(denom)
-                console.log("confidence", confidence);
-                const dir: number = confidence >= 0.5 ? 1 : 0
+                // TODO - Review in scale/testnet/production.
+                // This will be either 1 or 0 right now.
+                let confidence:number = parseFloat(nominator) / parseFloat(denominator)
+                if(isNaN(confidence)) {
+                    confidence = 0;
+                }
+                let dir: number = confidence >= 0.5 ? 1 : 0
+                
+                // TODO - We can do better with stake.
+                // I.E. Keep a moving average of stake, and celebrate/feature big pot/lots of volume
                 const stake: number = denom
-            
+
                 return { 
-                    nom: nom,
-                    denom: denom,
+                    nom: nominator,
+                    denom: denominator,
                     confidence: confidence,
                     dir: dir,
                     stake: stake
