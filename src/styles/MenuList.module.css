@@ -1,0 +1,23 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--small-border-radius);
+  font-size: var(--regular-font-size);
+  margin-left: 10px;
+}
+
+.list li {
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.list li a {
+  color: var(--dark-grey);
+  font-weight: 600;
+}

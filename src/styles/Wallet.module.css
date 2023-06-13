@@ -11,8 +11,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #2e6bac;
-  border-radius: 10px;
+  border-radius: var(--big-border-radius);
 }
 
 .chainName {
@@ -23,4 +22,16 @@
 .switchNetwork {
   position: absolute;
   top: 50px;
+}
+
+.button {
+  /*border: 1px solid rgb(var(--connect-button-border-rgb));*/
+  border: 0px none;
+  box-shadow: inset 0px 0px 1px 1px var(--border-color);
+  color: var(--primary-pink);
+  border-radius: var(--small-border-radius);
+  font-weight: 600;
+  font-size: var(--regular-font-size);
+  background: transparent;
+  padding: 12px 15px 12px 15px;
 }
