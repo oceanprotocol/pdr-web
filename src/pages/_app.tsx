@@ -4,16 +4,15 @@ import { OPFProvider } from '@/contexts/OPFContext'
 import { UserProvider } from '@/contexts/UserContext'
 import { ganache, oasis } from '@/metadata/networksConfig'
 import '@/styles/globals.css'
+import { networkProvider } from '@/utils/networkProvider'
 import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { ethers } from 'ethers'
 import type { AppProps } from 'next/app'
 import { WagmiConfig, createClient } from 'wagmi'
-import chainConfig from '../metadata/config.json'
-import { getProvider } from '../utils/network'
 
 const chains = [oasis, ganache]
-const env = process.env.NEXT_PUBLIC_ENV?.toString() as keyof typeof chainConfig;
+
 const projectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
 // const predictoorRPC = process.env.NEXT_PUBLIC_PREDICTOOR_RPC || ''
 const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
@@ -28,7 +27,7 @@ const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
 //   predictoorRPC
 // )
 
-const provider = getProvider(env);
+const provider = networkProvider.getProvider()
 
 const wagmiClient = createClient({
   autoConnect: true,

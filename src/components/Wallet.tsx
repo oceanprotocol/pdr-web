@@ -1,6 +1,6 @@
 import styles from '@/styles/Wallet.module.css'
 import { currentConfig } from '@/utils/appconstants'
-import { getNetworkName } from '@/utils/network'
+import { networkProvider } from '@/utils/networkProvider'
 import { useWeb3Modal } from '@web3modal/react'
 import { useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
@@ -19,8 +19,8 @@ export default function Wallet() {
   const { chainId } = currentConfig
 
   const saveNetworkName = async () => {
-    if (!chain) return
-    let name = await getNetworkName(chain.id)
+    if (!chainId) return
+    const name = networkProvider.getNetworkName(parseInt(chainId))
     setNetworkName(name)
   }
 
