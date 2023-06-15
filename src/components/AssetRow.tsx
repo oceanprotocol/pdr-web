@@ -8,8 +8,9 @@ import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
 import Predictoor from '@/utils/contracts/Predictoor'
-import { getAssetPairPrice } from '@/utils/kraken'
+import { TGetAssetPairPriceArgs, getAssetPairPrice } from '@/utils/marketPrices'
 import { TPredictionContract } from '@/utils/subgraph'
+import { findContractMarketInConfig } from '@/utils/utils'
 import AmountInput from './AmountInput'
 import { TAssetData } from './AssetList'
 import Coin from './Coin'
@@ -59,7 +60,13 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     async ({ tokenName, pairName, contract }) =>
       Promise.all([
         getTokenData(tokenName as TCoinGeckoIdKeys),
-        getAssetPairPrice(`${tokenName}${pairName}`),
+        getAssetPairPrice({
+          assetPair: `${tokenName}${pairName}`,
+          exchange: findContractMarketInConfig(
+            tokenName,
+            pairName
+          ) as TGetAssetPairPriceArgs['exchange']
+        }),
         checkOrAddContract(contract)
       ]),
     [checkOrAddContract]
