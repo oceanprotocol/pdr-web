@@ -22,8 +22,6 @@ export const AssetsContainer: React.FC = () => {
     const contracts = await getAllInterestingPredictionContracts(
       currentConfig.subgraph
     )
-    console.log('contracts', contracts)
-    console.log('currentConfig', currentConfig)
     setContracts(contracts)
   }, [provider, wallet])
 
