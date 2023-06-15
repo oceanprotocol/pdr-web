@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { useOPFContext } from '@/contexts/OPFContext'
 import { currentConfig } from '@/utils/appconstants'
+import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
 import { updatePredictoorSubscriptions } from '../utils/predictoors'
-import { getAllInterestingPredictionContracts } from '../utils/subgraph'
 import { AssetList } from './AssetList'
 
 type TContractsState = Awaited<
