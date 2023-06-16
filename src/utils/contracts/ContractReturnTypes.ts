@@ -1,3 +1,5 @@
+import { ethers } from 'ethers'
+
 export type TCalcBaseInGivenOutDTResult = {
   baseTokenAmount: number
   oceanFeeAmount: number
@@ -22,4 +24,9 @@ export type TGetAggPredvalResult = {
   confidence: number
   dir: number
   stake: number
+}
+
+export type TGetSubscriptions = {
+  user: string
+  expires: ethers.BigNumber
 }

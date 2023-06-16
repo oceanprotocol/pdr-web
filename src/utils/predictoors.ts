@@ -40,9 +40,12 @@ async function consumePredictoorSubscription(
     const predictorContract = new Predictor(predictoorProps.address, provider)
 
     await predictorContract.init()
+
     const subscriptionValid = await predictorContract.isValidSubscription(
       user.address
     )
+
+    //await predictorContract.getSubscriptions(user.address)
     // console.log("subscriptionValid: ", subscriptionValid);
 
     if (!subscriptionValid) {
