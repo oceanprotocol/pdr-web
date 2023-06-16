@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { assetTableColumns } from '@/utils/appconstants'
-import { TPredictionContract } from '@/utils/subgraph'
+import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
 
 export type TAssetData = {

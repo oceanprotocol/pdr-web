@@ -4,8 +4,11 @@ import { currentConfig } from './appconstants'
 /* eslint-env mocha */
 /* global */
 
-export function getEventFromTx(txReceipt: any, eventName: string) {
-  return txReceipt.events.filter((log: any) => {
+export function getEventFromTx(
+  txReceipt: ethers.ContractReceipt,
+  eventName: string
+): ethers.Event | undefined {
+  return txReceipt.events?.filter((log: any) => {
     return log.event === eventName
   })[0]
 }
