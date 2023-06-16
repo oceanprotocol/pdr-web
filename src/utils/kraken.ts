@@ -18,16 +18,6 @@ export const getMessageSignature = (
   return hmac_digest
 }
 
-export const getAssetPairPrice = async (assetPair: string): Promise<string> => {
-  const response = await axios.get(
-    `https://api.kraken.com/0/public/Ticker?pair=${assetPair}`,
-    {
-      headers: {}
-    }
-  )
-  return response.data.result[assetPair].a[0]
-}
-
 export const getAssetBalance = async (
   apiKey: string | undefined,
   apiSecret: string | undefined
