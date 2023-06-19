@@ -40,29 +40,23 @@ class FixedRateExchange {
   ): Promise<ethers.ContractReceipt | Error> {
     try {
       // TODO - Fix gas estimation
+      const args = [
+        exchangeId,
+        ethers.utils.parseEther('1'),
+        baseTokenAmount,
+        ethers.constants.AddressZero,
+        0
+      ]
       const gasPrice = await this.provider.getGasPrice()
       const gasLimit = await this.instance
         .connect(user)
-        .estimateGas.buyDT(
-          exchangeId,
-          ethers.utils.parseEther('1'),
-          baseTokenAmount,
-          ethers.constants.AddressZero,
-          0
-        )
+        .estimateGas.buyDT(...args)
 
       //console.log('gasLimit', ethers.utils.formatEther(gasLimit.toString()))
 
       const tx = await this.instance
         .connect(user)
-        .buyDT(
-          exchangeId,
-          ethers.utils.parseEther('1'),
-          baseTokenAmount,
-          ethers.constants.AddressZero,
-          0,
-          { gasLimit: gasLimit, gasPrice: gasPrice }
-        )
+        .buyDT(...args, { gasLimit: gasLimit, gasPrice: gasPrice })
       const receipt = await tx.wait()
       // get gas fee from receipt
       return receipt

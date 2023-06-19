@@ -1,6 +1,6 @@
 import { ERC20Template3ABI } from '@/metadata/abis/ERC20Template3ABI'
 import { BigNumber, ethers } from 'ethers'
-import { stringToBytes32 } from '../utils'
+import { getEventFromTx, stringToBytes32 } from '../utils'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -84,18 +84,18 @@ class Predictoor {
         return Error('Assert token requirements.')
       }
 
-      //console.log('dtPrice: ', dtPrice)
-      //console.log(
-      //  'Buying 1.0 DT with price: ',
-      //  ethers.utils.formatEther(baseTokenAmount)
-      //)
+      console.log('dtPrice: ', dtPrice)
+      console.log(
+        'Buying 1.0 DT with price: ',
+        ethers.utils.formatEther(baseTokenAmount)
+      )
       await this.token.approve(
         user,
         this.FRE?.address || '',
         ethers.utils.formatEther(baseTokenAmount),
         this.provider
       )
-      //console.log('>>>> Buy DT Now...! <<<<')
+      console.log('>>>> Buy DT Now...! <<<<')
       const result = await this.FRE?.buyDt(
         user,
         this.exchangeId?.toString(),
@@ -105,59 +105,56 @@ class Predictoor {
       console.log('>>>> Bought DT! <<<<', result)
       const providerFees = this.getEmptyProviderFee()
 
-      // TODO - FIX ESTIMATE GAS
-      // console.log("call Estimate Gas...");
-      // const gasLimit: BigNumber|undefined = await this.instance?.estimateGas.startOrder(
-      //     user,
-      //     0,
-      //     [
-      //         ZERO_ADDRESS,
-      //         ZERO_ADDRESS,
-      //         0,
-      //         0,
-      //         stringToBytes32(''),
-      //         stringToBytes32(''),
-      //         providerFees.validUntil,
-      //         ethers.constants.HashZero
-      //     ],
-      //     [
-      //         ZERO_ADDRESS,
-      //         ZERO_ADDRESS,
-      //         0
-      //     ],
-      //     { gasPrice }
-      // );
+      console.log('>>> startOrder')
+      const tx = await this.startTheSubscriptionOrder(user, providerFees)
 
-      //console.log('>>> startOrder')
-      const tx = await this.instance
-        ?.connect(user)
-        .startOrder(
-          user.address,
-          0,
-          [
-            ethers.constants.AddressZero,
-            ethers.constants.AddressZero,
-            0,
-            0,
-            stringToBytes32(''),
-            stringToBytes32(''),
-            providerFees.validUntil,
-            ethers.constants.HashZero
-          ],
-          [ethers.constants.AddressZero, ethers.constants.AddressZero, 0]
-        )
-
-      //console.log('Subscription tx:', tx.hash)
+      console.log('Subscription tx:', tx.hash)
       const receipt = await tx.wait()
-      //console.log('Receipt receipt: ', receipt)
-      //let event = getEventFromTx(receipt, 'OrderStarted')
-      //console.log('event: ', event)
+      console.log('startTheSubscriptionOrder receipt: ', receipt)
+      //console.log('receipt.gasUsed: ', receipt.gasUsed.toString())
+      let event = getEventFromTx(receipt, 'OrderStarted')
+      console.log('event: ', event)
 
       return receipt
     } catch (e: any) {
       console.error(e)
       return null
     }
+  }
+
+  async startTheSubscriptionOrder(
+    user: ethers.Wallet,
+    providerFees: TProviderFee
+  ): Promise<ethers.ContractTransaction> {
+    const args = [
+      user.address,
+      0,
+      [
+        ethers.constants.AddressZero,
+        ethers.constants.AddressZero,
+        0,
+        0,
+        stringToBytes32(''),
+        stringToBytes32(''),
+        providerFees.validUntil,
+        ethers.constants.HashZero
+      ],
+      [ethers.constants.AddressZero, ethers.constants.AddressZero, 0]
+    ]
+    const gasLimit = await this.instance
+      ?.connect(user)
+      .estimateGas.startOrder(...args)
+
+    console.log('startTheSubscriptionOrder gasLimit: ', gasLimit?.toString())
+    const gasPrice = this.provider.getGasPrice()
+
+    return this.instance
+      ?.connect(user)
+      .startOrder(...args, { gasLimit: gasLimit, gasPrice: gasPrice })
+  }
+
+  startOrder(): Promise<ethers.ContractReceipt> {
+    return this.instance?.startOrder()
   }
 
   getExchanges(): Promise<[string, BigNumber][]> {

@@ -47,8 +47,8 @@ async function consumePredictoorSubscription(
 
     //await predictorContract.getSubscriptions(user.address)
     // console.log("subscriptionValid: ", subscriptionValid);
-
-    if (!subscriptionValid) {
+    // !subscriptionValid
+    if (true) {
       const receipt = await predictorContract.buyAndStartSubscription(user)
 
       return {
