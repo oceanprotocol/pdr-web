@@ -32,17 +32,21 @@ class Token {
   ): Promise<ethers.providers.TransactionReceipt | null> {
     try {
       // TODO - Gas estimation
-      // const gasPrice: BigNumber = await this.provider.getGasPrice();
-      // const gasLimit: BigNumber = await this.contractInstance.estimateGas.approve(
-      //   spender,
-      //   ethers.utils.parseEther(amount)
-      // );
+      const gasPrice = await this.provider.getGasPrice()
+      const gasLimit = await this.contractInstance
+        .connect(user)
+        .estimateGas.approve(spender, ethers.utils.parseEther(amount))
 
-      const tx = await this.contractInstance.connect(user).approve(
-        spender,
-        ethers.utils.parseEther(amount)
-        // {gasLimit: gasLimit, gasPrice: gasPrice}
+      console.log(
+        'approve gasLimit',
+        ethers.utils.formatEther(gasLimit.toString())
       )
+      const tx = await this.contractInstance
+        .connect(user)
+        .approve(spender, ethers.utils.parseEther(amount), {
+          gasLimit: gasLimit,
+          gasPrice: gasPrice
+        })
       console.log(`Approval tx: ${tx.hash}.`)
 
       const receipt = await tx.wait()
