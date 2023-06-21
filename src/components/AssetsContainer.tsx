@@ -1,29 +1,25 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { useOPFContext } from '@/contexts/OPFContext'
-import { currentConfig } from '@/utils/appconstants'
-import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { getActiveContracts } from '@/services/getActiveContracts'
+import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
-import { updatePredictoorSubscriptions } from '../utils/predictoors'
 import { AssetList } from './AssetList'
 
-type TContractsState = Awaited<
-  ReturnType<typeof getAllInterestingPredictionContracts>
->
+type TContractsState = Array<TPredictionContract> | undefined
 
 export const AssetsContainer: React.FC = () => {
   const [contracts, setContracts] = useState<TContractsState>()
   // TODO - Setup WSS/TWAP web3 databinding based on price feed
-  const { provider, wallet } = useOPFContext()
 
   const initTable = useCallback(async () => {
-    await updatePredictoorSubscriptions(currentConfig, wallet, provider)
+    getActiveContracts()
+      .then((contracts) => {
+        if (contracts instanceof Error) return console.error(contracts)
 
-    const contracts = await getAllInterestingPredictionContracts(
-      currentConfig.subgraph
-    )
-    setContracts(contracts)
-  }, [provider, wallet])
+        setContracts(contracts)
+      })
+      .catch(console.error)
+  }, [])
 
   useEffect(() => {
     initTable()

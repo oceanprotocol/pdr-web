@@ -1,6 +1,8 @@
+import { ethers } from 'ethers'
 import React from 'react'
 import { HeaderNextElement } from '../elements/HeaderNextElement'
 import config from '../metadata/config.json'
+import { networkProvider } from './networkProvider'
 
 export const currentConfig = process.env.NEXT_PUBLIC_ENV
   ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
@@ -40,3 +42,12 @@ export const assetTableColumns = [
     accessor: 'history'
   }
 ]
+
+export const predictoorPK = process.env.NEXT_PUBLIC_PREDICTOOR_PK || ''
+
+export const predictoorWallet = new ethers.Wallet(
+  predictoorPK,
+  networkProvider.getProvider()
+)
+
+export const overlapBlockCount = 100

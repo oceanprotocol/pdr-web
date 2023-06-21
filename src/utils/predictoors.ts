@@ -1,161 +1,176 @@
 import Predictor from '@/utils/contracts/Predictoor'
 import { ethers } from 'ethers'
-import moment from 'moment'
-import { getAllInterestingPredictionContracts } from './subgraphs/getAllInterestingPredictionContracts'
+import { filterOutUnwantedTypes } from './clearUnwantedTypes'
+import { TGetSubscriptions } from './contracts/ContractReturnTypes'
+import {
+  TPredictionContract,
+  getAllInterestingPredictionContracts
+} from './subgraphs/getAllInterestingPredictionContracts'
 import { getFilteredOrders } from './subgraphs/getFilteredOrders'
+import { TGetFilteredOrdersQueryResult } from './subgraphs/queries/getFilteredOrdersQuery'
+import { Maybe } from './typeHelpers'
 
-const scheduleOverlapInMillis = 5 * 60 * 1000
+const overlapBlockCount = 100
 
-function canStartOrder(lastOrderTimestamp: number, deltaTime: number): boolean {
-  if (lastOrderTimestamp === null) {
-    return true
-  }
-
-  const currentTime = Date.now()
-  return currentTime - lastOrderTimestamp >= deltaTime
+export type TSubscriptionStartedResult = {
+  status: 'bought' | 'exists'
+  tx: Maybe<string>
+  predictionContract: TPredictionContract
+  expires: Maybe<number>
 }
 
-interface OrderStartedEvent {
-  datatoken: string
-  consumer: string
-  payer: string
-  amount: number
-  serviceIndex: number
-  timestamp: number
-  publishMarketAddress: string
-  blockNumber: number
+export type TConsumedSubscription = Omit<TSubscriptionStartedResult, 'tx'> & {
+  tx: null
+  orders: Maybe<TGetFilteredOrdersQueryResult['orders']>
 }
 
-// TODO - Harden this function.
-// TODO - Split it into smaller parts.
-// TODO - Add more tests around possible (dependency: queries subgraph)
-async function consumePredictoorSubscription(
+const consumePredictoorSubscription = async (
   chainConfig: any,
-  predictoorProps: any,
+  predictoorProps: TPredictionContract,
   user: ethers.Wallet,
   provider: ethers.providers.JsonRpcProvider
-): Promise<OrderStartedEvent | Error | null | object> {
+): Promise<TConsumedSubscription | TSubscriptionStartedResult | null> => {
   try {
     // console.log("init PredictoorContract: ", predictoorProps, provider );
     const predictorContract = new Predictor(predictoorProps.address, provider)
 
     await predictorContract.init()
 
-    const subscriptionValid = await predictorContract.isValidSubscription(
-      user.address
-    )
+    //console.log('predictorContract', predictorContract)
 
-    //await predictorContract.getSubscriptions(user.address)
-    // console.log("subscriptionValid: ", subscriptionValid);
+    const [subscription, blockNumber, isValidSubscription] =
+      await getSubscriptionDetails(predictorContract, user.address, provider)
 
-    if (!subscriptionValid) {
+    const expireBlock = parseInt(subscription.expires.toString())
+
+    //console.log('!isValidSubscription', !isValidSubscription)
+    if (
+      !isValidSubscription ||
+      expireBlock <= blockNumber - overlapBlockCount
+    ) {
       const receipt = await predictorContract.buyAndStartSubscription(user)
 
+      let expires = null
+      if (receipt) {
+        await predictorContract.getSubscriptions(user.address)
+        expires = parseInt(subscription.expires.toString())
+      }
+
       return {
-        tx: receipt instanceof Error ? '' : receipt?.transactionHash,
-        lastOrderTimestamp: moment.now()
+        tx: receipt instanceof Error ? null : receipt?.transactionHash ?? null,
+        predictionContract: predictoorProps,
+        expires: expires || null
       }
     }
 
-    // console.log("chainConfig: ", chainConfig.subgraph);
-    // console.log("predictoorProps: ", predictoorProps);
-    // console.log("user: ", user.address);
     const orders = (
       await getFilteredOrders(predictoorProps.address, user.address)
     )?.data?.orders
 
-    // console.log('---orders: ', orders)
-
-    // Find the latest order from the user
-    const latestOrder: any = orders?.find(
-      (order: any) =>
-        ethers.utils.getAddress(order.consumer.id) === user.address
-    )
-    const lastOrderTimestamp: any = latestOrder
-      ? moment.unix(latestOrder.createdTimestamp)
-      : null
-
-    // console.log("latestOrder: ", latestOrder);
-    // console.log("lastOrderTimestamp: ", lastOrderTimestamp);
-
-    // Calculate next consume based on predictoorProps.subscription_lifetime_hours
-    const deltaTimeInMillis =
-      predictoorProps.blocksPerSubscription * 60 * 60 * 1000
-    // console.log("blockPerSubscription: ", predictoorProps.blocksPerSubscription);
-    // console.log("deltaTimeInMillis: ", deltaTimeInMillis);
-
-    const canStartAnotherOrder: boolean = canStartOrder(
-      lastOrderTimestamp,
-      deltaTimeInMillis
-    )
-    // console.log("canStartAnotherOrder: ", canStartAnotherOrder);
-
-    if (canStartAnotherOrder) {
-      // Calculate the time remaining until the next order can be placed with the overlap
-      const nextOrderTimestamp = moment(lastOrderTimestamp)
-        .add(deltaTimeInMillis, 'milliseconds')
-        .subtract(scheduleOverlapInMillis, 'milliseconds')
-      const timeRemainingInMillis = nextOrderTimestamp.diff(
-        moment(),
-        'milliseconds'
-      )
-
-      if (timeRemainingInMillis <= 0) {
-        // console.log("buyAndStartSubscrption: ", user);
-        const receipt = await predictorContract.buyAndStartSubscription(user)
-
-        return {
-          tx: receipt instanceof Error ? '' : receipt?.transactionHash,
-          orders: orders,
-          latestOrder: latestOrder,
-          lastOrderTimestamp: moment.now(),
-          nextOrderTimestamp: nextOrderTimestamp,
-          canStartAnotherOrder: canStartAnotherOrder,
-          timeRemainingInHours: timeRemainingInMillis / (60 * 60 * 1000),
-          timeRemainingInDays: timeRemainingInMillis / deltaTimeInMillis
-        }
-      }
-    } else {
-      return {
-        orders: orders,
-        latestOrder: latestOrder,
-        lastOrderTimestamp: lastOrderTimestamp,
-        canStartAnotherOrder: canStartAnotherOrder,
-        timeRemainingInHours: null,
-        timeRemainingInDays: null
-      }
+    return {
+      tx: null,
+      orders: orders || null,
+      predictionContract: predictoorProps,
+      expires: expireBlock
     }
   } catch (error) {
     console.error('Error fetching data:', error)
   }
-
   return null
+}
+
+const checkAndBuySubscription = async (
+  predictoorProps: TPredictionContract,
+  user: ethers.Wallet,
+  provider: ethers.providers.JsonRpcProvider
+): Promise<TSubscriptionStartedResult | null> => {
+  try {
+    const predictorContract = new Predictor(predictoorProps.address, provider)
+    await predictorContract.init()
+
+    const [subscription, blockNumber, isValidSubscription] =
+      await getSubscriptionDetails(predictorContract, user.address, provider)
+
+    const expireBlock = parseInt(subscription.expires.toString())
+
+    if (
+      !isValidSubscription ||
+      expireBlock <= blockNumber - overlapBlockCount
+    ) {
+      const receipt = await predictorContract.buyAndStartSubscription(user)
+
+      let expires = null
+      if (receipt) {
+        await predictorContract.getSubscriptions(user.address)
+        expires = parseInt(subscription.expires.toString())
+      }
+
+      return {
+        status: 'bought',
+        tx: receipt instanceof Error ? null : receipt?.transactionHash ?? null,
+        predictionContract: predictoorProps,
+        expires: expires || null
+      }
+    }
+
+    return {
+      status: 'exists',
+      tx: null,
+      predictionContract: predictoorProps,
+      expires: expireBlock
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+  return null
+}
+
+const consumeCurrentPredictoorSubscription = async (
+  predictoorProps: TPredictionContract,
+  user: ethers.Wallet,
+  provider: ethers.providers.JsonRpcProvider
+): Promise<TConsumedSubscription | null> => {
+  try {
+    const predictorContract = new Predictor(predictoorProps.address, provider)
+    await predictorContract.init()
+
+    const [subscription, blockNumber, isValidSubscription] =
+      await getSubscriptionDetails(predictorContract, user.address, provider)
+
+    const expireBlock = parseInt(subscription.expires.toString())
+
+
+const getSubscriptionDetails = (
+  predictorContract: Predictor,
+  userAddress: string,
+  provider: ethers.providers.JsonRpcProvider
+): Promise<[TGetSubscriptions, number, boolean]> => {
+  return Promise.all([
+    predictorContract.getSubscriptions(userAddress),
+    provider.getBlockNumber(),
+    predictorContract.isValidSubscription(userAddress)
+  ])
 }
 
 async function updatePredictoorSubscriptions(
   config: any,
   user: ethers.Wallet,
   provider: ethers.providers.JsonRpcProvider
-): Promise<OrderStartedEvent | Error | null | object> {
+): Promise<Maybe<Array<TSubscriptionStartedResult | TConsumedSubscription>>> {
   try {
     // retrieve all contract details from subgraph
-    const predictoorContract: Record<string, any> =
-      await getAllInterestingPredictionContracts(config.subgraph)
+    const predictoorContract = await getAllInterestingPredictionContracts(
+      config.subgraph
+    )
 
     // iterate through all deployed predictoors and buy a subscription
-    let results = []
-    for (const predictoorProps of Object.values(predictoorContract)) {
-      const result = await consumePredictoorSubscription(
-        config,
-        predictoorProps,
-        user,
-        provider
+    return filterOutUnwantedTypes(
+      await Promise.all(
+        Object.values(predictoorContract).map((predictoorProps) =>
+          consumePredictoorSubscription(config, predictoorProps, user, provider)
+        )
       )
-
-      if (result) {
-        results.push(result)
-      }
-    }
+    )
   } catch (error) {
     console.error('Error fetching data:', error)
   }
@@ -163,4 +178,4 @@ async function updatePredictoorSubscriptions(
   return null
 }
 
-export { consumePredictoorSubscription, updatePredictoorSubscriptions }
+export { consumePredictoorSubscription, updatePredictoorSubscriptions, checkAndBuySubscription }
