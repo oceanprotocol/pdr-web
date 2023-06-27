@@ -20,6 +20,8 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   tokenName,
   pairName
 }) => {
+  console.log('status', status)
+
   const { epochData } = useSocketContext()
   const relatedData = epochData?.find(
     (data) => data.contractInfo.name === `${tokenName}-${pairName}`
