@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { useOPFContext } from '@/contexts/OPFContext'
+import { useSocketContext } from '@/contexts/SocketContext'
 import { currentConfig } from '@/utils/appconstants'
+import { getInitialData } from '@/utils/getInitialData'
 import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
-import { updatePredictoorSubscriptions } from '../utils/predictoors'
 import { AssetList } from './AssetList'
 
 type TContractsState = Awaited<
@@ -13,21 +13,22 @@ type TContractsState = Awaited<
 
 export const AssetsContainer: React.FC = () => {
   const [contracts, setContracts] = useState<TContractsState>()
-  // TODO - Setup WSS/TWAP web3 databinding based on price feed
-  const { provider, wallet } = useOPFContext()
-
-  const initTable = useCallback(async () => {
-    await updatePredictoorSubscriptions(currentConfig, wallet, provider)
-
-    const contracts = await getAllInterestingPredictionContracts(
-      currentConfig.subgraph
-    )
-    setContracts(contracts)
-  }, [provider, wallet])
+  const { setInitialData } = useSocketContext()
 
   useEffect(() => {
-    initTable()
-  }, [initTable])
+    getAllInterestingPredictionContracts(currentConfig.subgraph).then(
+      (contracts) => {
+        setContracts(contracts)
+      }
+    )
+  }, [])
+
+  useEffect(() => {
+    if (!setInitialData) return
+    getInitialData().then((data) => {
+      setInitialData(data)
+    })
+  }, [setInitialData])
 
   return (
     <div className={styles.container}>

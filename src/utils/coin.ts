@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { ECoinGeckoIdList } from './appconstants'
 
 export interface TokenData {
@@ -7,23 +6,23 @@ export interface TokenData {
   image: string
   price: number
 }
-
 export const getTokenData = async (
   network: keyof typeof ECoinGeckoIdList
 ): Promise<TokenData> => {
-  const response = await axios.get(
-    `https://api.coingecko.com/api/v3/coins/${ECoinGeckoIdList[network]}`,
-    {
-      params: {},
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      }
-    }
+  const response = await fetch(
+    `https://api.coingecko.com/api/v3/coins/${ECoinGeckoIdList[network]}`
   )
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok')
+  }
+
+  const data = await response.json()
+
   return {
-    symbol: response.data.symbol,
-    name: response.data.name,
-    image: response.data.image.thumb,
-    price: response.data.market_data.current_price.usd
+    symbol: data.symbol,
+    name: data.name,
+    image: data.image.thumb,
+    price: data.market_data.current_price.usd
   }
 }

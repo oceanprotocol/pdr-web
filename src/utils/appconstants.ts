@@ -1,6 +1,6 @@
 import React from 'react'
 import { HeaderNextElement } from '../elements/HeaderNextElement'
-import config from '../metadata/config.json'
+import { config } from './config'
 
 export const currentConfig = process.env.NEXT_PUBLIC_ENV
   ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
@@ -22,10 +22,6 @@ export const assetTableColumns = [
   {
     Header: 'Price',
     accessor: 'price'
-  },
-  {
-    Header: 'Amount',
-    accessor: 'amount'
   },
   {
     Header: React.createElement(HeaderNextElement),
