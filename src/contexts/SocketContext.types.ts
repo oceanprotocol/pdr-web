@@ -22,7 +22,6 @@ export type TSocketFeedItem = {
     dir: number
     stake: number
     epoch: number
-    contractAddress: string
   }>
   contractInfo: TSocketContractInfo
 }

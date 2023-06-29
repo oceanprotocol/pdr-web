@@ -1,24 +1,8 @@
-import {
-  TSocketContractInfo,
-  TSocketFeedItem
-} from '@/contexts/SocketContext.types'
+import { TSocketFeedData } from '@/contexts/SocketContext.types'
 import { pdrwebInitialData } from './endpoints/pdrwebEndpoints'
+import { Maybe } from './utils'
 
-export type TInitialDataItem = {
-  contractInfo: TSocketContractInfo
-  blockNumber: number
-  isValid: boolean
-  aggPredVal: Pick<
-    TSocketFeedItem,
-    'nom' | 'denom' | 'confidence' | 'dir' | 'stake'
-  >
-}
-
-export type TInitialData = {
-  results: Array<TInitialDataItem>
-}
-
-export const getInitialData = async (): Promise<TInitialData> => {
+export const getInitialData = async (): Promise<Maybe<TSocketFeedData>> => {
   return fetch(pdrwebInitialData())
     .then((response) => response.json())
     .then((response) => {

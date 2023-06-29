@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
 import { currentConfig } from '@/utils/appconstants'
+import { getInitialData } from '@/utils/getInitialData'
 import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
 import { AssetList } from './AssetList'
@@ -24,9 +25,9 @@ export const AssetsContainer: React.FC = () => {
 
   useEffect(() => {
     if (!setInitialData) return
-    //getInitialData().then((data) => {
-    //  setInitialData(data)
-    //})
+    getInitialData().then((data) => {
+      setInitialData(data)
+    })
   }, [setInitialData])
 
   return (

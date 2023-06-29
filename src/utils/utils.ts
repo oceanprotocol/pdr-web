@@ -12,3 +12,5 @@ export const findContractMarketInConfig = (
       tokenPrediction.tokenName === tokenName &&
       tokenPrediction.pairName === pairName
   )?.exchange
+
+export type Maybe<T> = T | null

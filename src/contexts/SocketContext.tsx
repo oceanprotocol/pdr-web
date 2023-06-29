@@ -1,4 +1,4 @@
-import { TInitialData } from '@/utils/getInitialData'
+import { Maybe } from '@/utils/utils'
 import React, {
   createContext,
   useCallback,
@@ -35,6 +35,12 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
 
   const isFirstDataEnter = useRef<boolean>(false)
 
+  const setInitialData = useCallback((data: Maybe<TSocketFeedData>) => {
+    if (isFirstDataEnter.current || !data) return
+    // transform TInitialData to TSocketFeedData
+    setEpochData(data)
+  }, [])
+
   useEffect(() => {
     const newSocket = io('http://localhost:8888', {
       path: '/api/datafeed',
@@ -43,7 +49,8 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
 
     setSocket(newSocket)
 
-    newSocket.on('newEpoch', (data: TSocketFeedData) => {
+    newSocket.on('newEpoch', (data: Maybe<TSocketFeedData>) => {
+      if (!data) return
       if (!isFirstDataEnter.current) {
         isFirstDataEnter.current = true
       }
@@ -53,16 +60,6 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
     return () => {
       newSocket.close()
     }
-  }, [])
-
-  const setInitialData = useCallback((data: TInitialData | undefined) => {
-    if (isFirstDataEnter.current || !data) return
-    // transform TInitialData to TSocketFeedData
-    const transformedData: TSocketFeedData = data.results.map((item) => ({
-      ...item.aggPredVal,
-      contractInfo: item.contractInfo
-    }))
-    setEpochData(transformedData)
   }, [])
 
   return (

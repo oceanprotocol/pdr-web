@@ -1,6 +1,7 @@
 import { TokenData, getTokenData } from '@/utils/coin'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
@@ -11,7 +12,7 @@ import Coin from './Coin'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 
 export type TAssetFetchedInfo = {
-  tokenData: TokenData
+  tokenData: TokenData | undefined
   price: string
 }
 
@@ -24,10 +25,26 @@ export type TAssetRowState = {
 }
 
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
+  const { epochData } = useSocketContext()
+
   const { tokenName, pairName } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
+
+  const getAssetPairPriceForRow = useCallback<
+    (args: { tokenName: string; pairName: string }) => Promise<string>
+  >(
+    ({ tokenName, pairName }) =>
+      getAssetPairPrice({
+        assetPair: `${tokenName}${pairName}`,
+        exchange: findContractMarketInConfig(
+          tokenName,
+          pairName
+        ) as TGetAssetPairPriceArgs['exchange']
+      }),
+    []
+  )
 
   const getRemoteData = useCallback<
     (args: {
@@ -38,13 +55,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     async ({ tokenName, pairName }) =>
       Promise.all([
         getTokenData(tokenName as TCoinGeckoIdKeys),
-        getAssetPairPrice({
-          assetPair: `${tokenName}${pairName}`,
-          exchange: findContractMarketInConfig(
-            tokenName,
-            pairName
-          ) as TGetAssetPairPriceArgs['exchange']
-        })
+        getAssetPairPriceForRow({ tokenName, pairName })
       ]),
     []
   )
@@ -57,19 +68,38 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     setFetchedInfo({ tokenData, price })
   }, [tokenName, pairName, getRemoteData])
 
+  const renewPrice = useCallback<() => Promise<void>>(async () => {
+    const price = await getAssetPairPriceForRow({
+      tokenName,
+      pairName
+    })
+    if (price)
+      setFetchedInfo((prev) => ({ ...(prev as TAssetFetchedInfo), price }))
+  }, [tokenName, pairName, getAssetPairPriceForRow])
+
   useEffect(() => {
     loadData()
   }, [loadData])
 
+  useEffect(() => {
+    const priceInterval = setInterval(() => {
+      renewPrice()
+    }, 10000)
+
+    return () => {
+      clearInterval(priceInterval)
+    }
+  }, [epochData, renewPrice])
+
   const slotProps = useMemo(
     () =>
-      fetchedInfo
+      tokenName && pairName
         ? {
             tokenName,
             pairName
           }
         : null,
-    [fetchedInfo, tokenName, pairName]
+    [tokenName, pairName]
   )
 
   if (!fetchedInfo || !slotProps) return null
