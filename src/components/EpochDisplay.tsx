@@ -4,6 +4,7 @@ import styles from '../styles/Slot.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
 
+//TODO: Fix Eslint
 export enum EEpochDisplayStatus {
   'NextPrediction' = 'next',
   'LivePrediction' = 'live',

@@ -1,4 +1,4 @@
-import { TInitialData } from '@/utils/getInitialData'
+import { Maybe } from '@/utils/utils'
 import { Socket } from 'socket.io-client'
 
 export type TSocketProviderProps = {
@@ -31,5 +31,5 @@ export type TSocketFeedData = Array<TSocketFeedItem>
 export type TSocketContext = {
   epochData: TSocketFeedData | null
   socket: Socket | null
-  setInitialData: (data: TInitialData) => void
+  setInitialData: (data: Maybe<TSocketFeedData>) => void
 }
