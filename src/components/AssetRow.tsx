@@ -88,7 +88,11 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
       />
       <EpochDisplay
-        status={EEpochDisplayStatus.NextPrediction}
+        status={EEpochDisplayStatus.LivePrediction}
+        {...slotProps}
+      />
+      <EpochDisplay
+        status={EEpochDisplayStatus.HistoricalPrediction}
         {...slotProps}
       />
     </TableRowWrapper>

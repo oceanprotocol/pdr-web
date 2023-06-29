@@ -1,4 +1,5 @@
 import { useSocketContext } from '@/contexts/SocketContext'
+import { useMemo } from 'react'
 import styles from '../styles/Slot.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
@@ -20,12 +21,22 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   tokenName,
   pairName
 }) => {
-  console.log('status', status)
-
   const { epochData } = useSocketContext()
-  const relatedData = epochData?.find(
-    (data) => data.contractInfo.name === `${tokenName}-${pairName}`
-  )
+
+  const relatedPredictionIndex = useMemo(() => {
+    switch (status) {
+      case EEpochDisplayStatus.NextPrediction:
+        return 2
+      case EEpochDisplayStatus.LivePrediction:
+        return 1
+      default:
+        return 0
+    }
+  }, [status])
+
+  const relatedData = epochData
+    ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
+    ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
 
   if (!epochData || !relatedData) return null
 

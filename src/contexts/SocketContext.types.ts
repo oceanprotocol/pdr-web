@@ -15,11 +15,15 @@ export type TSocketContractInfo = {
 }
 
 export type TSocketFeedItem = {
-  nom: string
-  denom: string
-  confidence: number
-  dir: number
-  stake: number
+  predictions: Array<{
+    nom: string
+    denom: string
+    confidence: number
+    dir: number
+    stake: number
+    epoch: number
+    contractAddress: string
+  }>
   contractInfo: TSocketContractInfo
 }
 
