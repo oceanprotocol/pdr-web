@@ -1,5 +1,6 @@
 export const config = {
   staging: {
+    chainId: '23295',
     subgraph:
       'https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -11,6 +12,7 @@ export const config = {
     ]
   },
   production: {
+    chainId: '23295',
     subgraph:
       'https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -22,6 +24,7 @@ export const config = {
     ]
   },
   barge: {
+    chainId: '8996',
     subgraph:
       'http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -33,6 +36,7 @@ export const config = {
     ]
   },
   mock: {
+    chainId: '23295',
     subgraph:
       'http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
