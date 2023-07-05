@@ -1,25 +1,9 @@
 import { SocketProvider } from '@/contexts/SocketContext'
-import { ganache, oasis } from '@/metadata/networksConfig'
 import '@/styles/globals.css'
-import { EthereumClient, w3mConnectors } from '@web3modal/ethereum'
+import { ethereumClient, w3mProjectId, wagmiConfig } from '@/utils/web3Clients'
 import { Web3Modal } from '@web3modal/react'
 import type { AppProps } from 'next/app'
-import { WagmiConfig, configureChains, createConfig } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [oasis, ganache],
-  [publicProvider()]
-)
-
-const projectId = 'YOUR_PROJECT_ID'
-
-const wagmiConfig = createConfig({
-  webSocketPublicClient,
-  connectors: w3mConnectors({ projectId, chains }),
-  publicClient
-})
-const ethereumClient = new EthereumClient(wagmiConfig, chains)
+import { WagmiConfig } from 'wagmi'
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -29,7 +13,7 @@ function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </SocketProvider>
       </WagmiConfig>
-      <Web3Modal projectId={''} ethereumClient={ethereumClient} />
+      <Web3Modal projectId={w3mProjectId} ethereumClient={ethereumClient} />
     </>
   )
 }
