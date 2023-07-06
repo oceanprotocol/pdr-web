@@ -42,7 +42,9 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   }, [])
 
   useEffect(() => {
-    const newSocket = io('http://localhost:8888', {
+    const socketUrl = process.env.SOCKET_IO_URL || ''
+    console.log('socketUrl', socketUrl)
+    const newSocket = io(socketUrl, {
       path: '/api/datafeed',
       transports: ['websocket']
     })

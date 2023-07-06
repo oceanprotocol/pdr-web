@@ -69,6 +69,7 @@ You might need to setup your .env file, especially in Barge such as by using the
 ```
 NEXT_PUBLIC_ENV = barge
 NEXT_PUBLIC_SOCKET_IO_URL = http://localhost:8888
+NEXT_PUBLIC_WC2_PROJECT_ID =
 ```
 
 #### Run the App
