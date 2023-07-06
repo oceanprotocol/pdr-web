@@ -7,23 +7,26 @@ import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import Button from '../elements/Button'
 
 export default function Wallet() {
+  // States
   const [loading, setLoading] = useState<boolean>(true)
   const [networkName, setNetworkName] = useState<string | undefined>(undefined)
   const [buttonText, setButtonText] = useState<string>('Connect Wallet')
 
+  // Custom Hooks
   const { chain } = useNetwork()
   const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
   const { open } = useWeb3Modal()
   const { address, isConnected } = useAccount()
-
   const { chainId } = currentConfig
 
+  // Function to save network name
   const saveNetworkName = async () => {
     if (!chainId) return
     const name = networkProvider.getNetworkName(parseInt(chainId))
     setNetworkName(name)
   }
 
+  // useEffect to save network name and set loading state
   useEffect(() => {
     if (chain) {
       saveNetworkName()
@@ -31,6 +34,7 @@ export default function Wallet() {
     }
   }, [chain])
 
+  // useEffect to set button text based on address and connection status
   useEffect(() => {
     if (!isConnected || !address) {
       setButtonText('Connect Wallet')
