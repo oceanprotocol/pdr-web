@@ -2,7 +2,7 @@ import styles from '@/styles/Wallet.module.css'
 import { currentConfig } from '@/utils/appconstants'
 import { networkProvider } from '@/utils/networkProvider'
 import { useWeb3Modal } from '@web3modal/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import Button from '../elements/Button'
 
@@ -20,19 +20,25 @@ export default function Wallet() {
   const { chainId } = currentConfig
 
   // Function to save network name
-  const saveNetworkName = async () => {
-    if (!chainId) return
-    const name = networkProvider.getNetworkName(parseInt(chainId))
-    setNetworkName(name)
-  }
+  const saveNetworkName = useCallback<
+    (
+      chain: NonNullable<ReturnType<typeof useNetwork>['chain']>
+    ) => Promise<void>
+  >(
+    async (chain) => {
+      const name = networkProvider.getNetworkName(parseInt(chainId))
+      setNetworkName(name)
+    },
+    [chainId]
+  )
 
   // useEffect to save network name and set loading state
   useEffect(() => {
     if (chain) {
-      saveNetworkName()
+      saveNetworkName(chain)
       setLoading(false)
     }
-  }, [chain])
+  }, [chain, saveNetworkName])
 
   // useEffect to set button text based on address and connection status
   useEffect(() => {
