@@ -24,13 +24,10 @@ export default function Wallet() {
     (
       chain: NonNullable<ReturnType<typeof useNetwork>['chain']>
     ) => Promise<void>
-  >(
-    async (chain) => {
-      const name = networkProvider.getNetworkName(parseInt(chainId))
-      setNetworkName(name)
-    },
-    [chainId]
-  )
+  >(async (chain) => {
+    const name = networkProvider.getNetworkName(chain.id)
+    setNetworkName(name)
+  }, [])
 
   // useEffect to save network name and set loading state
   useEffect(() => {
