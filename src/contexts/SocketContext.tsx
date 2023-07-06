@@ -42,7 +42,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   }, [])
 
   useEffect(() => {
-    const socketUrl = process.env.SOCKET_IO_URL || ''
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_IO_URL || ''
     console.log('socketUrl', socketUrl)
     const newSocket = io(socketUrl, {
       path: '/api/datafeed',

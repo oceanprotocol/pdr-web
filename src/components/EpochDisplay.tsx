@@ -35,6 +35,8 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     }
   }, [status])
 
+  console.log('epochData', epochData)
+
   const relatedData = epochData
     ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
     ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]

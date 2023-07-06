@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    GREETING: process.env.WC2_PROJECT_ID
+    GREETING: process.env.NEXT_PUBLIC_WC2_PROJECT_ID
   }
 }
 
