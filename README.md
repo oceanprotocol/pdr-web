@@ -3,13 +3,14 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Setup Barge Env
 
 #### Deploy Barge
+
 Use [this readme](https://github.com/oceanprotocol/pdr-trueval/blob/main/README_local_full_flow.md#full-barge) to setup your barge.
 You should now have:
+
 - Barge
 - Ganache
 - Subgraph
 - All pdr-dockers running: pdr-predictoor, pdr-trader, pdr-publisher, pdr-trueval
-
 
 <!-- #### Copy the address.json file into metadata
 // Use sed to update address.json rather than copying things manually
@@ -21,12 +22,15 @@ $ cp ~/.ocean/ocean-contracts/artifacts/address.json src/metadata/
 ``` -->
 
 #### Check if contracts are deployed
+
 Navigate to your local subgraph
+
 ```
 http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph/graphql
 ```
 
 Run this query to verify predictoor contracts are deployed
+
 ```
 {
     predictContracts(first: 100) {
@@ -49,6 +53,7 @@ Run this query to verify predictoor contracts are deployed
 ```
 
 #### Update ABIs from Barge if needed
+
 During the development phase, you may need to update the project ABIs by running the following commands in the console/root folder.
 
 ```
@@ -60,11 +65,12 @@ cat ~/.ocean/ocean-contracts/artifacts/contracts/interfaces/IERC20.sol/IERC20.js
 #### Configure .env file
 
 You might need to setup your .env file, especially in Barge such as by using the following PK and configuring it to run locally.
+
 ```
-NEXT_PUBLIC_PREDICTOOR_PK = 0xc594c6e5def4bab63ac29eed19a134c130388f74f019bc74b8f4389df2837a58
 NEXT_PUBLIC_ENV = barge
-NEXT_PUBLIC_ADMIN_PASSWORD = password
-``` 
+NEXT_PUBLIC_SOCKET_IO_URL = http://localhost:8888
+NEXT_PUBLIC_WC2_PROJECT_ID =
+```
 
 #### Run the App
 

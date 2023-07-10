@@ -1,9 +1,8 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
+import Header from '@/components/Header'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
-import Balance from '../components/Balance'
-import Header from '../components/Header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,7 +17,6 @@ export default function Home() {
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
-        <Balance />
         <AssetsContainer />
       </main>
     </>

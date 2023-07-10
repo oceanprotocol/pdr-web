@@ -1,24 +1,19 @@
 import { TokenData, getTokenData } from '@/utils/coin'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Slot, { SlotState } from './Slot'
 
-import { useContractsContext } from '@/contexts/ContractsContext'
-import { useOPFContext } from '@/contexts/OPFContext'
+import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
-import Predictoor from '@/utils/contracts/Predictoor'
 import { TGetAssetPairPriceArgs, getAssetPairPrice } from '@/utils/marketPrices'
-import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { findContractMarketInConfig } from '@/utils/utils'
-import AmountInput from './AmountInput'
 import { TAssetData } from './AssetList'
 import Coin from './Coin'
+import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 
 export type TAssetFetchedInfo = {
-  tokenData: TokenData
+  tokenData: TokenData | undefined
   price: string
-  predictoor: Predictoor
 }
 
 export type TAssetRowProps = {
@@ -30,71 +25,81 @@ export type TAssetRowState = {
 }
 
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
-  const { tokenName, pairName, contract } = assetData
-  const { data, addContract } = useContractsContext()
-  const { provider } = useOPFContext()
+  const { epochData } = useSocketContext()
+
+  const { tokenName, pairName } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
 
-  const checkOrAddContract = useCallback<
-    (contract: TPredictionContract) => Promise<Predictoor>
+  const getAssetPairPriceForRow = useCallback<
+    (args: { tokenName: string; pairName: string }) => Promise<string>
   >(
-    async (contract) => {
-      const predictor = data[contract.address]
-      if (!predictor) {
-        return await addContract(contract.address, provider, contract.address)
-      }
-      return predictor
-    },
-    [data, provider, addContract]
+    ({ tokenName, pairName }) =>
+      getAssetPairPrice({
+        assetPair: `${tokenName}${pairName}`,
+        exchange: findContractMarketInConfig(
+          tokenName,
+          pairName
+        ) as TGetAssetPairPriceArgs['exchange']
+      }),
+    []
   )
 
   const getRemoteData = useCallback<
     (args: {
       tokenName: string
       pairName: string
-      contract: TPredictionContract
-    }) => Promise<[TokenData, string, Predictoor]>
+    }) => Promise<[TokenData, string]>
   >(
-    async ({ tokenName, pairName, contract }) =>
+    async ({ tokenName, pairName }) =>
       Promise.all([
         getTokenData(tokenName as TCoinGeckoIdKeys),
-        getAssetPairPrice({
-          assetPair: `${tokenName}${pairName}`,
-          exchange: findContractMarketInConfig(
-            tokenName,
-            pairName
-          ) as TGetAssetPairPriceArgs['exchange']
-        }),
-        checkOrAddContract(contract)
+        getAssetPairPriceForRow({ tokenName, pairName })
       ]),
-    [checkOrAddContract]
+    []
   )
 
   const loadData = useCallback<() => Promise<void>>(async () => {
-    const [tokenData, price, predictoor] = await getRemoteData({
+    const [tokenData, price] = await getRemoteData({
       tokenName,
-      pairName,
-      contract
+      pairName
     })
-    setFetchedInfo({ tokenData, price, predictoor })
-  }, [tokenName, pairName, contract, getRemoteData])
+    setFetchedInfo({ tokenData, price })
+  }, [tokenName, pairName, getRemoteData])
+
+  const renewPrice = useCallback<() => Promise<void>>(async () => {
+    const price = await getAssetPairPriceForRow({
+      tokenName,
+      pairName
+    })
+    if (price)
+      setFetchedInfo((prev) => ({ ...(prev as TAssetFetchedInfo), price }))
+  }, [tokenName, pairName, getAssetPairPriceForRow])
 
   useEffect(() => {
     loadData()
   }, [loadData])
 
+  useEffect(() => {
+    const priceInterval = setInterval(() => {
+      renewPrice()
+    }, 10000)
+
+    return () => {
+      clearInterval(priceInterval)
+    }
+  }, [epochData, renewPrice])
+
   const slotProps = useMemo(
     () =>
-      fetchedInfo
+      tokenName && pairName
         ? {
-            predictoor: fetchedInfo?.predictoor,
             tokenName,
             pairName
           }
         : null,
-    [fetchedInfo, tokenName, pairName]
+    [tokenName, pairName]
   )
 
   if (!fetchedInfo || !slotProps) return null
@@ -108,12 +113,16 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     >
       <Coin coinData={fetchedInfo.tokenData} />
       <>{`$${parseFloat(fetchedInfo.price).toFixed(2)}`}</>
-      <AmountInput />
-      <Slot state={SlotState.NextPrediction} epochOffset={+1} {...slotProps} />
-      <Slot state={SlotState.NextPrediction} epochOffset={+1} {...slotProps} />
-      <Slot
-        state={SlotState.HistoricalPrediction}
-        epochOffset={-1}
+      <EpochDisplay
+        status={EEpochDisplayStatus.NextPrediction}
+        {...slotProps}
+      />
+      <EpochDisplay
+        status={EEpochDisplayStatus.LivePrediction}
+        {...slotProps}
+      />
+      <EpochDisplay
+        status={EEpochDisplayStatus.HistoricalPrediction}
         {...slotProps}
       />
     </TableRowWrapper>
