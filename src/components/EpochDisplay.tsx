@@ -1,6 +1,6 @@
 import { useSocketContext } from '@/contexts/SocketContext'
 import { useMemo } from 'react'
-import styles from '../styles/Slot.module.css'
+import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
 

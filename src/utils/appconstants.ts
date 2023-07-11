@@ -34,5 +34,9 @@ export const assetTableColumns = [
   {
     Header: 'History',
     accessor: 'history'
+  },
+  {
+    Header: 'Subscription',
+    accessor: 'subscription'
   }
 ]

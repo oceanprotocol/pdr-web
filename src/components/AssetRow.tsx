@@ -7,9 +7,10 @@ import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
 import { TGetAssetPairPriceArgs, getAssetPairPrice } from '@/utils/marketPrices'
 import { findContractMarketInConfig } from '@/utils/utils'
-import { TAssetData } from './AssetList'
+import { TAssetData } from './AssetTable'
 import Coin from './Coin'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
+import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -27,7 +28,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  const { tokenName, pairName } = assetData
+  const { tokenName, pairName, subscription } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
@@ -124,6 +125,16 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <EpochDisplay
         status={EEpochDisplayStatus.HistoricalPrediction}
         {...slotProps}
+      />
+      <Subscription
+        subscriptionData={{
+          price: 3,
+          status:
+            subscription == 'active'
+              ? SubscriptionStatus.ACTIVE
+              : SubscriptionStatus.INACTIVE,
+          assetDid: ''
+        }}
       />
     </TableRowWrapper>
   )

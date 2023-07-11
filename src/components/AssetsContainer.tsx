@@ -5,7 +5,7 @@ import { currentConfig } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
 import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
-import { AssetList } from './AssetList'
+import { AssetTable } from './AssetTable'
 
 type TContractsState = Awaited<
   ReturnType<typeof getAllInterestingPredictionContracts>
@@ -32,7 +32,7 @@ export const AssetsContainer: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {contracts ? <AssetList contracts={contracts} /> : <div>Loading</div>}
+      {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
     </div>
   )
 }
