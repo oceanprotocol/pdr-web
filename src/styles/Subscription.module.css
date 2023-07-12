@@ -5,10 +5,6 @@
   justify-content: center;
 }
 
-.price {
-  margin-bottom: calc(var(--spacer) / 10);
-}
-
 .status {
   color: green;
 }

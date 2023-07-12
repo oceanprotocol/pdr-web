@@ -18,8 +18,8 @@ export type TCoinGeckoIdKeys = keyof typeof ECoinGeckoIdList
 
 export const assetTableColumns = [
   {
-    Header: 'Coin',
-    accessor: 'coin'
+    Header: 'Asset',
+    accessor: 'asset'
   },
   {
     Header: 'Price',

@@ -7,7 +7,7 @@ export type TRuntimeConfig = Record<
     tokenPredictions: Array<{
       tokenName: string
       pairName: string
-      exchange: string
+      market: string
     }>
     freePredictions: string[]
   }
@@ -22,7 +22,7 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
     ],
     freePredictions: []
@@ -35,7 +35,7 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
     ],
     freePredictions: []
@@ -48,17 +48,17 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDT',
-        exchange: 'binance'
+        market: 'binance'
       },
       {
         tokenName: 'BTC',
         pairName: 'TUSD',
-        exchange: 'binance'
+        market: 'binance'
       },
       {
         tokenName: 'XRP',
         pairName: 'USDT',
-        exchange: 'kraken'
+        market: 'kraken'
       }
     ],
     freePredictions: ['0x54b5ebeed85f4178c6cb98dd185067991d058d55']
@@ -71,7 +71,7 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
     ],
     freePredictions: []

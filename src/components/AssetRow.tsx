@@ -10,8 +10,8 @@ import { findContractMarketInConfig } from '@/utils/utils'
 import { TAssetData } from './AssetTable'
 import Coin from './Coin'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
-import Price from './Price'
-import Subscription from './Subscription'
+import Price, { Markets } from './Price'
+import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -29,7 +29,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  let { tokenName, pairName, subscription, market } = assetData
+  let { tokenName, pairName, subscription } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
@@ -95,7 +95,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   const slotProps = useMemo(
     () =>
-      tokenName && pairName
+      tokenName && pairName && subscription
         ? {
             tokenName,
             pairName,
@@ -109,24 +109,36 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   return (
     <TableRowWrapper
-      className={`${styles.tableRow} ${!subscription && styles.unactiveRow}`}
+      className={`${styles.tableRow} ${
+        subscription == SubscriptionStatus.INACTIVE && styles.inactiveRow
+      }`}
       cellProps={{
         className: styles.tableRowCell
       }}
     >
       <Coin coinData={fetchedInfo.tokenData} />
-      <Price coinData={fetchedInfo.tokenData} />
+      <Price
+        coinData={fetchedInfo.tokenData}
+        market={
+          fetchedInfo.tokenData?.name == 'Ethereum'
+            ? Markets.BINANCE
+            : Markets.KRAKEN
+        }
+      />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         {...slotProps}
+        subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LivePrediction}
         {...slotProps}
+        subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.HistoricalPrediction}
         {...slotProps}
+        subsciption={subscription}
       />
       <Subscription
         subscriptionData={{

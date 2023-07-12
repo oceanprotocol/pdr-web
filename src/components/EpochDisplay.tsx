@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
+import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
 export enum EEpochDisplayStatus {
@@ -15,7 +16,7 @@ export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
   tokenName: string
   pairName: string
-  subsciption: boolean
+  subsciption: SubscriptionStatus
 }
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
@@ -48,7 +49,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   return (
     <div className={styles.container}>
       <EpochBackground direction={relatedData.dir} stake={relatedData.stake} />
-      {!subsciption ? (
+      {subsciption != SubscriptionStatus.INACTIVE ? (
         <EpochDirection
           direction={relatedData.dir}
           confidence={relatedData.confidence}

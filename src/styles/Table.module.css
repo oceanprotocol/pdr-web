@@ -28,6 +28,6 @@
 .tableRowCell {
 }
 
-.unactiveRow {
-  background-color: #bfbfbf;
+.inactiveRow {
+  background-color: #282828;
 }
