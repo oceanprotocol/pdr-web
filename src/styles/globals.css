@@ -14,6 +14,7 @@
   --big-border-radius: 12px;
   --small-border-radius: 5px;
   --regular-font-size: 14px;
+  --spacer: 3rem;
 }
 
 @media (prefers-color-scheme: dark) {

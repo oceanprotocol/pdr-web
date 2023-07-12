@@ -29,19 +29,20 @@ export const getKrakenPrice = async (assetPair: string): Promise<string> => {
 
 export type TGetAssetPairPriceArgs = {
   assetPair: string
-  exchange?: 'kraken' | 'binance'
+  market?: 'kraken' | 'binance'
 }
 
 export const getAssetPairPrice = async ({
   assetPair,
-  exchange
+  market
 }: TGetAssetPairPriceArgs): Promise<string> => {
-  switch (exchange) {
+  switch (market) {
     case 'binance':
       return getBinancePrice(assetPair)
     case 'kraken':
+      return getBinancePrice(assetPair)
     default:
-      return getKrakenPrice(assetPair)
+      return getBinancePrice(assetPair)
   }
 }
 

@@ -6,6 +6,7 @@
 }
 
 .price {
+  margin-bottom: calc(var(--spacer) / 10);
 }
 
 .status {

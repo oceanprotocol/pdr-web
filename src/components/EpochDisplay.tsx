@@ -15,12 +15,14 @@ export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
   tokenName: string
   pairName: string
+  subsciption: boolean
 }
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   status,
   tokenName,
-  pairName
+  pairName,
+  subsciption
 }) => {
   const { epochData } = useSocketContext()
 
@@ -46,10 +48,14 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   return (
     <div className={styles.container}>
       <EpochBackground direction={relatedData.dir} stake={relatedData.stake} />
-      <EpochDirection
-        direction={relatedData.dir}
-        confidence={relatedData.confidence}
-      />
+      {!subsciption ? (
+        <EpochDirection
+          direction={relatedData.dir}
+          confidence={relatedData.confidence}
+        />
+      ) : (
+        <span>??</span>
+      )}
     </div>
   )
 }

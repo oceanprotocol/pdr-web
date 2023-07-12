@@ -17,7 +17,7 @@
 .tableHeaderCell,
 .tableRowCell {
   text-align: center;
-  padding: 15px 0;
+  padding: calc(var(--spacer) / 8) 0;
   border: 0;
   border-bottom: 1px solid var(--primary-color);
 }
@@ -26,4 +26,8 @@
 }
 
 .tableRowCell {
+}
+
+.unactiveRow {
+  background-color: #bfbfbf;
 }

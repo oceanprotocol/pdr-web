@@ -5,6 +5,7 @@ import styles from '@/styles/Table.module.css'
 import { assetTableColumns } from '@/utils/appconstants'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
+import { SubscriptionStatus } from './Subscription'
 
 export type TAssetData = {
   tokenName: string
@@ -33,8 +34,9 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
       assetsData.push({ tokenName, pairName, contract })
     })
-    assetsData[1].subscription = 'unactive'
-    assetsData[0].subscription = 'active'
+    assetsData[2].subscription = SubscriptionStatus.INACTIVE
+    assetsData[1].subscription = SubscriptionStatus.ACTIVE
+    assetsData[0].subscription = SubscriptionStatus.ACTIVE
     setAssetsData(assetsData)
   }
 

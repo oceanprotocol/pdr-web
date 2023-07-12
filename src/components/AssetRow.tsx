@@ -10,7 +10,8 @@ import { findContractMarketInConfig } from '@/utils/utils'
 import { TAssetData } from './AssetTable'
 import Coin from './Coin'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
-import Subscription, { SubscriptionStatus } from './Subscription'
+import Price from './Price'
+import Subscription from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -28,7 +29,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  const { tokenName, pairName, subscription } = assetData
+  let { tokenName, pairName, subscription, market } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
@@ -39,10 +40,10 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     ({ tokenName, pairName }) =>
       getAssetPairPrice({
         assetPair: `${tokenName}${pairName}`,
-        exchange: findContractMarketInConfig(
+        market: findContractMarketInConfig(
           tokenName,
           pairName
-        ) as TGetAssetPairPriceArgs['exchange']
+        ) as TGetAssetPairPriceArgs['market']
       }),
     []
   )
@@ -79,7 +80,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   }, [tokenName, pairName, getAssetPairPriceForRow])
 
   useEffect(() => {
-    loadData()
+    subscription && loadData()
   }, [loadData])
 
   useEffect(() => {
@@ -97,23 +98,24 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       tokenName && pairName
         ? {
             tokenName,
-            pairName
+            pairName,
+            subscription
           }
         : null,
-    [tokenName, pairName]
+    [tokenName, pairName, subscription]
   )
 
   if (!fetchedInfo || !slotProps) return null
 
   return (
     <TableRowWrapper
-      className={styles.tableRow}
+      className={`${styles.tableRow} ${!subscription && styles.unactiveRow}`}
       cellProps={{
         className: styles.tableRowCell
       }}
     >
       <Coin coinData={fetchedInfo.tokenData} />
-      <>{`$${parseFloat(fetchedInfo.price).toFixed(2)}`}</>
+      <Price coinData={fetchedInfo.tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         {...slotProps}
@@ -129,10 +131,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Subscription
         subscriptionData={{
           price: 3,
-          status:
-            subscription == 'active'
-              ? SubscriptionStatus.ACTIVE
-              : SubscriptionStatus.INACTIVE,
+          status: subscription,
           assetDid: ''
         }}
       />
