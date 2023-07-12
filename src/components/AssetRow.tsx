@@ -1,4 +1,4 @@
-import { TokenData, getTokenData } from '@/utils/coin'
+import { TokenData, getTokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
@@ -7,8 +7,8 @@ import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
 import { TGetAssetPairPriceArgs, getAssetPairPrice } from '@/utils/marketPrices'
 import { findContractMarketInConfig } from '@/utils/utils'
+import Asset from './Asset'
 import { TAssetData } from './AssetTable'
-import Coin from './Coin'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 import Price, { Markets } from './Price'
 import Subscription, { SubscriptionStatus } from './Subscription'
@@ -116,9 +116,9 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         className: styles.tableRowCell
       }}
     >
-      <Coin coinData={fetchedInfo.tokenData} />
+      <Asset assetData={fetchedInfo.tokenData} />
       <Price
-        coinData={fetchedInfo.tokenData}
+        assetData={fetchedInfo.tokenData}
         market={
           fetchedInfo.tokenData?.name == 'Ethereum'
             ? Markets.BINANCE

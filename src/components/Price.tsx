@@ -1,20 +1,20 @@
 import Image from 'next/image'
 import styles from '../styles/Price.module.css'
-import { TokenData } from '../utils/coin'
+import { TokenData } from '../utils/asset'
 
 export enum Markets {
   'BINANCE' = 'binance',
   'KRAKEN' = 'kraken'
 }
 
-export default function Coin({
-  coinData,
+export default function Asset({
+  assetData,
   market
 }: {
-  coinData: TokenData | undefined
+  assetData: TokenData | undefined
   market: Markets
 }) {
-  if (!coinData) return null
+  if (!assetData) return null
 
   return (
     <div className={styles.container}>
@@ -28,7 +28,7 @@ export default function Coin({
       />
       <span
         className={styles.price}
-      >{`$${coinData.price.toLocaleString()}`}</span>
+      >{`$${assetData.price.toLocaleString()}`}</span>
     </div>
   )
 }
