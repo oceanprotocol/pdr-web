@@ -17,7 +17,7 @@
 .tableHeaderCell,
 .tableRowCell {
   text-align: center;
-  padding: calc(var(--spacer) / 8) 0;
+  padding: calc(var(--spacer) / 8) calc(var(--spacer) / 2);
   border: 0;
   border-bottom: 1px solid var(--primary-color);
 }
@@ -30,4 +30,8 @@
 
 .inactiveRow {
   background-color: #282828;
+}
+
+#alignStart {
+  text-align: start;
 }
