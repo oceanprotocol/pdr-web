@@ -32,4 +32,5 @@ export type TSocketContext = {
   epochData: TSocketFeedData | null
   socket: Socket | null
   setInitialData: (data: Maybe<TSocketFeedData>) => void
+  setEpochData: React.Dispatch<React.SetStateAction<TSocketFeedData | null>>
 }

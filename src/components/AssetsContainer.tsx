@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
+import useBlockchainListener from '@/hooks/useBlockchainListener'
 import { currentConfig } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
 import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
@@ -13,8 +14,12 @@ type TContractsState = Awaited<
 
 export const AssetsContainer: React.FC = () => {
   const [contracts, setContracts] = useState<TContractsState>()
-  const { setInitialData } = useSocketContext()
+  const { setInitialData, setEpochData } = useSocketContext()
 
+  useBlockchainListener({
+    providedContracts: contracts,
+    setEpochData
+  })
   useEffect(() => {
     getAllInterestingPredictionContracts(currentConfig.subgraph).then(
       (contracts) => {

@@ -18,7 +18,8 @@ import {
 const SocketContext = createContext<TSocketContext>({
   socket: null,
   epochData: null,
-  setInitialData: (data) => {}
+  setInitialData: (data) => {},
+  setEpochData: (data) => {}
 })
 
 // Custom hook to use the SocketContext
@@ -65,7 +66,9 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   }, [])
 
   return (
-    <SocketContext.Provider value={{ socket, epochData, setInitialData }}>
+    <SocketContext.Provider
+      value={{ socket, epochData, setEpochData, setInitialData }}
+    >
       {children}
     </SocketContext.Provider>
   )

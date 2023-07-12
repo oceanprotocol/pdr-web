@@ -14,3 +14,28 @@ export const findContractMarketInConfig = (
   )?.exchange
 
 export type Maybe<T> = T | null
+
+export const calculatePredictionEpochs = (
+  currentEpoch: number,
+  BPE: number
+): number[] => [
+  BPE * (currentEpoch - 1),
+  BPE * currentEpoch,
+  BPE * (currentEpoch + 1)
+]
+
+export type DeepNonNullable<T> = T extends null | undefined
+  ? never
+  : T extends object
+  ? {
+      [K in keyof T]-?: DeepNonNullable<T[K]>
+    }
+  : T
+
+export const omit = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
+  const cloned = { ...obj }
+  for (const key of keys) {
+    delete cloned[key]
+  }
+  return cloned
+}
