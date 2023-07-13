@@ -1,8 +1,8 @@
 .table {
   width: 100%;
-  color: var(--primary-color);
+  color: var(--color-primary);
   border-spacing: 0;
-  border-top: 1px solid var(--primary-color);
+  border-top: 1px solid var(--shadow-grey);
   table-layout: fixed;
 }
 
@@ -11,7 +11,7 @@
 
 .tableRow {
   border: 0;
-  border-bottom: 1px solid var(--primary-color);
+  border-bottom: 1px solid var(--shadow-grey);
 }
 
 .tableHeaderCell,
@@ -19,7 +19,7 @@
   text-align: center;
   padding: calc(var(--spacer) / 8) calc(var(--spacer) / 2);
   border: 0;
-  border-bottom: 1px solid var(--primary-color);
+  border-bottom: 1px solid var(--shadow-grey);
 }
 
 .tableHeaderCell {
@@ -29,7 +29,7 @@
 }
 
 .inactiveRow {
-  background-color: #282828;
+  background-color: var(--shadow-grey);
 }
 
 #alignStart {

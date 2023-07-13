@@ -9,7 +9,7 @@
   width: 100px;
   height: 30px;
   margin: auto;
-  background-color: gray;
+  background-color: var(--dark-grey);
 }
 
 .position {
