@@ -129,16 +129,22 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         status={EEpochDisplayStatus.NextPrediction}
         {...slotProps}
         subsciption={subscription}
+        blocksLeft={200}
+        blocksPerEpoch={500}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LivePrediction}
         {...slotProps}
         subsciption={subscription}
+        blocksLeft={200}
+        blocksPerEpoch={500}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.HistoricalPrediction}
         {...slotProps}
         subsciption={subscription}
+        blocksLeft={200}
+        blocksPerEpoch={500}
       />
       <Subscription
         subscriptionData={{
