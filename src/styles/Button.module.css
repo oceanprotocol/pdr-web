@@ -9,3 +9,7 @@
   background: var(--shadow-grey);
   color: var(--primary-color);
 }
+
+.button:hover {
+  cursor: pointer;
+}

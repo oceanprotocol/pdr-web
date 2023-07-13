@@ -1,0 +1,9 @@
+.container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.price {
+  margin-left: calc(var(--spacer) / 4);
+}

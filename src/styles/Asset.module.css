@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.image {
+  width: 30px;
+  object-fit: contain;
+  margin-right: calc(var(--spacer) / 4);
+}

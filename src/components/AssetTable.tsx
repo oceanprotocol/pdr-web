@@ -5,34 +5,40 @@ import styles from '@/styles/Table.module.css'
 import { assetTableColumns } from '@/utils/appconstants'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
+import { SubscriptionStatus } from './Subscription'
 
 export type TAssetData = {
   tokenName: string
   pairName: string
   contract: TPredictionContract
+  subscription: SubscriptionStatus
 }
 
-export type TAssetListProps = {
+export type TAssetTableProps = {
   contracts: Record<string, TPredictionContract>
 }
 
-export type TAssetListState = {
+export type TAssetTableState = {
   AssetsData: Array<TAssetData>
 }
 
-export const AssetList: React.FC<TAssetListProps> = ({ contracts }) => {
-  const [assetsData, setAssetsData] = useState<TAssetListState['AssetsData']>(
+export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
+  const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
 
   const prepareAssetData = (contracts: Record<string, TPredictionContract>) => {
-    const assetsData: TAssetListState['AssetsData'] = []
+    const assetsData: TAssetTableState['AssetsData'] = []
 
     Object.entries(contracts).forEach(([, contract]) => {
       const [tokenName, pairName] = contract.name.split('-')
+      let subscription = SubscriptionStatus.ACTIVE
 
-      assetsData.push({ tokenName, pairName, contract })
+      assetsData.push({ tokenName, pairName, contract, subscription })
     })
+    assetsData[2].subscription = SubscriptionStatus.INACTIVE
+    assetsData[1].subscription = SubscriptionStatus.ACTIVE
+    assetsData[0].subscription = SubscriptionStatus.ACTIVE
     setAssetsData(assetsData)
   }
 

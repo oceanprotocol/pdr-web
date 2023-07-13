@@ -1,4 +1,19 @@
-export const config = {
+export type TRunEnvironments = 'staging' | 'production' | 'barge' | 'mock'
+export type TRuntimeConfig = Record<
+  TRunEnvironments,
+  {
+    chainId: string
+    subgraph: string
+    tokenPredictions: Array<{
+      tokenName: string
+      pairName: string
+      market: string
+    }>
+    freePredictions: string[]
+  }
+>
+
+export const config: TRuntimeConfig = {
   staging: {
     chainId: '23295',
     subgraph:
@@ -7,9 +22,10 @@ export const config = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
-    ]
+    ],
+    freePredictions: []
   },
   production: {
     chainId: '23295',
@@ -19,9 +35,10 @@ export const config = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
-    ]
+    ],
+    freePredictions: []
   },
   barge: {
     chainId: '8996',
@@ -31,9 +48,20 @@ export const config = {
       {
         tokenName: 'ETH',
         pairName: 'USDT',
-        exchange: 'binance'
+        market: 'binance'
+      },
+      {
+        tokenName: 'BTC',
+        pairName: 'TUSD',
+        market: 'binance'
+      },
+      {
+        tokenName: 'XRP',
+        pairName: 'USDT',
+        market: 'kraken'
       }
-    ]
+    ],
+    freePredictions: ['0x54b5ebeed85f4178c6cb98dd185067991d058d55']
   },
   mock: {
     chainId: '23295',
@@ -43,8 +71,9 @@ export const config = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
-    ]
+    ],
+    freePredictions: []
   }
 }

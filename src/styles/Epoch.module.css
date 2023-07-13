@@ -4,12 +4,12 @@
   position: relative;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border-radius: var(--small-border-radius);
-  width: 120px;
-  height: 50px;
+  width: 100px;
+  height: 30px;
   margin: auto;
-  background-color: gray;
+  background-color: var(--dark-grey);
 }
 
 .position {

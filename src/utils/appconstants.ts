@@ -9,15 +9,17 @@ export const currentConfig = process.env.NEXT_PUBLIC_ENV
 // TODO: we need to remove quotes from the keys
 // when we configure the eslint rules again for typescript
 export enum ECoinGeckoIdList {
-  'ETH' = 'ethereum'
+  'ETH' = 'ethereum',
+  'BTC' = 'bitcoin',
+  'XRP' = 'ripple'
 }
 
 export type TCoinGeckoIdKeys = keyof typeof ECoinGeckoIdList
 
 export const assetTableColumns = [
   {
-    Header: 'Coin',
-    accessor: 'coin'
+    Header: 'Asset',
+    accessor: 'asset'
   },
   {
     Header: 'Price',
@@ -34,5 +36,9 @@ export const assetTableColumns = [
   {
     Header: 'History',
     accessor: 'history'
+  },
+  {
+    Header: 'Subscription',
+    accessor: 'subscription'
   }
 ]
