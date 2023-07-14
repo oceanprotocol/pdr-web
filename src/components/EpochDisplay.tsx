@@ -17,8 +17,6 @@ export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
   tokenName: string
   pairName: string
-  blocksLeft: number
-  blocksPerEpoch: number
   subsciption: SubscriptionStatus
 }
 
@@ -26,8 +24,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   status,
   tokenName,
   pairName,
-  blocksLeft,
-  blocksPerEpoch,
   subsciption
 }) => {
   const { epochData } = useSocketContext()
@@ -65,7 +61,14 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         <span>??</span>
       )}
       {status === EEpochDisplayStatus.NextPrediction && (
-        <ProgressBar progress={blocksLeft} max={blocksPerEpoch} />
+        <ProgressBar
+          progress={
+            relatedData.epochStartBlockNumber +
+            relatedData.blocksPerEpoch -
+            relatedData.currentBlockNumber
+          }
+          max={relatedData.blocksPerEpoch}
+        />
       )}
     </div>
   )
