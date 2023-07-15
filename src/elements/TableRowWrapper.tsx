@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from '../styles/Table.module.css'
 
 type THTMLCellProps = React.DetailedHTMLProps<
   React.TdHTMLAttributes<HTMLTableCellElement>,
@@ -24,14 +25,22 @@ export const TableRowWrapper: React.FC<TTableRowWrapperProps> = ({
 }) => {
   return (
     <tr {...rest}>
-      {React.Children.map(children, (child, index) => {
+      {React.Children.map(children, (child: any, index) => {
         const isHeader = cellType === 'th'
         const cellKeyIndex = {
           key: `${isHeader ? 'header' : 'cell'}${index}`
         }
         return React.createElement(
           cellType,
-          { ...cellProps, ...cellKeyIndex },
+          {
+            ...cellProps,
+            ...cellKeyIndex,
+            id:
+              child?.props?.children === 'Asset' ||
+              child?.props?.children === 'Price'
+                ? styles.alignStart
+                : ''
+          },
           child
         )
       })}

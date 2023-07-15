@@ -1,3 +1,5 @@
+import { Maybe } from './utils'
+
 export type TRunEnvironments = 'staging' | 'production' | 'barge' | 'mock'
 export type TRuntimeConfig = Record<
   TRunEnvironments,
@@ -7,9 +9,10 @@ export type TRuntimeConfig = Record<
     tokenPredictions: Array<{
       tokenName: string
       pairName: string
-      exchange: string
+      market: string
     }>
-    freePredictions: string[]
+    opfProvidedPredictions: Array<string>
+    whiteListedPredictions: Maybe<Array<string>>
   }
 >
 
@@ -22,10 +25,11 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
     ],
-    freePredictions: []
+    opfProvidedPredictions: [],
+    whiteListedPredictions: []
   },
   production: {
     chainId: '23295',
@@ -35,10 +39,11 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
     ],
-    freePredictions: []
+    opfProvidedPredictions: [],
+    whiteListedPredictions: []
   },
   barge: {
     chainId: '8996',
@@ -48,20 +53,27 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDT',
-        exchange: 'binance'
+        market: 'binance'
       },
       {
         tokenName: 'BTC',
         pairName: 'TUSD',
-        exchange: 'binance'
+        market: 'binance'
       },
       {
         tokenName: 'XRP',
         pairName: 'USDT',
-        exchange: 'kraken'
+        market: 'kraken'
       }
     ],
-    freePredictions: ['0x54b5ebeed85f4178c6cb98dd185067991d058d55']
+    opfProvidedPredictions: [
+      '0x54b5ebeed85f4178c6cb98dd185067991d058d55',
+      '0x2d30d9b506f8df53058674a8be8722b073edf6a5'
+    ],
+    whiteListedPredictions: [
+      '0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5',
+      '0xdb0fb92fd13dd6d9d7b828369efe833ea5ad18b3'
+    ]
   },
   mock: {
     chainId: '23295',
@@ -71,9 +83,10 @@ export const config: TRuntimeConfig = {
       {
         tokenName: 'ETH',
         pairName: 'USDC',
-        exchange: 'univ3'
+        market: 'univ3'
       }
     ],
-    freePredictions: []
+    opfProvidedPredictions: [],
+    whiteListedPredictions: []
   }
 }

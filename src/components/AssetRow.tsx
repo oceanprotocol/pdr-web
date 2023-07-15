@@ -1,4 +1,4 @@
-import { TokenData, getTokenData } from '@/utils/coin'
+import { TokenData, getTokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
@@ -7,9 +7,11 @@ import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
 import { TGetAssetPairPriceArgs, getAssetPairPrice } from '@/utils/marketPrices'
 import { findContractMarketInConfig } from '@/utils/utils'
-import { TAssetData } from './AssetList'
-import Coin from './Coin'
+import Asset from './Asset'
+import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
+import Price, { Markets } from './Price'
+import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -27,7 +29,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  const { tokenName, pairName } = assetData
+  let { tokenName, pairName, subscription } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
@@ -38,10 +40,10 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     ({ tokenName, pairName }) =>
       getAssetPairPrice({
         assetPair: `${tokenName}${pairName}`,
-        exchange: findContractMarketInConfig(
+        market: findContractMarketInConfig(
           tokenName,
           pairName
-        ) as TGetAssetPairPriceArgs['exchange']
+        ) as TGetAssetPairPriceArgs['market']
       }),
     []
   )
@@ -78,7 +80,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   }, [tokenName, pairName, getAssetPairPriceForRow])
 
   useEffect(() => {
-    loadData()
+    subscription && loadData()
   }, [loadData])
 
   useEffect(() => {
@@ -93,37 +95,57 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   const slotProps = useMemo(
     () =>
-      tokenName && pairName
+      tokenName && pairName && subscription
         ? {
             tokenName,
-            pairName
+            pairName,
+            subscription
           }
         : null,
-    [tokenName, pairName]
+    [tokenName, pairName, subscription]
   )
 
   if (!fetchedInfo || !slotProps) return null
 
   return (
     <TableRowWrapper
-      className={styles.tableRow}
+      className={`${styles.tableRow} ${
+        subscription == SubscriptionStatus.INACTIVE && styles.inactiveRow
+      }`}
       cellProps={{
         className: styles.tableRowCell
       }}
     >
-      <Coin coinData={fetchedInfo.tokenData} />
-      <>{`$${parseFloat(fetchedInfo.price).toFixed(2)}`}</>
+      <Asset assetData={fetchedInfo.tokenData} />
+      <Price
+        assetData={fetchedInfo.tokenData}
+        market={
+          fetchedInfo.tokenData?.name == 'Ethereum'
+            ? Markets.BINANCE
+            : Markets.KRAKEN
+        }
+      />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         {...slotProps}
+        subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LivePrediction}
         {...slotProps}
+        subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.HistoricalPrediction}
         {...slotProps}
+        subsciption={subscription}
+      />
+      <Subscription
+        subscriptionData={{
+          price: 3,
+          status: subscription,
+          assetDid: ''
+        }}
       />
     </TableRowWrapper>
   )

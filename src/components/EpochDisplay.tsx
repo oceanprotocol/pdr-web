@@ -1,8 +1,9 @@
 import { useSocketContext } from '@/contexts/SocketContext'
 import { useMemo } from 'react'
-import styles from '../styles/Slot.module.css'
+import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
+import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
 export enum EEpochDisplayStatus {
@@ -15,12 +16,14 @@ export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
   tokenName: string
   pairName: string
+  subsciption: SubscriptionStatus
 }
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   status,
   tokenName,
-  pairName
+  pairName,
+  subsciption
 }) => {
   const { epochData } = useSocketContext()
 
@@ -37,19 +40,25 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   console.log('epochData', epochData)
 
-  const relatedData = epochData
-    ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
-    ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
+  const relatedData = Array.isArray(epochData)
+    ? epochData
+        ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
+        ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
+    : null
 
   if (!epochData || !relatedData) return null
 
   return (
     <div className={styles.container}>
       <EpochBackground direction={relatedData.dir} stake={relatedData.stake} />
-      <EpochDirection
-        direction={relatedData.dir}
-        confidence={relatedData.confidence}
-      />
+      {subsciption != SubscriptionStatus.INACTIVE ? (
+        <EpochDirection
+          direction={relatedData.dir}
+          confidence={relatedData.confidence}
+        />
+      ) : (
+        <span>??</span>
+      )}
     </div>
   )
 }

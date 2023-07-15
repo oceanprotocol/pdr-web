@@ -10,16 +10,16 @@ export const currentConfig = process.env.NEXT_PUBLIC_ENV
 // when we configure the eslint rules again for typescript
 export enum ECoinGeckoIdList {
   'ETH' = 'ethereum',
-  'XRP' = 'ripple',
-  'BTC' = 'bitcoin'
+  'BTC' = 'bitcoin',
+  'XRP' = 'ripple'
 }
 
 export type TCoinGeckoIdKeys = keyof typeof ECoinGeckoIdList
 
 export const assetTableColumns = [
   {
-    Header: 'Coin',
-    accessor: 'coin'
+    Header: 'Asset',
+    accessor: 'asset'
   },
   {
     Header: 'Price',
@@ -36,5 +36,19 @@ export const assetTableColumns = [
   {
     Header: 'History',
     accessor: 'history'
+  },
+  {
+    Header: 'Subscription',
+    accessor: 'subscription'
   }
 ]
+
+export const getAllowedPredictions = () => {
+  let allowedPredictions = [...currentConfig.opfProvidedPredictions]
+  if (currentConfig.whiteListedPredictions) {
+    allowedPredictions = allowedPredictions.concat(
+      currentConfig.whiteListedPredictions
+    )
+  }
+  return allowedPredictions
+}
