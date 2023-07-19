@@ -1,17 +1,9 @@
+import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { Maybe } from '@/utils/utils'
 import { Socket } from 'socket.io-client'
 
 export type TSocketProviderProps = {
   children: React.ReactNode
-}
-
-export type TSocketContractInfo = {
-  name: string
-  address: string
-  symbol: string
-  blocksPerEpoch: string
-  blocksPerSubscription: string
-  last_submitted_epoch: number
 }
 
 export type TSocketFeedItem = {
@@ -26,7 +18,7 @@ export type TSocketFeedItem = {
     blocksPerEpoch: number
     currentBlockNumber: number
   }>
-  contractInfo: TSocketContractInfo
+  contractInfo: TPredictionContract
 }
 
 export type TSocketFeedData = Array<TSocketFeedItem>

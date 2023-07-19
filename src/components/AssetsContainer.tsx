@@ -1,27 +1,25 @@
 import { useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
-import { currentConfig } from '@/utils/appconstants'
+import { TSocketFeedItem } from '@/contexts/SocketContext.types'
 import { getInitialData } from '@/utils/getInitialData'
-import { getAllInterestingPredictionContracts } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
 import { AssetTable } from './AssetTable'
 
-type TContractsState = Awaited<
-  ReturnType<typeof getAllInterestingPredictionContracts>
->
-
 export const AssetsContainer: React.FC = () => {
-  const [contracts, setContracts] = useState<TContractsState>()
-  const { setInitialData } = useSocketContext()
+  const [contracts, setContracts] = useState<TPredictionContract[]>()
+  const { setInitialData, epochData } = useSocketContext()
 
   useEffect(() => {
-    getAllInterestingPredictionContracts(currentConfig.subgraph).then(
-      (contracts) => {
-        setContracts(contracts)
-      }
-    )
-  }, [])
+    console.log(epochData)
+    if (!epochData) return
+    let contracts: TPredictionContract[] = []
+    epochData?.forEach((contract: TSocketFeedItem) => {
+      contracts.push(contract.contractInfo)
+    })
+    setContracts(contracts)
+  }, [epochData])
 
   useEffect(() => {
     if (!setInitialData) return

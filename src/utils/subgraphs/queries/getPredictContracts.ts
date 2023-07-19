@@ -16,6 +16,7 @@ type TPredictToken = {
   id: string
   name: string
   symbol: string
+  lastPriceValue: string
 }
 
 type TPredictContract = {

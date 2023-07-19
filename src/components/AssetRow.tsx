@@ -29,7 +29,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  let { tokenName, pairName, subscription } = assetData
+  let { tokenName, pairName, subscription, subscriptionPrice } = assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
@@ -142,7 +142,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       />
       <Subscription
         subscriptionData={{
-          price: 3,
+          price: parseInt(subscriptionPrice),
           status: subscription,
           assetDid: ''
         }}

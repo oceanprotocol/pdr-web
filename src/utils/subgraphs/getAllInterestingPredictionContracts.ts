@@ -8,6 +8,7 @@ export type TPredictionContract = {
   name: string
   address: string
   symbol: string
+  price: string
   blocksPerEpoch: string
   blocksPerSubscription: string
   last_submitted_epoch: number
@@ -40,6 +41,7 @@ export const getAllInterestingPredictionContracts = async (
 
     for (const item of predictContracts) {
       contracts[item.id] = {
+        price: item.token.lastPriceValue,
         name: item.token.name,
         address: item.id,
         symbol: item.token.symbol,

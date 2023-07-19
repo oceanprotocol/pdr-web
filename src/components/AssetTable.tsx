@@ -12,10 +12,11 @@ export type TAssetData = {
   pairName: string
   contract: TPredictionContract
   subscription: SubscriptionStatus
+  subscriptionPrice: string
 }
 
 export type TAssetTableProps = {
-  contracts: Record<string, TPredictionContract>
+  contracts: TPredictionContract[]
 }
 
 export type TAssetTableState = {
@@ -27,14 +28,21 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     []
   )
 
-  const prepareAssetData = (contracts: Record<string, TPredictionContract>) => {
+  const prepareAssetData = (contracts: TPredictionContract[]) => {
     const assetsData: TAssetTableState['AssetsData'] = []
 
-    Object.entries(contracts).forEach(([, contract]) => {
+    contracts.forEach((contract) => {
       const [tokenName, pairName] = contract.name.split('-')
+      const subscriptionPrice = contract.price
       let subscription = SubscriptionStatus.ACTIVE
 
-      assetsData.push({ tokenName, pairName, contract, subscription })
+      assetsData.push({
+        tokenName,
+        pairName,
+        contract,
+        subscription,
+        subscriptionPrice
+      })
     })
     assetsData[2].subscription = SubscriptionStatus.INACTIVE
     assetsData[1].subscription = SubscriptionStatus.ACTIVE
