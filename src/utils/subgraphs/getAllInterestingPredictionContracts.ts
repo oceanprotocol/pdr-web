@@ -1,6 +1,7 @@
 import { graphqlClientInstance } from '../graphqlClient'
 import {
   TGetPredictContractsQueryResult,
+  TPredictContract,
   getPredictContracts
 } from './queries/getPredictContracts'
 
@@ -9,6 +10,7 @@ export type TPredictionContract = {
   address: string
   symbol: string
   price: string
+  market: string
   blocksPerEpoch: string
   blocksPerSubscription: string
   last_submitted_epoch: number
@@ -16,10 +18,10 @@ export type TPredictionContract = {
 
 export const getAllInterestingPredictionContracts = async (
   subgraphURL: string
-): Promise<Record<string, TPredictionContract>> => {
+): Promise<Record<string, TPredictContract>> => {
   const chunkSize = 1000
   let offset = 0
-  const contracts: Record<string, TPredictionContract> = {}
+  const contracts: Record<string, TPredictContract> = {}
   const whileValue = true
   while (whileValue) {
     const variables = {
@@ -39,9 +41,8 @@ export const getAllInterestingPredictionContracts = async (
       break
     }
 
-    for (const item of predictContracts) {
+    /*for (const item of predictContracts) {
       contracts[item.id] = {
-        price: item.token.lastPriceValue,
         name: item.token.name,
         address: item.id,
         symbol: item.token.symbol,
@@ -49,7 +50,7 @@ export const getAllInterestingPredictionContracts = async (
         blocksPerSubscription: item.blocksPerSubscription,
         last_submitted_epoch: 0
       }
-    }
+    }*/
 
     offset += chunkSize
   }

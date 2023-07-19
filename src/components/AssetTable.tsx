@@ -10,6 +10,7 @@ import { SubscriptionStatus } from './Subscription'
 export type TAssetData = {
   tokenName: string
   pairName: string
+  market: string
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
@@ -34,6 +35,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     contracts.forEach((contract) => {
       const [tokenName, pairName] = contract.name.split('-')
       const subscriptionPrice = contract.price
+      const market = contract.market
       let subscription = SubscriptionStatus.ACTIVE
 
       assetsData.push({
@@ -41,6 +43,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         pairName,
         contract,
         subscription,
+        market,
         subscriptionPrice
       })
     })

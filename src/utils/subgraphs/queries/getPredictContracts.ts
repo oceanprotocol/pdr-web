@@ -19,7 +19,7 @@ type TPredictToken = {
   lastPriceValue: string
 }
 
-type TPredictContract = {
+export type TPredictContract = {
   id: string
   token: TPredictToken
   blocksPerEpoch: string

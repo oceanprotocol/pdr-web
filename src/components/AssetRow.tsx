@@ -29,7 +29,8 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  let { tokenName, pairName, subscription, subscriptionPrice } = assetData
+  let { tokenName, pairName, subscription, subscriptionPrice, market } =
+    assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
@@ -119,11 +120,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Asset assetData={fetchedInfo.tokenData} />
       <Price
         assetData={fetchedInfo.tokenData}
-        market={
-          fetchedInfo.tokenData?.name == 'Ethereum'
-            ? Markets.BINANCE
-            : Markets.KRAKEN
-        }
+        market={market == Markets.BINANCE ? Markets.BINANCE : Markets.KRAKEN}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
