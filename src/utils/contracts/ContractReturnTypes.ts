@@ -24,6 +24,9 @@ export type TGetAggPredvalResult = {
   confidence: number
   dir: number
   stake: number
+  epochStartBlockNumber: number
+  blocksPerEpoch: number
+  currentBlockNumber: number
 }
 
 export type TGetSubscriptions = {

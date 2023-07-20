@@ -45,8 +45,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
 
-  console.log(epochData)
-
   return (
     <div className={styles.container}>
       {subsciption != SubscriptionStatus.INACTIVE &&
@@ -61,19 +59,19 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
             direction={relatedData.dir}
             confidence={relatedData.confidence}
           />
+          {status === EEpochDisplayStatus.NextPrediction && (
+            <ProgressBar
+              progress={
+                relatedData.epochStartBlockNumber +
+                relatedData.blocksPerEpoch -
+                relatedData.currentBlockNumber
+              }
+              max={relatedData.blocksPerEpoch}
+            />
+          )}
         </>
       ) : (
         <span>??</span>
-      )}
-      {status === EEpochDisplayStatus.NextPrediction && (
-        <ProgressBar
-          progress={
-            relatedData.epochStartBlockNumber +
-            relatedData.blocksPerEpoch -
-            relatedData.currentBlockNumber
-          }
-          max={relatedData.blocksPerEpoch}
-        />
       )}
     </div>
   )
