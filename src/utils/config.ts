@@ -1,5 +1,3 @@
-import { Maybe } from './utils'
-
 export type TRunEnvironments = 'staging' | 'production' | 'barge' | 'mock'
 export type TRuntimeConfig = Record<
   TRunEnvironments,
@@ -12,7 +10,7 @@ export type TRuntimeConfig = Record<
       market: string
     }>
     opfProvidedPredictions: Array<string>
-    whiteListedPredictions: Maybe<Array<string>>
+    opfOwnerAddress: string
   }
 >
 
@@ -29,7 +27,7 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: [],
-    whiteListedPredictions: []
+    opfOwnerAddress: ''
   },
   production: {
     chainId: '23295',
@@ -43,7 +41,7 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: [],
-    whiteListedPredictions: []
+    opfOwnerAddress: ''
   },
   barge: {
     chainId: '8996',
@@ -67,13 +65,10 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: [
-      '0x54b5ebeed85f4178c6cb98dd185067991d058d55',
-      '0x2d30d9b506f8df53058674a8be8722b073edf6a5'
+      '0x4d7495e0d4bd74b531b4bf50e4a585207356e8fa',
+      '0x7ed5b0876e9df6f81db71f0450db09c0f522cc7b'
     ],
-    whiteListedPredictions: [
-      '0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5',
-      '0xdb0fb92fd13dd6d9d7b828369efe833ea5ad18b3'
-    ]
+    opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   },
   mock: {
     chainId: '23295',
@@ -87,6 +82,6 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: [],
-    whiteListedPredictions: []
+    opfOwnerAddress: ''
   }
 }

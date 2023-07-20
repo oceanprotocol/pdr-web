@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
 import useBlockchainListener from '@/hooks/useBlockchainListener'
-import { currentConfig, getAllowedPredictions } from '@/utils/appconstants'
+import { currentConfig } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
 import {
   TPredictionContract,
@@ -26,14 +26,15 @@ export const AssetsContainer: React.FC = () => {
 
   console.log('subscribedContracts11', subscribedContracts)
 
-  const filterContractsWithAllowedPredictions = useCallback<
+  const filterAllowedContracts = useCallback<
     (contracts: TContractsState) => Record<string, TPredictionContract>
   >((contracts) => {
-    const allowedContracts = getAllowedPredictions()
     const filteredContracts: Record<string, TPredictionContract> = {}
-
     Object.keys(contracts).forEach((contractKey) => {
-      if (allowedContracts.includes(contractKey)) {
+      if (
+        !currentConfig.opfProvidedPredictions.includes(contractKey) &&
+        contracts[contractKey].owner === currentConfig.opfOwnerAddress
+      ) {
         filteredContracts[contractKey] = contracts[contractKey]
       }
     })
@@ -44,12 +45,11 @@ export const AssetsContainer: React.FC = () => {
   useEffect(() => {
     getAllInterestingPredictionContracts(currentConfig.subgraph).then(
       (contracts) => {
-        const filteredContracts =
-          filterContractsWithAllowedPredictions(contracts)
+        const filteredContracts = filterAllowedContracts(contracts)
         setContracts(filteredContracts)
       }
     )
-  }, [filterContractsWithAllowedPredictions, setContracts])
+  }, [filterAllowedContracts, setContracts])
 
   useEffect(() => {
     if (!setInitialData) return

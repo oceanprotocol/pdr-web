@@ -5,6 +5,15 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
         id
         name
         symbol
+        nft {
+          owner{
+            id
+          }
+           nftData {
+              key
+              value
+           }
+        }
       }
       blocksPerEpoch
       blocksPerSubscription
@@ -12,10 +21,19 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
     }
   }`
 
+type TNftOwner = {
+  id: string
+}
+
+type TNft = {
+  owner: TNftOwner
+}
+
 type TPredictToken = {
   id: string
   name: string
   symbol: string
+  nft: TNft
 }
 
 type TPredictContract = {
