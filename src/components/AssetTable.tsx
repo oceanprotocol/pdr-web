@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { assetTableColumns } from '@/utils/appconstants'
+import { assetTableColumns, currentConfig } from '@/utils/appconstants'
+import Predictoor from '@/utils/contracts/Predictoor'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
@@ -16,31 +17,39 @@ export type TAssetData = {
 
 export type TAssetTableProps = {
   contracts: Record<string, TPredictionContract>
+  subscribedContracts: Array<Predictoor>
 }
 
 export type TAssetTableState = {
   AssetsData: Array<TAssetData>
 }
 
-export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
+export const AssetTable: React.FC<TAssetTableProps> = ({
+  contracts,
+  subscribedContracts
+}) => {
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
+  )
+
+  const subscribedContractAddresses = useMemo(
+    () => subscribedContracts.map((contract) => contract.address),
+    [subscribedContracts]
   )
 
   const getSubscriptionStatus = useCallback<
     (contract: TPredictionContract) => SubscriptionStatus
   >(
     (contract) => {
-      return SubscriptionStatus.ACTIVE
-      /*if (subscribedContractAddresses.includes(contract.address)) {
+      if (subscribedContractAddresses.includes(contract.address)) {
         return SubscriptionStatus.ACTIVE
       }
       if (currentConfig.opfProvidedPredictions.includes(contract.address)) {
         return SubscriptionStatus.FREE
       }
-      return SubscriptionStatus.INACTIVE*/
+      return SubscriptionStatus.INACTIVE
     },
-    [contracts]
+    [subscribedContractAddresses]
   )
 
   const prepareAssetData = useCallback<

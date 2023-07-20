@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
+import useBlockchainListener from '@/hooks/useBlockchainListener'
 import { currentConfig } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
 import {
@@ -24,16 +25,18 @@ export const AssetsContainer: React.FC = () => {
     const filteredContracts: Record<string, TPredictionContract> =
       contracts || {}
     Object.keys(contracts).forEach((contractKey) => {
-      if (
-        !currentConfig.opfProvidedPredictions.includes(contractKey) &&
-        contracts[contractKey].owner === currentConfig.opfOwnerAddress
-      ) {
+      if (contracts[contractKey].owner === currentConfig.opfOwnerAddress) {
         filteredContracts[contractKey] = contracts[contractKey]
       }
     })
 
     return filteredContracts
   }, [])
+
+  const { subscribedContracts } = useBlockchainListener({
+    providedContracts: contracts && filterAllowedContracts(contracts),
+    setEpochData
+  })
 
   useEffect(() => {
     getAllInterestingPredictionContracts(currentConfig.subgraph).then(
@@ -66,7 +69,14 @@ export const AssetsContainer: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
+      {contracts ? (
+        <AssetTable
+          contracts={contracts}
+          subscribedContracts={subscribedContracts}
+        />
+      ) : (
+        <div>Loading</div>
+      )}
     </div>
   )
 }
