@@ -30,7 +30,12 @@ export type TUseBlockchainListenerResult = {
   >
 }
 
-export type TPredictedEpochLogItem = TGetAggPredvalResult & { epoch: number }
+export type TPredictedEpochLogItem = TGetAggPredvalResult & {
+  epoch: number
+  epochStartBlockNumber: number
+  blocksPerEpoch: number
+  currentBlockNumber: number
+}
 
 const useBlockchainListener = ({
   providedContracts,
@@ -40,8 +45,6 @@ const useBlockchainListener = ({
   const [subscribedContracts, setSubscribedContracts] = useState<Predictoor[]>(
     []
   )
-
-  console.log('providedContracts', providedContracts)
 
   const lastCheckedEpoch = useRef<number>(0)
   const predictedEpochs =
@@ -146,6 +149,7 @@ const useBlockchainListener = ({
 
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !providedContracts) return
+    console.log('herre')
     const BPE = await subscribedContracts[0]?.getBlocksPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', (blockNumber) => {
@@ -177,6 +181,7 @@ const useBlockchainListener = ({
 
       console.log('newEpochs', newEpochs)
       getMultiplePredictions({
+        currentBlockNumber: blockNumber,
         epochs: newEpochs,
         contracts: subscribedContracts,
         userWallet: address,
@@ -240,9 +245,8 @@ const useBlockchainListener = ({
   }, [initializeContracts, providedContracts])
 
   useEffect(() => {
-    const provider = networkProvider.getProvider()
     if (subscribedContracts.length === 0) return
-
+    const provider = networkProvider.getProvider()
     addChainListener()
     return () => {
       provider.removeAllListeners('block')

@@ -2,6 +2,7 @@ import { TPredictedEpochLogItem } from '@/hooks/useBlockchainListener'
 import Predictoor from '../Predictoor'
 
 export type TGetMultiplePredictionsArgs = {
+  currentBlockNumber: number
   epochs: Array<number>
   contracts: Array<Predictoor>
   userWallet: string
@@ -21,6 +22,7 @@ export type TGetMultiplePredictionsResult = Promise<
 >
 
 export const getMultiplePredictions = ({
+  currentBlockNumber,
   epochs,
   contracts,
   userWallet,
@@ -29,12 +31,18 @@ export const getMultiplePredictions = ({
   Promise.all(
     epochs.flatMap((epoch) =>
       contracts.map(async (contract) => {
+        const epochStartBlockNumber =
+          await contract.getCurrentEpochStartBlockNumber(currentBlockNumber)
+        const blocksPerEpoch = await contract.getBlocksPerEpoch()
         const aggPredVal = await contract.getAggPredval(epoch, userWallet)
         if (!aggPredVal) return null
 
         const predVal = {
           ...aggPredVal,
-          epoch
+          epoch,
+          epochStartBlockNumber,
+          blocksPerEpoch,
+          currentBlockNumber
         }
         if (registerPrediction)
           registerPrediction({
