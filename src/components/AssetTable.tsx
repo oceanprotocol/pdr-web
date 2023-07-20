@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { assetTableColumns, currentConfig } from '@/utils/appconstants'
-import Predictoor from '@/utils/contracts/Predictoor'
+import { assetTableColumns } from '@/utils/appconstants'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
@@ -17,41 +16,31 @@ export type TAssetData = {
 
 export type TAssetTableProps = {
   contracts: Record<string, TPredictionContract>
-  subscribedContracts: Array<Predictoor>
 }
 
 export type TAssetTableState = {
   AssetsData: Array<TAssetData>
 }
 
-export const AssetTable: React.FC<TAssetTableProps> = ({
-  contracts,
-  subscribedContracts
-}) => {
+export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
-
-  const subscribedContractAddresses = useMemo(
-    () => subscribedContracts.map((contract) => contract.address),
-    [subscribedContracts]
-  )
-
-  console.log('subscribedContractAddresses', subscribedContractAddresses)
 
   const getSubscriptionStatus = useCallback<
     (contract: TPredictionContract) => SubscriptionStatus
   >(
     (contract) => {
-      if (subscribedContractAddresses.includes(contract.address)) {
+      return SubscriptionStatus.ACTIVE
+      /*if (subscribedContractAddresses.includes(contract.address)) {
         return SubscriptionStatus.ACTIVE
       }
       if (currentConfig.opfProvidedPredictions.includes(contract.address)) {
         return SubscriptionStatus.FREE
       }
-      return SubscriptionStatus.INACTIVE
+      return SubscriptionStatus.INACTIVE*/
     },
-    [subscribedContractAddresses]
+    [contracts]
   )
 
   const prepareAssetData = useCallback<
@@ -72,6 +61,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({
           subscription: subscriptionStatus
         })
       })
+      console.log(assetsData)
       setAssetsData(assetsData)
     },
     [getSubscriptionStatus]

@@ -38,24 +38,27 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     }
   }, [status])
 
-  console.log('epochData', epochData)
-
   const relatedData = Array.isArray(epochData)
     ? epochData
         ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
 
-  if (!epochData || !relatedData) return null
-
   return (
     <div className={styles.container}>
-      <EpochBackground direction={relatedData.dir} stake={relatedData.stake} />
-      {subsciption != SubscriptionStatus.INACTIVE ? (
-        <EpochDirection
-          direction={relatedData.dir}
-          confidence={relatedData.confidence}
-        />
+      {subsciption != SubscriptionStatus.INACTIVE &&
+      epochData &&
+      relatedData ? (
+        <>
+          <EpochBackground
+            direction={relatedData.dir}
+            stake={relatedData.stake}
+          />
+          <EpochDirection
+            direction={relatedData.dir}
+            confidence={relatedData.confidence}
+          />
+        </>
       ) : (
         <span>??</span>
       )}

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
-import useBlockchainListener from '@/hooks/useBlockchainListener'
 import { currentConfig } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
 import {
@@ -17,19 +16,13 @@ type TContractsState = Awaited<
 
 export const AssetsContainer: React.FC = () => {
   const [contracts, setContracts] = useState<TContractsState>()
-  const { setInitialData, setEpochData } = useSocketContext()
-
-  const { subscribedContracts } = useBlockchainListener({
-    providedContracts: contracts,
-    setEpochData
-  })
-
-  console.log('subscribedContracts11', subscribedContracts)
+  const { initialEpochData, setInitialData, setEpochData } = useSocketContext()
 
   const filterAllowedContracts = useCallback<
     (contracts: TContractsState) => Record<string, TPredictionContract>
   >((contracts) => {
-    const filteredContracts: Record<string, TPredictionContract> = {}
+    const filteredContracts: Record<string, TPredictionContract> =
+      contracts || {}
     Object.keys(contracts).forEach((contractKey) => {
       if (
         !currentConfig.opfProvidedPredictions.includes(contractKey) &&
@@ -54,20 +47,26 @@ export const AssetsContainer: React.FC = () => {
   useEffect(() => {
     if (!setInitialData) return
     getInitialData().then((data) => {
+      console.log('initialData', data)
       setInitialData(data)
     })
   }, [setInitialData])
 
+  useEffect(() => {
+    if (!initialEpochData) return
+    let serverContracts = contracts || {}
+    initialEpochData.forEach((data) => {
+      serverContracts[data.contractInfo.address] = {
+        ...data.contractInfo,
+        owner: currentConfig.opfOwnerAddress
+      }
+    })
+    setContracts(serverContracts)
+  }, [initialEpochData])
+
   return (
     <div className={styles.container}>
-      {contracts ? (
-        <AssetTable
-          contracts={contracts}
-          subscribedContracts={subscribedContracts}
-        />
-      ) : (
-        <div>Loading</div>
-      )}
+      {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
     </div>
   )
 }
