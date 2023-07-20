@@ -1,4 +1,5 @@
 import { useSocketContext } from '@/contexts/SocketContext'
+import ProgressBar from '@/elements/ProgressBar'
 import { useMemo } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
@@ -44,6 +45,8 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
 
+  console.log(epochData)
+
   return (
     <div className={styles.container}>
       {subsciption != SubscriptionStatus.INACTIVE &&
@@ -61,6 +64,16 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         </>
       ) : (
         <span>??</span>
+      )}
+      {status === EEpochDisplayStatus.NextPrediction && (
+        <ProgressBar
+          progress={
+            relatedData.epochStartBlockNumber +
+            relatedData.blocksPerEpoch -
+            relatedData.currentBlockNumber
+          }
+          max={relatedData.blocksPerEpoch}
+        />
       )}
     </div>
   )

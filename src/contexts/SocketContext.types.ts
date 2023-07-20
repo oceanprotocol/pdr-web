@@ -22,6 +22,9 @@ export type TSocketFeedItem = {
     dir: number
     stake: number
     epoch: number
+    epochStartBlockNumber: number
+    blocksPerEpoch: number
+    currentBlockNumber: number
   }>
   contractInfo: TSocketContractInfo
 }
