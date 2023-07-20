@@ -1,7 +1,4 @@
-import {
-  TSocketFeedData,
-  TSocketFeedItem
-} from '@/contexts/SocketContext.types'
+import { TSocketFeedData } from '@/contexts/SocketContext.types'
 import { currentConfig } from '@/utils/appconstants'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor from '@/utils/contracts/Predictoor'
@@ -203,14 +200,13 @@ const useBlockchainListener = ({
 
           const items = [...pickedCaches, ...pickedResults]
 
-          //convert the items to socket feed data
-          const socketFeedDataPredictions = items.map((item) =>
+          const dataPredictions = items.map((item) =>
             omit(item, ['contractAddress'])
           )
 
-          const blockchainFeedData: TSocketFeedItem = {
+          const blockchainFeedData: any = {
             contractInfo: providedContracts[contract.address],
-            predictions: socketFeedDataPredictions
+            predictions: dataPredictions
           }
 
           setEpochData((prev) => {
