@@ -9,7 +9,8 @@ export type TRuntimeConfig = Record<
       pairName: string
       market: string
     }>
-    freePredictions: string[]
+    opfProvidedPredictions: Array<string>
+    opfOwnerAddress: string
   }
 >
 
@@ -25,7 +26,8 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    freePredictions: []
+    opfProvidedPredictions: [],
+    opfOwnerAddress: ''
   },
   production: {
     chainId: '23295',
@@ -38,7 +40,8 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    freePredictions: []
+    opfProvidedPredictions: [],
+    opfOwnerAddress: ''
   },
   barge: {
     chainId: '8996',
@@ -61,7 +64,11 @@ export const config: TRuntimeConfig = {
         market: 'kraken'
       }
     ],
-    freePredictions: ['0x54b5ebeed85f4178c6cb98dd185067991d058d55']
+    opfProvidedPredictions: [
+      '0x4d7495e0d4bd74b531b4bf50e4a585207356e8fa',
+      '0x7ed5b0876e9df6f81db71f0450db09c0f522cc7b'
+    ],
+    opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   },
   mock: {
     chainId: '23295',
@@ -74,6 +81,7 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    freePredictions: []
+    opfProvidedPredictions: [],
+    opfOwnerAddress: ''
   }
 }

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { assetTableColumns } from '@/utils/appconstants'
+import { assetTableColumns, currentConfig } from '@/utils/appconstants'
+import Predictoor from '@/utils/contracts/Predictoor'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
@@ -16,35 +17,69 @@ export type TAssetData = {
 
 export type TAssetTableProps = {
   contracts: Record<string, TPredictionContract>
+  subscribedContracts: Array<Predictoor>
 }
 
 export type TAssetTableState = {
   AssetsData: Array<TAssetData>
 }
 
-export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
+export const AssetTable: React.FC<TAssetTableProps> = ({
+  contracts,
+  subscribedContracts
+}) => {
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
 
-  const prepareAssetData = (contracts: Record<string, TPredictionContract>) => {
-    const assetsData: TAssetTableState['AssetsData'] = []
+  const subscribedContractAddresses = useMemo(
+    () => subscribedContracts.map((contract) => contract.address),
+    [subscribedContracts]
+  )
 
-    Object.entries(contracts).forEach(([, contract]) => {
-      const [tokenName, pairName] = contract.name.split('-')
-      let subscription = SubscriptionStatus.ACTIVE
+  const getSubscriptionStatus = useCallback<
+    (contract: TPredictionContract) => SubscriptionStatus
+  >(
+    (contract) => {
+      if (subscribedContractAddresses.includes(contract.address)) {
+        return SubscriptionStatus.ACTIVE
+      }
+      if (currentConfig.opfProvidedPredictions.includes(contract.address)) {
+        return SubscriptionStatus.FREE
+      }
+      return SubscriptionStatus.INACTIVE
+    },
+    [subscribedContractAddresses]
+  )
 
-      assetsData.push({ tokenName, pairName, contract, subscription })
-    })
-    assetsData[2].subscription = SubscriptionStatus.INACTIVE
-    assetsData[1].subscription = SubscriptionStatus.ACTIVE
-    assetsData[0].subscription = SubscriptionStatus.ACTIVE
-    setAssetsData(assetsData)
-  }
+  const prepareAssetData = useCallback<
+    (contracts: Record<string, TPredictionContract>) => void
+  >(
+    (contracts) => {
+      const assetsData: TAssetTableState['AssetsData'] = []
+
+      Object.entries(contracts).forEach(([, contract]) => {
+        const [tokenName, pairName] = contract.name.split('-')
+
+        const subscriptionStatus = getSubscriptionStatus(contract)
+
+        assetsData.push({
+          tokenName,
+          pairName,
+          contract,
+          subscription: subscriptionStatus
+        })
+      })
+      console.log(assetsData)
+      setAssetsData(assetsData)
+    },
+    [getSubscriptionStatus]
+  )
 
   useEffect(() => {
+    if (!contracts || !prepareAssetData) return
     prepareAssetData(contracts)
-  }, [contracts])
+  }, [contracts, prepareAssetData])
 
   return (
     <table className={styles.table}>
