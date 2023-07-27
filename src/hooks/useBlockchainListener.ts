@@ -44,8 +44,6 @@ const useBlockchainListener = ({
     []
   )
 
-  console.log('providedContracts', providedContracts)
-
   const lastCheckedEpoch = useRef<number>(0)
   const predictedEpochs =
     useRef<Record<string, Array<TPredictedEpochLogItem>>>()

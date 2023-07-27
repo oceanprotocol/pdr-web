@@ -17,7 +17,7 @@ class NetworkProvider {
   provider: ethers.providers.JsonRpcProvider
 
   constructor() {
-    const env = process.env.NEXT_PUBLIC_ENV || 'development'
+    const env = process.env.ENVIRONMENT || 'development'
     const networkURL =
       networkConfig[env as NetworkNames] || networkConfig['development']
 
@@ -30,6 +30,10 @@ class NetworkProvider {
 
   getNetworkName(chainId: number): string | undefined {
     return networksData.find((data) => data.chainId == chainId)?.name
+  }
+
+  getSigner(address: string) {
+    return this.provider.getSigner(address)
   }
 }
 

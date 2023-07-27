@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
+import { useSubscribedPredictoorsContext } from '@/contexts/SubscribedPredictoorsContext'
 import useBlockchainListener from '@/hooks/useBlockchainListener'
 import { currentConfig, getAllowedPredictions } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
@@ -18,13 +19,19 @@ type TContractsState = Awaited<
 export const AssetsContainer: React.FC = () => {
   const [contracts, setContracts] = useState<TContractsState>()
   const { setInitialData, setEpochData } = useSocketContext()
+  const { checkAndAddInstance } = useSubscribedPredictoorsContext()
 
   const { subscribedContracts } = useBlockchainListener({
     providedContracts: contracts,
     setEpochData
   })
 
-  console.log('subscribedContracts11', subscribedContracts)
+  useEffect(() => {
+    if (!subscribedContracts) return
+    subscribedContracts.forEach((contract) => {
+      checkAndAddInstance(contract)
+    })
+  }, [checkAndAddInstance, subscribedContracts])
 
   const filterContractsWithAllowedPredictions = useCallback<
     (contracts: TContractsState) => Record<string, TPredictionContract>

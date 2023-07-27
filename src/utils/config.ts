@@ -47,8 +47,7 @@ export const config: TRuntimeConfig = {
   },
   barge: {
     chainId: '8996',
-    subgraph:
-      'http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
+    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`,
     tokenPredictions: [
       {
         tokenName: 'ETH',
@@ -77,8 +76,7 @@ export const config: TRuntimeConfig = {
   },
   mock: {
     chainId: '23295',
-    subgraph:
-      'http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
+    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`,
     tokenPredictions: [
       {
         tokenName: 'ETH',
