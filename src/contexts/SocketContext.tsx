@@ -18,7 +18,9 @@ import {
 const SocketContext = createContext<TSocketContext>({
   socket: null,
   epochData: null,
-  setInitialData: (data) => {}
+  initialEpochData: null,
+  setInitialData: (data) => {},
+  setEpochData: (data) => {}
 })
 
 // Custom hook to use the SocketContext
@@ -32,12 +34,16 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null)
   const [epochData, setEpochData] = useState<TSocketFeedData | null>(null)
+  const [initialEpochData, setInitialEpochData] =
+    useState<TSocketFeedData | null>(null)
 
   const isFirstDataEnter = useRef<boolean>(false)
 
   const setInitialData = useCallback((data: Maybe<TSocketFeedData>) => {
     if (isFirstDataEnter.current || !data) return
     // transform TInitialData to TSocketFeedData
+    console.log(data)
+    setInitialEpochData(data)
     setEpochData(data)
   }, [])
 
@@ -55,6 +61,8 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
       console.log(data)
       if (!data) return
       if (!isFirstDataEnter.current) {
+        console.log('firstData', data)
+        setInitialData(data)
         isFirstDataEnter.current = true
       }
       setEpochData(data)
@@ -66,7 +74,15 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   }, [])
 
   return (
-    <SocketContext.Provider value={{ socket, epochData, setInitialData }}>
+    <SocketContext.Provider
+      value={{
+        socket,
+        epochData,
+        initialEpochData,
+        setEpochData,
+        setInitialData
+      }}
+    >
       {children}
     </SocketContext.Provider>
   )

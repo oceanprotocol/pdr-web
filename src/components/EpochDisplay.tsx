@@ -39,32 +39,39 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     }
   }, [status])
 
-  const relatedData = epochData
-    ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
-    ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
-
-  if (!epochData || !relatedData) return null
+  const relatedData = Array.isArray(epochData)
+    ? epochData
+        ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
+        ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
+    : null
 
   return (
     <div className={styles.container}>
-      <EpochBackground direction={relatedData.dir} stake={relatedData.stake} />
-      {subsciption != SubscriptionStatus.INACTIVE ? (
-        <EpochDirection
-          direction={relatedData.dir}
-          confidence={relatedData.confidence}
-        />
+      {subsciption != SubscriptionStatus.INACTIVE &&
+      epochData &&
+      relatedData ? (
+        <>
+          <EpochBackground
+            direction={relatedData.dir}
+            stake={relatedData.stake}
+          />
+          <EpochDirection
+            direction={relatedData.dir}
+            confidence={relatedData.confidence}
+          />
+          {status === EEpochDisplayStatus.NextPrediction && (
+            <ProgressBar
+              progress={
+                relatedData.epochStartBlockNumber +
+                relatedData.blocksPerEpoch -
+                relatedData.currentBlockNumber
+              }
+              max={relatedData.blocksPerEpoch}
+            />
+          )}
+        </>
       ) : (
         <span>??</span>
-      )}
-      {status === EEpochDisplayStatus.NextPrediction && (
-        <ProgressBar
-          progress={
-            relatedData.epochStartBlockNumber +
-            relatedData.blocksPerEpoch -
-            relatedData.currentBlockNumber
-          }
-          max={relatedData.blocksPerEpoch}
-        />
       )}
     </div>
   )

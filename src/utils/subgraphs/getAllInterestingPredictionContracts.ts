@@ -1,7 +1,8 @@
 import { graphqlClientInstance } from '../graphqlClient'
 import {
+  NftKeys,
   TGetPredictContractsQueryResult,
-  TPredictContract,
+  TNft,
   getPredictContracts
 } from './queries/getPredictContracts'
 
@@ -11,6 +12,7 @@ export type TPredictionContract = {
   symbol: string
   price: string
   market: string
+  owner: string
   blocksPerEpoch: string
   blocksPerSubscription: string
   last_submitted_epoch: number
@@ -18,10 +20,10 @@ export type TPredictionContract = {
 
 export const getAllInterestingPredictionContracts = async (
   subgraphURL: string
-): Promise<Record<string, TPredictContract>> => {
+): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000
   let offset = 0
-  const contracts: Record<string, TPredictContract> = {}
+  const contracts: Record<string, TPredictionContract> = {}
   const whileValue = true
   while (whileValue) {
     const variables = {
@@ -41,16 +43,26 @@ export const getAllInterestingPredictionContracts = async (
       break
     }
 
-    /*for (const item of predictContracts) {
+    for (const item of predictContracts) {
+      let market: string = ''
+      item.token.nft.nftData.forEach((i: TNft) => {
+        if (i.key == NftKeys.MARKET) {
+          market = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
+        }
+      })
+
       contracts[item.id] = {
         name: item.token.name,
         address: item.id,
+        owner: item.token.nft.owner.id,
+        market: market,
         symbol: item.token.symbol,
+        price: item.token.lastPriceValue,
         blocksPerEpoch: item.blocksPerEpoch,
         blocksPerSubscription: item.blocksPerSubscription,
         last_submitted_epoch: 0
       }
-    }*/
+    }
 
     offset += chunkSize
   }
