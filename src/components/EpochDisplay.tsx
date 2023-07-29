@@ -1,4 +1,5 @@
 import { useSocketContext } from '@/contexts/SocketContext'
+import ProgressBar from '@/elements/ProgressBar'
 import { useMemo } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
@@ -38,24 +39,37 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     }
   }, [status])
 
-  console.log('epochData', epochData)
-
   const relatedData = Array.isArray(epochData)
     ? epochData
         ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
 
-  if (!epochData || !relatedData) return null
-
   return (
     <div className={styles.container}>
-      <EpochBackground direction={relatedData.dir} stake={relatedData.stake} />
-      {subsciption != SubscriptionStatus.INACTIVE ? (
-        <EpochDirection
-          direction={relatedData.dir}
-          confidence={relatedData.confidence}
-        />
+      {subsciption != SubscriptionStatus.INACTIVE &&
+      epochData &&
+      relatedData ? (
+        <>
+          <EpochBackground
+            direction={relatedData.dir}
+            stake={relatedData.stake}
+          />
+          <EpochDirection
+            direction={relatedData.dir}
+            confidence={relatedData.confidence}
+          />
+          {status === EEpochDisplayStatus.NextPrediction && (
+            <ProgressBar
+              progress={
+                relatedData.epochStartBlockNumber +
+                relatedData.blocksPerEpoch -
+                relatedData.currentBlockNumber
+              }
+              max={relatedData.blocksPerEpoch}
+            />
+          )}
+        </>
       ) : (
         <span>??</span>
       )}

@@ -7,7 +7,7 @@ type NetworkConfig = Record<NetworkNames, string>
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: 'http://localhost:8545',
+  development: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:8545`,
   mock: 'http://localhost:8545',
   testnet: '',
   mainnet: ''
@@ -21,6 +21,7 @@ class NetworkProvider {
     const networkURL =
       networkConfig[env as NetworkNames] || networkConfig['development']
 
+    //console.log('networkURL', networkURL)
     this.provider = new ethers.providers.JsonRpcProvider(networkURL)
   }
 

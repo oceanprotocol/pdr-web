@@ -1,6 +1,7 @@
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import Button from '@/elements/Button'
-import Predictoor from '@/utils/contracts/Predictoor'
-import { useCallback } from 'react'
+import { useEthersSigner } from '@/hooks/useEthersSigner'
+import { useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
 
@@ -16,31 +17,48 @@ export interface SubscriptionData {
   price: number
 }
 
-const redirectToMarketplace = (did: string) => {
-  const url = `https://market.oceanprotocol.com/asset/${did}`
-  window.open(url, '_blank', 'noreferrer')
+export type TSubscriptionProps = {
+  subscriptionData: SubscriptionData | undefined
+  contractAddress: string
 }
 
 export default function Subscription({
-  subscriptionData
-}: {
-  subscriptionData: SubscriptionData | undefined
-}) {
-  const { isConnected } = useAccount()
+  subscriptionData,
+  contractAddress
+}: TSubscriptionProps) {
+  const { isConnected, address } = useAccount()
+  const signer = useEthersSigner({})
+
+  const { getPredictorInstanceByAddress, runCheckContracts } =
+    usePredictoorsContext()
+  const [isBuying, setIsBuying] = useState(false)
 
   const BuyAction = useCallback<
-    (args: { currentStatus: SubscriptionStatus }) => void
+    (args: { currentStatus: SubscriptionStatus }) => Promise<void>
   >(
-    ({ currentStatus }) => {
-      if (!isConnected || currentStatus !== SubscriptionStatus.INACTIVE) return
-
-      const predictoor = new Predictoor(
-        contract.address,
-        networkProvider.getProvider()
+    async ({ currentStatus }) => {
+      if (
+        !isConnected ||
+        currentStatus !== SubscriptionStatus.INACTIVE ||
+        !address
       )
-      await predictoor.init()
+        return
+
+      console.log('buying')
+      const predictorInstance = getPredictorInstanceByAddress(contractAddress)
+      console.log('predictorinstance found', !!predictorInstance)
+      if (!predictorInstance) return
+      setIsBuying(true)
+      console.log('setIsBuying true')
+      if (!signer) return
+      const receipt = await predictorInstance.buyAndStartSubscription(signer)
+      console.log('receipt', receipt)
+      if (!!receipt) {
+        runCheckContracts()
+      }
+      setIsBuying(false)
     },
-    [isConnected]
+    [isConnected, address, getPredictorInstanceByAddress, contractAddress]
   )
 
   if (!subscriptionData) return null
@@ -54,9 +72,9 @@ export default function Subscription({
       </span>
       {subscriptionData.status === SubscriptionStatus.INACTIVE ? (
         <Button
-          text="BUY"
-          onClick={() => redirectToMarketplace(subscriptionData.assetDid)}
-          disabled={!isConnected}
+          text={`${isBuying ? 'Buying...' : 'Buy'}`}
+          onClick={() => BuyAction({ currentStatus: subscriptionData.status })}
+          disabled={!isConnected || isBuying}
         />
       ) : (
         <span className={styles.status}>{subscriptionData.status}</span>

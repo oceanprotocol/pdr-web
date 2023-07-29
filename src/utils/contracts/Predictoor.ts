@@ -43,7 +43,7 @@ class Predictoor {
     this.instance = new ethers.Contract(
       this.address,
       ERC20Template3ABI,
-      this.provider
+      this.provider.getSigner()
     )
     // Get stake token and create new token instance
     const stakeToken = await this.instance?.stakeToken()
@@ -68,7 +68,7 @@ class Predictoor {
     return this.instance?.subscriptions(address)
   }
   // Calculate provider fee
-  async getCalculatedProviderFee(user: ethers.Wallet): Promise<TProviderFee> {
+  async getCalculatedProviderFee(user: string): Promise<TProviderFee> {
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
     const providerFeeAmount = 0
@@ -78,16 +78,18 @@ class Predictoor {
       ['bytes', 'address', 'address', 'uint256', 'uint256'],
       [
         ethers.utils.hexlify(ethers.utils.toUtf8Bytes(providerData)),
-        await user.getAddress(),
+        user,
         providerFeeToken,
         providerFeeAmount,
         providerValidUntil
       ]
     )
     // Sign the message
-    const { v, r, s } = await signHash(user.address, message)
+    console.log('message', message)
+    const { v, r, s } = await signHash(user, message)
+    console.log('{ v, r, s }', v, r, s)
     return {
-      providerFeeAddress: await user.getAddress(),
+      providerFeeAddress: user,
       providerFeeToken,
       providerFeeAmount,
       v,
@@ -100,10 +102,10 @@ class Predictoor {
     }
   }
   // Get order parameters
-  async getOrderParams(user: ethers.Wallet) {
+  async getOrderParams(user: string) {
     const providerFee = await this.getCalculatedProviderFee(user)
     return {
-      consumer: user.address,
+      consumer: user,
       serviceIndex: 0,
       _providerFee: providerFee,
       _consumeMarketFee: {
@@ -115,12 +117,17 @@ class Predictoor {
   }
   // Buy from Fixed Rate Exchange (FRE) and order
   async buyFromFreAndOrder(
-    user: ethers.Wallet,
+    user: ethers.Signer,
     exchangeId: string,
     baseTokenAmount: string
   ): Promise<ethers.ContractReceipt | Error> {
     try {
-      const orderParams = await this.getOrderParams(user)
+      // Check if FRE and token exist
+      if (!this.FRE || !this.token || !this.instance) {
+        return Error('Assert FRE and token requirements.')
+      }
+      const address = await user.getAddress()
+      const orderParams = await this.getOrderParams(address)
       const freParams = {
         exchangeContract: this.FRE.address,
         exchangeId,
@@ -129,23 +136,23 @@ class Predictoor {
         marketFeeAddress: ethers.constants.AddressZero
       }
       // Get gas price and limit
-      const gasPrice = await this.provider.getGasPrice()
-      let gasLimit = await this.instance
-        .connect(user)
-        .estimateGas.buyFromFreAndOrder(orderParams, freParams)
+      //const gasPrice = await this.provider.getGasPrice()
+      //let gasLimit = await this.instance
+      //  .connect(user)
+      //  .estimateGas.buyFromFreAndOrder(orderParams, freParams)
       // Check if gas limit is below minimum and adjust if necessary
 
-      if (process.env.ENVIRONMENT === 'barge' && process.env.MIN_GAS_PRICE) {
-        const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE))
-        if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit
-      }
+      //console.log('gasLimit', gasLimit)
+      //if (process.env.ENVIRONMENT === 'barge' && process.env.MIN_GAS_PRICE) {
+      //  const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE))
+      //  if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit
+      //}
+
+      //const gasLimit = BigNumber.from(16000000)
       // Execute transaction and wait for receipt
       const tx = await this.instance
         .connect(user)
-        .buyFromFreAndOrder(orderParams, freParams, {
-          gasLimit,
-          gasPrice
-        })
+        .buyFromFreAndOrder(orderParams, freParams)
       const receipt = await tx.wait()
 
       return receipt
@@ -156,7 +163,7 @@ class Predictoor {
   }
   // Buy and start subscription
   async buyAndStartSubscription(
-    user: ethers.Wallet
+    user: ethers.Signer
   ): Promise<ethers.ContractReceipt | Error | null> {
     try {
       const dtPrice: any = await this.FRE?.getDtPrice(
@@ -225,22 +232,26 @@ class Predictoor {
 
   async getAggPredval(
     block: number,
-    user: ethers.Wallet,
-    authorizationMessage: TAuthorizationUser
+    user: ethers.Signer,
+    authorizationData: TAuthorizationUser
   ): Promise<TGetAggPredvalResult | null> {
     try {
       if (this.instance) {
         const [nom, denom] = await this.instance
           .connect(user)
-          .getAggPredval(block, authorizationMessage)
+          .getAggPredval(block, authorizationData)
+
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(nom, 18)
-        // Calculate confidence and direction
+
+        // TODO - Review in scale/testnet/production.
+        // This will be either 1 or 0 right now.
         let confidence: number = parseFloat(nominator) / parseFloat(denominator)
         if (isNaN(confidence)) {
           confidence = 0
         }
         let dir: number = confidence >= 0.5 ? 1 : 0
+
         return {
           nom: nominator,
           denom: denominator,
@@ -249,8 +260,10 @@ class Predictoor {
           stake: denom?.toString()
         }
       }
+
       return null
     } catch (e) {
+      // console.log("Failed to call getAggPredval");
       console.error(e)
       return null
     }

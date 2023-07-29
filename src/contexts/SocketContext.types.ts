@@ -22,6 +22,9 @@ export type TSocketFeedItem = {
     dir: number
     stake: number
     epoch: number
+    epochStartBlockNumber: number
+    blocksPerEpoch: number
+    currentBlockNumber: number
   }>
   contractInfo: TSocketContractInfo
 }
@@ -31,6 +34,7 @@ export type TSocketFeedData = Array<TSocketFeedItem>
 export type TSocketContext = {
   epochData: TSocketFeedData | null
   socket: Socket | null
+  initialEpochData: TSocketFeedData | null
   setInitialData: (data: Maybe<TSocketFeedData>) => void
   setEpochData: React.Dispatch<React.SetStateAction<TSocketFeedData | null>>
 }

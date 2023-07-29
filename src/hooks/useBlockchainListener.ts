@@ -1,7 +1,4 @@
-import {
-  TSocketFeedData,
-  TSocketFeedItem
-} from '@/contexts/SocketContext.types'
+import { TSocketFeedData } from '@/contexts/SocketContext.types'
 import { currentConfig } from '@/utils/appconstants'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor from '@/utils/contracts/Predictoor'
@@ -24,25 +21,39 @@ import { useAccount } from 'wagmi'
 export type TUseBlockchainListener = {
   providedContracts?: Record<string, TPredictionContract>
   setEpochData: React.Dispatch<React.SetStateAction<TSocketFeedData | null>>
+  triggerKey: string
 }
 
 export type TUseBlockchainListenerResult = {
   subscribedContracts: Predictoor[]
+  allNonFreeOpfContracts: Predictoor[]
   predictedEpochs: MutableRefObject<
     Record<string, TPredictedEpochLogItem[]> | undefined
   >
+  checkAllContractsForSubscriptions: (
+    contracts?: Array<Predictoor>
+  ) => Promise<void>
 }
 
-export type TPredictedEpochLogItem = TGetAggPredvalResult & { epoch: number }
+export type TPredictedEpochLogItem = TGetAggPredvalResult & {
+  epoch: number
+  epochStartBlockNumber: number
+  blocksPerEpoch: number
+  currentBlockNumber: number
+}
 
 const useBlockchainListener = ({
   providedContracts,
-  setEpochData
+  setEpochData,
+  triggerKey
 }: TUseBlockchainListener): TUseBlockchainListenerResult => {
   const { address } = useAccount()
   const [subscribedContracts, setSubscribedContracts] = useState<Predictoor[]>(
     []
   )
+  const [allNonFreeOpfContracts, setAllNonFreeOpfContracts] = useState<
+    Predictoor[]
+  >([])
 
   const lastCheckedEpoch = useRef<number>(0)
   const predictedEpochs =
@@ -57,6 +68,25 @@ const useBlockchainListener = ({
           !currentConfig.opfProvidedPredictions.includes(contract.address)
       ),
     []
+  )
+
+  const checkAllContractsForSubscriptions = useCallback(
+    async (contracts?: Array<Predictoor>) => {
+      if (!address) return
+      const tempContracts = contracts ? contracts : allNonFreeOpfContracts
+      const validSubscriptionResult = await Promise.all(
+        tempContracts.map((predictorContract) =>
+          predictorContract.isValidSubscription(address)
+        )
+      )
+
+      const validSubscriptions = tempContracts.filter(
+        (contract, index) => validSubscriptionResult[index]
+      )
+
+      setSubscribedContracts(validSubscriptions)
+    },
+    [address, allNonFreeOpfContracts]
   )
 
   const initializeContracts = useCallback(
@@ -76,7 +106,6 @@ const useBlockchainListener = ({
           return predictoor
         })
       )
-
       const validSubscriptionResult = await Promise.all(
         contractsResult.map((predictorContract) =>
           predictorContract.isValidSubscription(address)
@@ -147,6 +176,7 @@ const useBlockchainListener = ({
 
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !providedContracts) return
+
     const BPE = await subscribedContracts[0]?.getBlocksPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', (blockNumber) => {
@@ -178,6 +208,7 @@ const useBlockchainListener = ({
 
       console.log('newEpochs', newEpochs)
       getMultiplePredictions({
+        currentBlockNumber: blockNumber,
         epochs: newEpochs,
         contracts: subscribedContracts,
         userWallet: address,
@@ -201,14 +232,13 @@ const useBlockchainListener = ({
 
           const items = [...pickedCaches, ...pickedResults]
 
-          //convert the items to socket feed data
-          const socketFeedDataPredictions = items.map((item) =>
+          const dataPredictions = items.map((item) =>
             omit(item, ['contractAddress'])
           )
 
-          const blockchainFeedData: TSocketFeedItem = {
+          const blockchainFeedData: any = {
             contractInfo: providedContracts[contract.address],
-            predictions: socketFeedDataPredictions
+            predictions: dataPredictions
           }
 
           setEpochData((prev) => {
@@ -239,12 +269,11 @@ const useBlockchainListener = ({
   useEffect(() => {
     if (!providedContracts) return
     initializeContracts(providedContracts)
-  }, [initializeContracts, providedContracts])
+  }, [initializeContracts, providedContracts, address])
 
   useEffect(() => {
-    const provider = networkProvider.getProvider()
     if (subscribedContracts.length === 0) return
-
+    const provider = networkProvider.getProvider()
     addChainListener()
     return () => {
       provider.removeAllListeners('block')
@@ -253,7 +282,9 @@ const useBlockchainListener = ({
 
   return {
     subscribedContracts,
-    predictedEpochs
+    predictedEpochs,
+    allNonFreeOpfContracts,
+    checkAllContractsForSubscriptions
   }
 }
 export default useBlockchainListener

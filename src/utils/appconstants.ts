@@ -42,13 +42,3 @@ export const assetTableColumns = [
     accessor: 'subscription'
   }
 ]
-
-export const getAllowedPredictions = () => {
-  let allowedPredictions = [...currentConfig.opfProvidedPredictions]
-  if (currentConfig.whiteListedPredictions) {
-    allowedPredictions = allowedPredictions.concat(
-      currentConfig.whiteListedPredictions
-    )
-  }
-  return allowedPredictions
-}

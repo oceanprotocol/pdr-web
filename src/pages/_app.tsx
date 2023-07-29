@@ -1,5 +1,5 @@
+import { PredictoorsProvider } from '@/contexts/PredictoorsContext'
 import { SocketProvider } from '@/contexts/SocketContext'
-import { SubscribedPredictoorsProvider } from '@/contexts/SubscribedPredictoorsContext'
 import '@/styles/globals.css'
 import { ethereumClient, w3mProjectId, wagmiConfig } from '@/utils/web3Clients'
 import { Web3Modal } from '@web3modal/react'
@@ -11,9 +11,9 @@ function App({ Component, pageProps }: AppProps) {
     <>
       <WagmiConfig config={wagmiConfig}>
         <SocketProvider>
-          <SubscribedPredictoorsProvider>
+          <PredictoorsProvider>
             <Component {...pageProps} />
-          </SubscribedPredictoorsProvider>
+          </PredictoorsProvider>
         </SocketProvider>
       </WagmiConfig>
       <Web3Modal projectId={w3mProjectId} ethereumClient={ethereumClient} />

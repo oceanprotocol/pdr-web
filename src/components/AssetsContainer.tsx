@@ -1,62 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
-import { useSubscribedPredictoorsContext } from '@/contexts/SubscribedPredictoorsContext'
-import useBlockchainListener from '@/hooks/useBlockchainListener'
-import { currentConfig, getAllowedPredictions } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
-import {
-  TPredictionContract,
-  getAllInterestingPredictionContracts
-} from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import styles from '../styles/AssetsTable.module.css'
 import { AssetTable } from './AssetTable'
 
-type TContractsState = Awaited<
-  ReturnType<typeof getAllInterestingPredictionContracts>
->
-
 export const AssetsContainer: React.FC = () => {
-  const [contracts, setContracts] = useState<TContractsState>()
-  const { setInitialData, setEpochData } = useSocketContext()
-  const { checkAndAddInstance } = useSubscribedPredictoorsContext()
-
-  const { subscribedContracts } = useBlockchainListener({
-    providedContracts: contracts,
-    setEpochData
-  })
-
-  useEffect(() => {
-    if (!subscribedContracts) return
-    subscribedContracts.forEach((contract) => {
-      checkAndAddInstance(contract)
-    })
-  }, [checkAndAddInstance, subscribedContracts])
-
-  const filterContractsWithAllowedPredictions = useCallback<
-    (contracts: TContractsState) => Record<string, TPredictionContract>
-  >((contracts) => {
-    const allowedContracts = getAllowedPredictions()
-    const filteredContracts: Record<string, TPredictionContract> = {}
-
-    Object.keys(contracts).forEach((contractKey) => {
-      if (allowedContracts.includes(contractKey)) {
-        filteredContracts[contractKey] = contracts[contractKey]
-      }
-    })
-
-    return filteredContracts
-  }, [])
-
-  useEffect(() => {
-    getAllInterestingPredictionContracts(currentConfig.subgraph).then(
-      (contracts) => {
-        const filteredContracts =
-          filterContractsWithAllowedPredictions(contracts)
-        setContracts(filteredContracts)
-      }
-    )
-  }, [filterContractsWithAllowedPredictions, setContracts])
+  const { contracts } = usePredictoorsContext()
+  const { setInitialData } = useSocketContext()
 
   useEffect(() => {
     if (!setInitialData) return
@@ -67,14 +19,7 @@ export const AssetsContainer: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {contracts ? (
-        <AssetTable
-          contracts={contracts}
-          subscribedContracts={subscribedContracts}
-        />
-      ) : (
-        <div>Loading</div>
-      )}
+      {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
     </div>
   )
 }

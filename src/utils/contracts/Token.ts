@@ -2,17 +2,17 @@ import { Contract, ethers } from 'ethers'
 import { IERC20ABI } from '../../metadata/abis/IERC20ABI'
 
 class Token {
-  public provider: ethers.providers.Provider
+  public provider: ethers.providers.JsonRpcProvider
   public contractAddress: string
   public contractInstance: Contract
 
-  constructor(address: string, provider: ethers.providers.Provider) {
+  constructor(address: string, provider: ethers.providers.JsonRpcProvider) {
     this.provider = provider
     this.contractAddress = ethers.utils.getAddress(address)
     this.contractInstance = new ethers.Contract(
       this.contractAddress,
       IERC20ABI,
-      provider
+      provider.getSigner()
     )
   }
 
@@ -25,7 +25,7 @@ class Token {
   }
 
   async approve(
-    user: ethers.Wallet,
+    user: ethers.Signer,
     spender: string,
     amount: string,
     provider: ethers.providers.JsonRpcProvider
@@ -36,6 +36,9 @@ class Token {
       const gasLimit = await this.contractInstance
         .connect(user)
         .estimateGas.approve(spender, ethers.utils.parseEther(amount))
+
+      console.log(`TOKEN Gas price: ${gasPrice.toString()}`)
+      console.log(`TOKEN Gas limit: ${gasLimit.toString()}`)
 
       const tx = await this.contractInstance
         .connect(user)
