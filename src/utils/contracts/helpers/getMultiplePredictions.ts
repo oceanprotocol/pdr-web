@@ -1,4 +1,4 @@
-import { TPredictedEpochLogItem } from '@/hooks/useBlockchainListener'
+import { TPredictedEpochLogItem } from '@/contexts/PredictoorsContext'
 import { ethers } from 'ethers'
 import Predictoor, { TAuthorizationUser } from '../Predictoor'
 

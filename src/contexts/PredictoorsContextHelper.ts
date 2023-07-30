@@ -1,6 +1,6 @@
-import { TPredictedEpochLogItem } from '@/hooks/useBlockchainListener'
 import Predictoor from '@/utils/contracts/Predictoor'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { TPredictedEpochLogItem } from './PredictoorsContext'
 
 export type TFilterAllowedContractsArgs = {
   contracts: Record<string, TPredictionContract>

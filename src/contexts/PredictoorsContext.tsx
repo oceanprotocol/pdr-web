@@ -1,8 +1,8 @@
-import { TPredictedEpochLogItem } from '@/hooks/useBlockchainListener'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { AuthorizationData } from '@/utils/AuthorizationData'
 import { currentConfig } from '@/utils/appconstants'
 import { authorize } from '@/utils/authorize'
+import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor, { TAuthorizationUser } from '@/utils/contracts/Predictoor'
 import {
   TGetMultiplePredictionsResult,
@@ -36,6 +36,13 @@ import { useSocketContext } from './SocketContext'
 type TContractsState = Awaited<
   ReturnType<typeof getAllInterestingPredictionContracts>
 >
+
+export type TPredictedEpochLogItem = TGetAggPredvalResult & {
+  epoch: number
+  epochStartBlockNumber: number
+  blocksPerEpoch: number
+  currentBlockNumber: number
+}
 
 // OPFOwnerPredictoorsContext
 export const PredictoorsContext = createContext<TPredictoorsContext>({
