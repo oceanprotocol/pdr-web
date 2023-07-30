@@ -35,17 +35,25 @@ export const ganache = {
     symbol: 'GNTK'
   },
   rpcUrls: {
-    public: { http: [process.env.NEXT_PUBLIC_DEV_GANACHE_HOST] },
-    default: { http: [process.env.NEXT_PUBLIC_DEV_GANACHE_HOST] }
+    public: {
+      http: [
+        process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://127.0.0.1:8545'
+      ]
+    },
+    default: {
+      http: [
+        process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://127.0.0.1:8545'
+      ]
+    }
   },
   blockExplorers: {
     etherscan: {
       name: 'Ganache',
-      url: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST
+      url: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://127.0.0.1:8545'
     },
     default: {
       name: 'Ganache',
-      url: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST
+      url: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://127.0.0.1:8545'
     }
   }
 } as Chain
