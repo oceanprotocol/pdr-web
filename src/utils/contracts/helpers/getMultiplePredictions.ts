@@ -37,6 +37,9 @@ export const getMultiplePredictions = ({
         const epochStartBlockNumber =
           await contract.getCurrentEpochStartBlockNumber(currentBlockNumber)
         const blocksPerEpoch = await contract.getBlocksPerEpoch()
+
+        if (!authorizationData) return null
+
         const aggPredVal = await contract.getAggPredval(
           epoch,
           userWallet,
