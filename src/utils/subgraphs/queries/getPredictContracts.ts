@@ -21,22 +21,34 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
     }
   }`
 
+export enum NftKeys {
+  MARKET = '0xf7e3126f87228afb82c9b18537eed25aaeb8171a78814781c26ed2cfeff27e69',
+  INTERVAL = '0x49435d2ff85f9f3594e40e887943d562765d026d50b7383e76891f8190bff4c9'
+}
+
+export type TNft = {
+  key: string
+  value: string
+}
+
 type TNftOwner = {
   id: string
 }
 
-type TNft = {
+export type TNftData = {
   owner: TNftOwner
+  nftData: TNft[]
 }
 
 type TPredictToken = {
   id: string
   name: string
   symbol: string
-  nft: TNft
+  lastPriceValue: string
+  nft: TNftData
 }
 
-type TPredictContract = {
+export type TPredictContract = {
   id: string
   token: TPredictToken
   blocksPerEpoch: string

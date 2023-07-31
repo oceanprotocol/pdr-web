@@ -5,8 +5,7 @@ import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { TCoinGeckoIdKeys } from '@/utils/appconstants'
-import { TGetAssetPairPriceArgs, getAssetPairPrice } from '@/utils/marketPrices'
-import { findContractMarketInConfig } from '@/utils/utils'
+import { getAssetPairPrice } from '@/utils/marketPrices'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
@@ -29,21 +28,23 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
 
-  let { tokenName, pairName, subscription } = assetData
+  let { tokenName, pairName, subscription, subscriptionPrice, market } =
+    assetData
 
   const [fetchedInfo, setFetchedInfo] =
     useState<TAssetRowState['FetchedInfo']>()
 
   const getAssetPairPriceForRow = useCallback<
-    (args: { tokenName: string; pairName: string }) => Promise<string>
+    (args: {
+      tokenName: string
+      pairName: string
+      market: string
+    }) => Promise<string>
   >(
     ({ tokenName, pairName }) =>
       getAssetPairPrice({
         assetPair: `${tokenName}${pairName}`,
-        market: findContractMarketInConfig(
-          tokenName,
-          pairName
-        ) as TGetAssetPairPriceArgs['market']
+        market: market
       }),
     []
   )
@@ -57,7 +58,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     async ({ tokenName, pairName }) =>
       Promise.all([
         getTokenData(tokenName as TCoinGeckoIdKeys),
-        getAssetPairPriceForRow({ tokenName, pairName })
+        getAssetPairPriceForRow({ tokenName, pairName, market })
       ]),
     []
   )
@@ -73,7 +74,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const renewPrice = useCallback<() => Promise<void>>(async () => {
     const price = await getAssetPairPriceForRow({
       tokenName,
-      pairName
+      pairName,
+      market
     })
     if (price)
       setFetchedInfo((prev) => ({ ...(prev as TAssetFetchedInfo), price }))
@@ -119,11 +121,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Asset assetData={fetchedInfo.tokenData} />
       <Price
         assetData={fetchedInfo.tokenData}
-        market={
-          fetchedInfo.tokenData?.name == 'Ethereum'
-            ? Markets.BINANCE
-            : Markets.KRAKEN
-        }
+        market={market == Markets.BINANCE ? Markets.BINANCE : Markets.KRAKEN}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
@@ -142,7 +140,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       />
       <Subscription
         subscriptionData={{
-          price: 3,
+          price: parseInt(subscriptionPrice),
           status: subscription,
           assetDid: ''
         }}

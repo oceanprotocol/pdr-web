@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useSocketContext } from '@/contexts/SocketContext'
+import { TSocketFeedItem } from '@/contexts/SocketContext.types'
 import useBlockchainListener from '@/hooks/useBlockchainListener'
 import { currentConfig } from '@/utils/appconstants'
 import { getInitialData } from '@/utils/getInitialData'
@@ -11,16 +12,26 @@ import {
 import styles from '../styles/AssetsTable.module.css'
 import { AssetTable } from './AssetTable'
 
-type TContractsState = Awaited<
-  ReturnType<typeof getAllInterestingPredictionContracts>
->
-
 export const AssetsContainer: React.FC = () => {
-  const [contracts, setContracts] = useState<TContractsState>()
-  const { initialEpochData, setInitialData, setEpochData } = useSocketContext()
+  const [contracts, setContracts] =
+    useState<Record<string, TPredictionContract>>()
+  const { initialEpochData, setInitialData, epochData, setEpochData } =
+    useSocketContext()
+
+  useEffect(() => {
+    console.log(epochData)
+    if (!epochData) return
+    let contracts: Record<string, TPredictionContract> = {}
+    epochData?.forEach((contract: TSocketFeedItem) => {
+      contracts[contract.contractInfo.address] = contract.contractInfo
+    })
+    setContracts(contracts)
+  }, [epochData])
 
   const filterAllowedContracts = useCallback<
-    (contracts: TContractsState) => Record<string, TPredictionContract>
+    (
+      contracts: Record<string, TPredictionContract>
+    ) => Record<string, TPredictionContract>
   >((contracts) => {
     const filteredContracts: Record<string, TPredictionContract> =
       contracts || {}

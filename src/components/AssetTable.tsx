@@ -11,11 +11,14 @@ import { SubscriptionStatus } from './Subscription'
 export type TAssetData = {
   tokenName: string
   pairName: string
+  market: string
   contract: TPredictionContract
   subscription: SubscriptionStatus
+  subscriptionPrice: string
 }
 
 export type TAssetTableProps = {
+  //contracts: TPredictionContract[]
   contracts: Record<string, TPredictionContract>
   subscribedContracts: Array<Predictoor>
 }
@@ -61,12 +64,16 @@ export const AssetTable: React.FC<TAssetTableProps> = ({
       Object.entries(contracts).forEach(([, contract]) => {
         const [tokenName, pairName] = contract.name.split('-')
 
+        const subscriptionPrice = contract.price
+        const market = contract.market
         const subscriptionStatus = getSubscriptionStatus(contract)
 
         assetsData.push({
           tokenName,
           pairName,
           contract,
+          market,
+          subscriptionPrice,
           subscription: subscriptionStatus
         })
       })
