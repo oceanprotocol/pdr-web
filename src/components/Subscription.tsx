@@ -1,8 +1,9 @@
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import Button from '@/elements/Button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
+import { currentConfig } from '@/utils/appconstants'
 import { useCallback, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
 
 export enum SubscriptionStatus {
@@ -27,6 +28,8 @@ export default function Subscription({
   contractAddress
 }: TSubscriptionProps) {
   const { isConnected, address } = useAccount()
+  const { chain } = useNetwork()
+  const { chainId } = currentConfig
   const signer = useEthersSigner({})
 
   const { getPredictorInstanceByAddress, runCheckContracts } =
@@ -74,7 +77,7 @@ export default function Subscription({
         <Button
           text={`${isBuying ? 'Buying...' : 'Buy'}`}
           onClick={() => BuyAction({ currentStatus: subscriptionData.status })}
-          disabled={!isConnected || isBuying}
+          disabled={!isConnected || isBuying || chain?.id !== parseInt(chainId)}
         />
       ) : (
         <span className={styles.status}>{subscriptionData.status}</span>
