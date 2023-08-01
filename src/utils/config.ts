@@ -48,7 +48,7 @@ export const config: TRuntimeConfig = {
   },
   barge: {
     chainId: '8996',
-    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`,
+    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`,
     oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     tokenPredictions: [
       {
@@ -67,13 +67,13 @@ export const config: TRuntimeConfig = {
         market: 'kraken'
       }
     ],
-    opfProvidedPredictions: ['0x003b23b92e84bf16f576b4c5c1664c2c801f3172'],
+    opfProvidedPredictions: [],
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   },
   mock: {
     chainId: '23295',
     oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
-    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`,
+    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`,
     tokenPredictions: [
       {
         tokenName: 'ETH',
