@@ -14,7 +14,7 @@ export enum SubscriptionStatus {
 
 export interface SubscriptionData {
   status: SubscriptionStatus
-  assetDid: string
+  duration: number
   price: number
 }
 
@@ -70,7 +70,7 @@ export default function Subscription({
     <div className={styles.container}>
       <span className={styles.price}>
         {subscriptionData.price > 0
-          ? `${subscriptionData.price} OCEAN`
+          ? `${subscriptionData.price} OCEAN / ${subscriptionData.duration}H`
           : 'FREE'}
       </span>
       {subscriptionData.status === SubscriptionStatus.INACTIVE ? (

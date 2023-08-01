@@ -32,6 +32,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     pairName,
     subscription,
     subscriptionPrice,
+    subscriptionDuration,
     market,
     contract
   } = assetData
@@ -147,7 +148,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         subscriptionData={{
           price: parseInt(subscriptionPrice),
           status: subscription,
-          assetDid: ''
+          duration: subscriptionDuration
         }}
         contractAddress={contract.address}
       />

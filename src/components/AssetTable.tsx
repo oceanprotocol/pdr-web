@@ -15,6 +15,7 @@ export type TAssetData = {
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
+  subscriptionDuration: number
 }
 
 export type TAssetTableProps = {
@@ -64,6 +65,8 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         const subscriptionPrice = contract.price
         const market = contract.market
         const subscriptionStatus = getSubscriptionStatus(contract)
+        const subscriptionDuration =
+          parseInt(contract.blocksPerSubscription) / 3600
 
         assetsData.push({
           tokenName,
@@ -71,10 +74,10 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           contract,
           market,
           subscriptionPrice,
+          subscriptionDuration,
           subscription: subscriptionStatus
         })
       })
-      console.log(assetsData)
       setAssetsData(assetsData)
     },
     [getSubscriptionStatus]
