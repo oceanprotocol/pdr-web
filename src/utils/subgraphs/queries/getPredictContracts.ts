@@ -5,6 +5,7 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
         id
         name
         symbol
+        lastPriceValue
         nft {
           owner{
             id
