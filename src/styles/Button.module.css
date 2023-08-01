@@ -3,13 +3,11 @@
   border: 0;
   padding: 5px 10px;
   border-radius: var(--small-border-radius);
+  cursor: pointer;
 }
 
 .button:disabled {
-  background: var(--shadow-grey);
+  opacity: 0.3;
   color: var(--primary-color);
-}
-
-.button:hover {
-  cursor: pointer;
+  cursor: default;
 }
