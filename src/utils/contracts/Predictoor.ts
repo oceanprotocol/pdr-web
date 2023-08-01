@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from 'ethers'
 import { ERC20Template3ABI } from '../../metadata/abis/ERC20Template3ABI'
-import { signHash } from '../signHash'
+import { signHashWithUser } from '../signHash'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -68,7 +68,8 @@ class Predictoor {
     return this.instance?.subscriptions(address)
   }
   // Calculate provider fee
-  async getCalculatedProviderFee(user: string): Promise<TProviderFee> {
+  async getCalculatedProviderFee(user: ethers.Signer): Promise<TProviderFee> {
+    const address = await user.getAddress()
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
     const providerFeeAmount = 0
@@ -78,7 +79,7 @@ class Predictoor {
       ['bytes', 'address', 'address', 'uint256', 'uint256'],
       [
         ethers.utils.hexlify(ethers.utils.toUtf8Bytes(providerData)),
-        user,
+        address,
         providerFeeToken,
         providerFeeAmount,
         providerValidUntil
@@ -86,10 +87,10 @@ class Predictoor {
     )
     // Sign the message
     console.log('message', message)
-    const { v, r, s } = await signHash(user, message)
-    console.log('{ v, r, s }', v, r, s)
+    const { v, r, s } = await signHashWithUser(user, message)
+
     return {
-      providerFeeAddress: user,
+      providerFeeAddress: address,
       providerFeeToken,
       providerFeeAmount,
       v,
@@ -102,10 +103,10 @@ class Predictoor {
     }
   }
   // Get order parameters
-  async getOrderParams(user: string) {
+  async getOrderParams(address: string, user: ethers.Signer) {
     const providerFee = await this.getCalculatedProviderFee(user)
     return {
-      consumer: user,
+      consumer: address,
       serviceIndex: 0,
       _providerFee: providerFee,
       _consumeMarketFee: {
@@ -127,7 +128,7 @@ class Predictoor {
         return Error('Assert FRE and token requirements.')
       }
       const address = await user.getAddress()
-      const orderParams = await this.getOrderParams(address)
+      const orderParams = await this.getOrderParams(address, user)
       const freParams = {
         exchangeContract: this.FRE.address,
         exchangeId,
@@ -148,11 +149,13 @@ class Predictoor {
       //  if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit
       //}
 
-      //const gasLimit = BigNumber.from(16000000)
+      const gasLimit = BigNumber.from(16000000)
       // Execute transaction and wait for receipt
       const tx = await this.instance
         .connect(user)
-        .buyFromFreAndOrder(orderParams, freParams)
+        .buyFromFreAndOrder(orderParams, freParams, {
+          gasLimit
+        })
       const receipt = await tx.wait()
 
       return receipt
