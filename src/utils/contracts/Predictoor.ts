@@ -179,12 +179,24 @@ class Predictoor {
       }
       const formattedBaseTokenAmount = ethers.utils.formatEther(baseTokenAmount)
       // Approve token and execute buy and order
-      await this.token.approve(
-        user,
-        this.address || '',
-        ethers.utils.formatEther(baseTokenAmount),
-        this.provider
+
+      const address = await user.getAddress()
+      const aprrovedTokenAmount = await this.token.allowance(
+        address,
+        this.address
       )
+
+      if (
+        ethers.utils.formatEther(aprrovedTokenAmount) <
+        ethers.utils.formatEther(baseTokenAmount)
+      ) {
+        await this.token.approve(
+          user,
+          this.address || '',
+          ethers.utils.formatEther(baseTokenAmount),
+          this.provider
+        )
+      }
       return await this.buyFromFreAndOrder(
         user,
         this.exchangeId?.toString(),
