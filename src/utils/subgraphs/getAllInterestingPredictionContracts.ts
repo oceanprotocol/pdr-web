@@ -1,6 +1,8 @@
 import { graphqlClientInstance } from '../graphqlClient'
 import {
+  NftKeys,
   TGetPredictContractsQueryResult,
+  TNft,
   getPredictContracts
 } from './queries/getPredictContracts'
 
@@ -8,6 +10,8 @@ export type TPredictionContract = {
   name: string
   address: string
   symbol: string
+  price: string
+  market: string
   owner: string
   blocksPerEpoch: string
   blocksPerSubscription: string
@@ -40,11 +44,20 @@ export const getAllInterestingPredictionContracts = async (
     }
 
     for (const item of predictContracts) {
+      let market: string = ''
+      item.token.nft.nftData.forEach((i: TNft) => {
+        if (i.key == NftKeys.MARKET) {
+          market = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
+        }
+      })
+
       contracts[item.id] = {
         name: item.token.name,
         address: item.id,
         owner: item.token.nft.owner.id,
+        market: market,
         symbol: item.token.symbol,
+        price: item.token.lastPriceValue,
         blocksPerEpoch: item.blocksPerEpoch,
         blocksPerSubscription: item.blocksPerSubscription,
         last_submitted_epoch: 0
