@@ -8,9 +8,9 @@ import styles from '../styles/Balance.module.css'
 export default function Balance() {
   const { address } = useAccount()
   const [balance, setBalance] = useState('0')
-  const { chainId } = currentConfig
+  const { chainId, oceanTokenAddress } = currentConfig
   const { data, refetch } = useContractRead({
-    address: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
+    address: oceanTokenAddress,
     abi: IERC20ABI,
     functionName: 'balanceOf',
     args: [address],

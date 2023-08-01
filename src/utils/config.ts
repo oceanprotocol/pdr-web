@@ -4,6 +4,7 @@ export type TRuntimeConfig = Record<
   {
     chainId: string
     subgraph: string
+    oceanTokenAddress: `0x${string}`
     tokenPredictions: Array<{
       tokenName: string
       pairName: string
@@ -17,6 +18,7 @@ export type TRuntimeConfig = Record<
 export const config: TRuntimeConfig = {
   staging: {
     chainId: '23295',
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     subgraph:
       'https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -31,6 +33,7 @@ export const config: TRuntimeConfig = {
   },
   production: {
     chainId: '23295',
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     subgraph:
       'https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -46,6 +49,7 @@ export const config: TRuntimeConfig = {
   barge: {
     chainId: '8996',
     subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`,
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     tokenPredictions: [
       {
         tokenName: 'ETH',
@@ -68,6 +72,7 @@ export const config: TRuntimeConfig = {
   },
   mock: {
     chainId: '23295',
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`,
     tokenPredictions: [
       {
