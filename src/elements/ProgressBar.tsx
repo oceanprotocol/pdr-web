@@ -7,9 +7,14 @@ import styles from '../styles/ProgressBar.module.css'
 interface ProgressBarProps {
   progress: number
   max: number
+  refreshOnData: any
 }
 
-export default function ProgressBar({ progress, max }: ProgressBarProps) {
+export default function ProgressBar({
+  progress,
+  max,
+  refreshOnData
+}: ProgressBarProps) {
   const [completed, setCompleted] = useState(progress)
 
   useEffect(() => {
@@ -26,7 +31,7 @@ export default function ProgressBar({ progress, max }: ProgressBarProps) {
 
   useEffect(() => {
     setCompleted(progress)
-  }, [progress])
+  }, [progress, refreshOnData])
 
   return (
     <ProgressBarComponent

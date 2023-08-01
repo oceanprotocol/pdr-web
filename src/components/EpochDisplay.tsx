@@ -61,6 +61,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           />
           {status === EEpochDisplayStatus.NextPrediction && (
             <ProgressBar
+              refreshOnData={relatedData.epochStartBlockNumber}
               progress={
                 relatedData.epochStartBlockNumber +
                 relatedData.blocksPerEpoch -

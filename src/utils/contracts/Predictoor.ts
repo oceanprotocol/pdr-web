@@ -249,7 +249,8 @@ class Predictoor {
 
         // TODO - Review in scale/testnet/production.
         // This will be either 1 or 0 right now.
-        let confidence: number = parseFloat(nominator) / parseFloat(denominator)
+        let confidence: number =
+          (parseFloat(nominator) / parseFloat(denominator)) * 100
         if (isNaN(confidence)) {
           confidence = 0
         }
