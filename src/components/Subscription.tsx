@@ -1,4 +1,5 @@
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
+import { useUserContext } from '@/contexts/UserContext'
 import Button from '@/elements/Button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { currentConfig } from '@/utils/appconstants'
@@ -30,6 +31,7 @@ export default function Subscription({
   const { isConnected, address } = useAccount()
   const { chain } = useNetwork()
   const { chainId } = currentConfig
+  const { refetchBalance } = useUserContext()
   const signer = useEthersSigner({})
 
   const { getPredictorInstanceByAddress, runCheckContracts } =
@@ -59,6 +61,7 @@ export default function Subscription({
       if (!!receipt) {
         runCheckContracts()
       }
+      refetchBalance()
       setIsBuying(false)
     },
     [isConnected, address, getPredictorInstanceByAddress, contractAddress]
