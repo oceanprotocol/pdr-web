@@ -103,11 +103,18 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           ))}
         </TableRowWrapper>
       </thead>
-      <tbody>
-        {assetsData.map((item) => (
-          <AssetRow key={`assetRow${item.contract.address}`} assetData={item} />
-        ))}
-      </tbody>
+      {assetsData.length > 0 ? (
+        <tbody>
+          {assetsData.map((item) => (
+            <AssetRow
+              key={`assetRow${item.contract.address}`}
+              assetData={item}
+            />
+          ))}
+        </tbody>
+      ) : (
+        <span className={styles.message}>No contracts found</span>
+      )}
     </table>
   )
 }
