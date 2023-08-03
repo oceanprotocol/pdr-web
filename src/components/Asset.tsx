@@ -12,7 +12,7 @@ export default function Asset({
     <div className={styles.container}>
       <img
         className={styles.image}
-        src={assetData.image}
+        src={`/assets/icons/${assetData.symbol}.svg`}
         alt="Coin symbol image"
       />
       {assetData.name}
