@@ -11,6 +11,11 @@
   --shadow-grey: #e8e8e8;
   --dark-grey: #dbdbdb;
 
+  --font-size-small: 0.5rem;
+  --font-size-base: 1rem;
+  --font-size-large: 1.5rem;
+  --font-size-extra-large: 2rem;
+
   --big-border-radius: 12px;
   --small-border-radius: 5px;
   --regular-font-size: 14px;

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export const HeaderNextElement = () => (
+export const PredictoorEyes = () => (
   <>
     <Image
       src="assets/svg/table_next_ellipse.svg"

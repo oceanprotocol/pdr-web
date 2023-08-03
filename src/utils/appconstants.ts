@@ -1,5 +1,3 @@
-import React from 'react'
-import { HeaderNextElement } from '../elements/HeaderNextElement'
 import { config } from './config'
 
 export const currentConfig = process.env.NEXT_PUBLIC_ENV
@@ -26,7 +24,7 @@ export const assetTableColumns = [
     accessor: 'price'
   },
   {
-    Header: React.createElement(HeaderNextElement),
+    Header: 'Next',
     accessor: 'next'
   },
   {
