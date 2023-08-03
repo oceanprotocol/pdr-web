@@ -56,10 +56,14 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
             direction={relatedData.dir}
             stake={relatedData.stake}
           />
-          <EpochDirection
-            direction={relatedData.dir}
-            confidence={relatedData.confidence}
-          />
+          {relatedData.stake ? (
+            <EpochDirection
+              direction={relatedData.dir}
+              confidence={relatedData.confidence}
+            />
+          ) : (
+            'NO PRED'
+          )}
           {status === EEpochDisplayStatus.NextPrediction && (
             <ProgressBar
               refreshOnData={relatedData.epochStartBlockNumber}

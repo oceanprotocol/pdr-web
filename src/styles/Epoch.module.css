@@ -30,6 +30,7 @@
 
 .stakeText {
   color: var(--background-color);
+  font-weight: bold;
 }
 
 .tokenImage {

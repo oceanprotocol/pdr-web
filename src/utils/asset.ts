@@ -9,7 +9,6 @@ export interface TokenData {
 export const getTokenData = async (
   network: keyof typeof ECoinGeckoIdList
 ): Promise<TokenData> => {
-  console.log('network', network)
   const response = await fetch(
     `https://api.coingecko.com/api/v3/coins/${ECoinGeckoIdList[network]}`
   )
