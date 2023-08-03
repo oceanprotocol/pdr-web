@@ -14,7 +14,9 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
         src={'oceanToken.png'}
         alt="Coin symbol image"
       />
-      <span>{`${stakedAmount / 100000000000} STAKED`}</span>
+      <span className={styles.stakeText}>{`${(
+        stakedAmount / 100000000000
+      ).toLocaleString()} STAKED`}</span>
     </div>
   )
 }

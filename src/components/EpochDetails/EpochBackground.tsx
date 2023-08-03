@@ -12,7 +12,7 @@ export const EpochBackground: React.FC<TEpochBackgroundProps> = ({
   <div
     className={styles.confidence}
     style={{
-      backgroundColor: `rgba(${direction == 1 ? '124,252,0' : '220,20,60'}, ${
+      backgroundColor: `rgba(${direction == 1 ? '102,207,0' : '220,20,60'}, ${
         stake / 100000000000
       })`
     }}

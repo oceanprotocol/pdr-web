@@ -28,6 +28,10 @@
   font-size: var(--font-size-small);
 }
 
+.stakeText {
+  color: var(--background-color);
+}
+
 .tokenImage {
   height: 6px;
   margin-right: 2px;
