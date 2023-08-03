@@ -79,6 +79,7 @@ export default function Subscription({
       {subscriptionData.status === SubscriptionStatus.INACTIVE ? (
         <Button
           text={`${isBuying ? 'Buying...' : 'Buy'}`}
+          textOnly
           onClick={() => BuyAction({ currentStatus: subscriptionData.status })}
           disabled={!isConnected || isBuying || chain?.id !== parseInt(chainId)}
         />

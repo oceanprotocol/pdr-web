@@ -5,6 +5,10 @@
   justify-content: center;
 }
 
+.price {
+  margin-bottom: calc(var(--spacer) / 12);
+}
+
 .status {
   color: rgb(102, 207, 0);
 }
