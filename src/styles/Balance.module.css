@@ -7,4 +7,12 @@
   background-color: var(--dark-grey);
   padding: calc(var(--spacer) / 4) calc(var(--spacer) / 2);
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tokenImage {
+  height: 15px;
+  margin-right: 5px;
 }

@@ -17,7 +17,7 @@
   --font-size-extra-large: 2rem;
 
   --big-border-radius: 12px;
-  --small-border-radius: 5px;
+  --small-border-radius: 2px;
   --regular-font-size: 14px;
   --spacer: 3rem;
 }
@@ -32,7 +32,6 @@
     --dark-grey: #555555;
 
     --big-border-radius: 12px;
-    --small-border-radius: 5px;
     --regular-font-size: 14px;
   }
 }

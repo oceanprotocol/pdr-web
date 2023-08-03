@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
+import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
 import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
@@ -70,6 +71,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               max={relatedData.blocksPerEpoch}
             />
           )}
+          <EpochStakedTokens stakedAmount={relatedData.stake} />
         </>
       ) : (
         <span>??</span>
