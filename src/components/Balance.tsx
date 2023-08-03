@@ -6,14 +6,14 @@ export default function Balance() {
 
   return (
     <div className={styles.container}>
-      <span className={styles.component}>Balance</span>
+      <span className={styles.component}>BALANCE</span>
       <span className={styles.component}>
         <img
           className={styles.tokenImage}
           src={'oceanToken.png'}
           alt="Coin symbol image"
         />
-        {balance} OCEAN
+        {balance.toLocaleString()}
       </span>
     </div>
   )

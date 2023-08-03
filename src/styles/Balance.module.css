@@ -1,11 +1,13 @@
 .container {
   display: flex;
-  gap: calc(var(--spacer) / 6);
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: calc(var(--spacer) / 4);
+  font-weight: bold;
 }
 
 .component {
-  background-color: var(--dark-grey);
-  padding: calc(var(--spacer) / 4) calc(var(--spacer) / 2);
   border-radius: 5px;
   display: flex;
   align-items: center;
