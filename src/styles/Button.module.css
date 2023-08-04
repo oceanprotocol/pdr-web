@@ -1,10 +1,12 @@
 .button {
-  background: linear-gradient(to right bottom, #7b1173, #ff4092);
+  background: var(--primary-pink);
   border: 0;
-  padding: calc(var(--spacer) / 10) calc(var(--spacer) / 4);
+  padding: calc(var(--spacer) / 16) calc(var(--spacer) / 6);
   border-radius: var(--border-radius-button);
   cursor: pointer;
+  font-size: var(--font-size-small);
   text-transform: uppercase;
+  font-weight: bold;
 }
 
 .textOnly {
@@ -14,7 +16,6 @@
 }
 
 .button:disabled {
-  opacity: 0.5;
-  color: var(--primary-pink);
+  opacity: 0.7;
   cursor: default;
 }

@@ -11,7 +11,8 @@
   --shadow-grey: #e8e8e8;
   --dark-grey: #cbcbcb;
 
-  --font-size-small: 0.5rem;
+  --font-size-mini: 0.5rem;
+  --font-size-small: 0.7rem;
   --font-size-base: 1rem;
   --font-size-large: 1.5rem;
   --font-size-extra-large: 2rem;

@@ -36,6 +36,10 @@ export const assetTableColumns = [
     accessor: 'history'
   },
   {
+    Header: 'Timeframe',
+    accessor: 'timegrame'
+  },
+  {
     Header: 'Subscription',
     accessor: 'subscription'
   }
