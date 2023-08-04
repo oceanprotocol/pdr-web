@@ -230,7 +230,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     const provider = networkProvider.getProvider()
     provider.on('block', (blockNumber) => {
       const currentEpoch = Math.floor(blockNumber / BPE)
-      if (currentEpoch === lastCheckedEpoch.current) return
+      const modula = blockNumber % BPE
+      if (currentEpoch === lastCheckedEpoch.current || modula < BPE / 5) return
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE)
 
@@ -265,7 +266,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         authorizationData:
           authorizationDataInstance.current?.getAuthorizationData()
       }).then((result) => {
-        console.log('result', result)
         subscribedPredictoors.forEach((contract) => {
           const pickedResults = result.filter(
             (item) => item !== null && item.contractAddress === contract.address
