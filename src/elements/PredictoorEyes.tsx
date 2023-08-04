@@ -6,15 +6,15 @@ export const PredictoorEyes = () => (
       src="assets/svg/table_next_ellipse.svg"
       alt="live"
       className="live-icon"
-      width={20}
-      height={20}
+      width={15}
+      height={15}
     />
     <Image
       src="assets/svg/table_next_ellipse.svg"
       alt="live"
       className="live-icon"
-      width={20}
-      height={20}
+      width={15}
+      height={15}
     />
   </>
 )

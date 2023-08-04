@@ -14,5 +14,6 @@
 }
 
 .logo {
-  font-size: var(--font-size-extra-large);
+  height: 50px;
+  object-fit: contain;
 }

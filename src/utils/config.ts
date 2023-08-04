@@ -49,7 +49,7 @@ export const config: TRuntimeConfig = {
   barge: {
     chainId: '8996',
     subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`,
-    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
+    oceanTokenAddress: '0x448fed712f01ff6d52e2283cf3c5772e43707ff5',
     tokenPredictions: [
       {
         tokenName: 'ETH',
