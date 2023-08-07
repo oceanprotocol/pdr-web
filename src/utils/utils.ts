@@ -1,4 +1,6 @@
+import { States } from '@/components/Banner'
 import { currentConfig } from './appconstants'
+const { chainId } = currentConfig
 
 /* eslint-env mocha */
 /* global */
@@ -38,4 +40,22 @@ export const omit = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
     delete cloned[key]
   }
   return cloned
+}
+
+export const checkForBannerMessage = (
+  userAddress: `0x${string}` | undefined,
+  connectedNetwork: number | undefined
+) => {
+  let message: string | undefined = undefined
+  let type: States = States.WARNING
+  console.log(connectedNetwork, chainId)
+  if (!userAddress) {
+    message = 'Wallet not connected'
+  } else if (connectedNetwork != parseInt(chainId)) {
+    message = 'Connected to wrong network'
+  }
+  return {
+    message,
+    type
+  }
 }
