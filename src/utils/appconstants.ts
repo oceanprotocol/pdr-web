@@ -12,7 +12,7 @@ export enum ECoinGeckoIdList {
   'XRP' = 'ripple'
 }
 
-export const PREDICTION_FETCH_EPOCHS_DELAY = 10
+export const PREDICTION_FETCH_EPOCHS_DELAY = 15
 
 export type TCoinGeckoIdKeys = keyof typeof ECoinGeckoIdList
 
