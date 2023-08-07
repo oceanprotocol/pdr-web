@@ -41,7 +41,6 @@ class Predictoor {
   }
 
   async getCurrentEpochStartTs(seconds: number): Promise<number> {
-    // This'd not return the soonest timestamp to predict but current epoch start
     const soonestTsToPredict: BigNumber =
       await this.instance?.soonestEpochToPredict(seconds)
     const formattedSoonestTsToPredict: number = parseInt(
