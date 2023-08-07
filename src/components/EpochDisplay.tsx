@@ -1,5 +1,6 @@
 import { useSocketContext } from '@/contexts/SocketContext'
 import ProgressBar from '@/elements/ProgressBar'
+import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
 import { useMemo } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
@@ -72,7 +73,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
                 relatedData.blocksPerEpoch -
                 relatedData.currentBlockNumber
               }
-              max={relatedData.blocksPerEpoch}
+              max={relatedData.blocksPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
             />
           )}
           <EpochStakedTokens stakedAmount={relatedData.stake} />

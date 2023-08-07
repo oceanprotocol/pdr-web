@@ -1,6 +1,9 @@
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { AuthorizationData } from '@/utils/AuthorizationData'
-import { currentConfig } from '@/utils/appconstants'
+import {
+  PREDICTION_FETCH_EPOCHS_DELAY,
+  currentConfig
+} from '@/utils/appconstants'
 import { authorize } from '@/utils/authorize'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor, { TAuthorizationUser } from '@/utils/contracts/Predictoor'
@@ -230,8 +233,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     const provider = networkProvider.getProvider()
     provider.on('block', (blockNumber) => {
       const currentEpoch = Math.floor(blockNumber / BPE)
-      const modula = blockNumber % BPE
-      if (currentEpoch === lastCheckedEpoch.current || modula < BPE / 5) return
+      if (
+        blockNumber - lastCheckedEpoch.current * BPE <
+        BPE + PREDICTION_FETCH_EPOCHS_DELAY
+      )
+        return
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE)
 
@@ -266,6 +272,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         authorizationData:
           authorizationDataInstance.current?.getAuthorizationData()
       }).then((result) => {
+        console.log(result)
         subscribedPredictoors.forEach((contract) => {
           const pickedResults = result.filter(
             (item) => item !== null && item.contractAddress === contract.address
