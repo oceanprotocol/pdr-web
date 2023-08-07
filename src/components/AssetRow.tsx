@@ -69,16 +69,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   }
 
   const renewPrice = useCallback<() => Promise<void>>(async () => {
-    const price = await getAssetPairPriceForRow({
-      tokenName,
-      pairName,
-      market
-    })
-    setTokenData({
-      symbol: tokenData?.symbol,
-      name: tokenData?.name,
-      price: parseFloat(price)
-    })
+    loadData()
   }, [tokenName, pairName, getAssetPairPriceForRow])
 
   useEffect(() => {
