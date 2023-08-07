@@ -152,8 +152,10 @@ const useBlockchainListener = ({
     console.log('herre')
     const SPE = await subscribedContracts[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
-    provider.on('block', (blockNumber) => {
-      const currentEpoch = Math.floor(Date.UTC() / 1000 / SPE)
+    provider.on('block', async (blockNumber) => {
+      const block = await provider.getBlock(blockNumber)
+      const currentTs = block.timestamp
+      const currentEpoch = Math.floor(currentTs / SPE)
       if (currentEpoch === lastCheckedEpoch.current) return
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
@@ -181,7 +183,7 @@ const useBlockchainListener = ({
 
       console.log('newEpochs', newEpochs)
       getMultiplePredictions({
-        currentBlockNumber: blockNumber,
+        currentTs: currentTs,
         epochs: newEpochs,
         contracts: subscribedContracts,
         userWallet: address,

@@ -22,7 +22,7 @@ export type TGetMultiplePredictionsResult = Promise<
 >
 
 export const getMultiplePredictions = ({
-  currentBlockNumber,
+  currentTs,
   epochs,
   contracts,
   userWallet,
@@ -32,7 +32,7 @@ export const getMultiplePredictions = ({
     epochs.flatMap((epoch) =>
       contracts.map(async (contract) => {
         const epochStartTs =
-          await contract.getCurrentEpochStartTs(currentBlockNumber)
+          await contract.getCurrentEpochStartTs(currentTs)
         const secondsPerEpoch = await contract.getSecondsPerEpoch()
         const aggPredVal = await contract.getAggPredval(epoch, userWallet)
         if (!aggPredVal) return null
@@ -42,7 +42,7 @@ export const getMultiplePredictions = ({
           epoch,
           epochStartTs,
           secondsPerEpoch,
-          currentBlockNumber
+          currentTs
         }
         if (registerPrediction)
           registerPrediction({
