@@ -15,8 +15,8 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
            }
         }
       }
-      blocksPerEpoch
-      blocksPerSubscription
+      secondsPerEpoch
+      secondsPerSubscription
       truevalSubmitTimeoutBlock
     }
   }`
@@ -51,8 +51,8 @@ type TPredictToken = {
 export type TPredictContract = {
   id: string
   token: TPredictToken
-  blocksPerEpoch: string
-  blocksPerSubscription: string
+  secondsPerEpoch: string
+  secondsPerSubscription: string
   truevalSubmitTimeoutBlock: number
 }
 

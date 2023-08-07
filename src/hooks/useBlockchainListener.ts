@@ -32,8 +32,8 @@ export type TUseBlockchainListenerResult = {
 
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
-  epochStartBlockNumber: number
-  blocksPerEpoch: number
+  epochStartTsNumber: number
+  secondsPerEpoch: number
   currentBlockNumber: number
 }
 
@@ -150,13 +150,13 @@ const useBlockchainListener = ({
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !providedContracts) return
     console.log('herre')
-    const BPE = await subscribedContracts[0]?.getBlocksPerEpoch()
+    const SPE = await subscribedContracts[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', (blockNumber) => {
-      const currentEpoch = Math.floor(blockNumber / BPE)
+      const currentEpoch = Math.floor(Date.UTC() / 1000 / SPE)
       if (currentEpoch === lastCheckedEpoch.current) return
       lastCheckedEpoch.current = currentEpoch
-      const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE)
+      const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
 
       const newEpochs = detectNewEpochs({
         subscribedContracts,

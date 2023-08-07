@@ -13,8 +13,8 @@ export type TPredictionContract = {
   price: string
   market: string
   owner: string
-  blocksPerEpoch: string
-  blocksPerSubscription: string
+  secondsPerEpoch: string
+  secondsPerSubscription: string
   last_submitted_epoch: number
 }
 
@@ -58,8 +58,8 @@ export const getAllInterestingPredictionContracts = async (
         market: market,
         symbol: item.token.symbol,
         price: item.token.lastPriceValue,
-        blocksPerEpoch: item.blocksPerEpoch,
-        blocksPerSubscription: item.blocksPerSubscription,
+        secondsPerEpoch: item.secondsPerEpoch,
+        secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0
       }
     }

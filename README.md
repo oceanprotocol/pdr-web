@@ -45,8 +45,8 @@ Run this query to verify predictoor contracts are deployed
         name
         symbol
       }
-      blocksPerEpoch
-      blocksPerSubscription
+      secondsPerEpoch
+      secondsPerSubscription
       truevalSubmitTimeoutBlock
     }
   }

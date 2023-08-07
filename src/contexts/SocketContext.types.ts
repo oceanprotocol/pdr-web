@@ -14,8 +14,8 @@ export type TSocketFeedItem = {
     dir: number
     stake: number
     epoch: number
-    epochStartBlockNumber: number
-    blocksPerEpoch: number
+    epochStartTsNumber: number
+    secondsPerEpoch: number
     currentBlockNumber: number
   }>
   contractInfo: TPredictionContract

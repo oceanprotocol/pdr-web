@@ -31,17 +31,17 @@ export const getMultiplePredictions = ({
   Promise.all(
     epochs.flatMap((epoch) =>
       contracts.map(async (contract) => {
-        const epochStartBlockNumber =
-          await contract.getCurrentEpochStartBlockNumber(currentBlockNumber)
-        const blocksPerEpoch = await contract.getBlocksPerEpoch()
+        const epochStartTs =
+          await contract.getCurrentEpochStartTs(currentBlockNumber)
+        const secondsPerEpoch = await contract.getSecondsPerEpoch()
         const aggPredVal = await contract.getAggPredval(epoch, userWallet)
         if (!aggPredVal) return null
 
         const predVal = {
           ...aggPredVal,
           epoch,
-          epochStartBlockNumber,
-          blocksPerEpoch,
+          epochStartTs,
+          secondsPerEpoch,
           currentBlockNumber
         }
         if (registerPrediction)
