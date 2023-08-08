@@ -20,7 +20,7 @@ class GraphqlClient {
     query: string,
     variables: { [name: string]: any } = {},
     endpoint?: string
-  ): Promise<GraphQLResponse<T> | undefined> {
+  ): Promise<GraphQLResponse<T>> {
     try {
       const response = await fetch(endpoint ? endpoint : this.endpoint, {
         method: 'POST',
