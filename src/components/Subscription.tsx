@@ -72,9 +72,18 @@ export default function Subscription({
   return (
     <div className={styles.container}>
       <span className={styles.price}>
-        {subscriptionData.price > 0
-          ? `${subscriptionData.price} OCEAN / ${subscriptionData.duration}H`
-          : 'FREE'}
+        {subscriptionData.price > 0 ? (
+          <div>
+            <img
+              className={styles.tokenImage}
+              src={'oceanToken.png'}
+              alt="Coin symbol image"
+            />
+            <b>{subscriptionData.price}</b> / {subscriptionData.duration}H
+          </div>
+        ) : (
+          'FREE'
+        )}
       </span>
       {subscriptionData.status === SubscriptionStatus.INACTIVE ? (
         <Button
