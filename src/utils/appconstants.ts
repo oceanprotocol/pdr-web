@@ -1,10 +1,10 @@
-import React from 'react'
-import { HeaderNextElement } from '../elements/HeaderNextElement'
 import { config } from './config'
 
 export const currentConfig = process.env.NEXT_PUBLIC_ENV
   ? config[process.env.NEXT_PUBLIC_ENV as keyof typeof config]
   : config['staging']
+
+export const PREDICTION_FETCH_EPOCHS_DELAY = 15
 
 export const assetTableColumns = [
   {
@@ -16,7 +16,7 @@ export const assetTableColumns = [
     accessor: 'price'
   },
   {
-    Header: React.createElement(HeaderNextElement),
+    Header: 'Next',
     accessor: 'next'
   },
   {
@@ -26,6 +26,10 @@ export const assetTableColumns = [
   {
     Header: 'History',
     accessor: 'history'
+  },
+  {
+    Header: 'Timeframe',
+    accessor: 'timegrame'
   },
   {
     Header: 'Subscription',

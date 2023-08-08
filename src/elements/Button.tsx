@@ -2,6 +2,7 @@ import styles from '../styles/Button.module.css'
 
 interface ButtonProps {
   text: string
+  textOnly?: boolean
   disabled?: boolean
   className?: string
   onClick: () => void
@@ -9,6 +10,7 @@ interface ButtonProps {
 
 export default function Button({
   text,
+  textOnly,
   disabled,
   onClick,
   className
@@ -16,7 +18,9 @@ export default function Button({
   return (
     <button
       onClick={() => onClick()}
-      className={`${className ? className : styles.button}`}
+      className={`${className ? className : styles.button} ${
+        textOnly && styles.textOnly
+      }`}
       disabled={disabled}
     >
       {text}

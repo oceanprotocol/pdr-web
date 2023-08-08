@@ -14,6 +14,7 @@ export type TPredictionContract = {
   market: string
   baseToken: string
   quoteToken: string
+  interval: string
   owner: string
   blocksPerEpoch: string
   blocksPerSubscription: string
@@ -49,6 +50,7 @@ export const getAllInterestingPredictionContracts = async (
       let market: string = ''
       let baseToken: string = ''
       let quoteToken: string = ''
+      let interval: string = ''
       item.token.nft.nftData.forEach((i: TNft) => {
         if (i.key == NftKeys.MARKET) {
           market = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
@@ -56,6 +58,8 @@ export const getAllInterestingPredictionContracts = async (
           baseToken = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
         } else if (i.key == NftKeys.QUOTE) {
           quoteToken = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
+        } else if (i.key == NftKeys.INTERVAL) {
+          interval = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
         }
       })
 
@@ -66,6 +70,7 @@ export const getAllInterestingPredictionContracts = async (
         market: market,
         baseToken: baseToken,
         quoteToken: quoteToken,
+        interval: interval,
         symbol: item.token.symbol,
         price: item.token.lastPriceValue,
         blocksPerEpoch: item.blocksPerEpoch,

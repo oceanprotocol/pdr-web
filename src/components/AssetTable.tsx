@@ -14,6 +14,7 @@ export type TAssetData = {
   market: string
   baseToken: string
   quoteToken: string
+  interval: string
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
@@ -75,6 +76,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           baseToken: contract.baseToken,
           quoteToken: contract.quoteToken,
           subscriptionPrice: contract.price,
+          interval: contract.interval,
           subscriptionDuration,
           subscription: subscriptionStatus
         })
