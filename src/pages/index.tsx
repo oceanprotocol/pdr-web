@@ -1,4 +1,5 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
+import Balance from '@/components/Balance'
 import Banner from '@/components/Banner'
 import Header from '@/components/Header'
 import styles from '@/styles/Home.module.css'
@@ -19,6 +20,7 @@ export default function Home() {
       <Banner />
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
+        <Balance />
         <AssetsContainer />
       </main>
     </>

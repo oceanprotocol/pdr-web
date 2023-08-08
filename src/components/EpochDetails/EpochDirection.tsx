@@ -11,5 +11,9 @@ export const EpochDirection: React.FC<TEpochDirectionProps> = ({
     return direction == 1 ? 'BULL' : 'BEAR'
   }
 
-  return <span>{`${confidence}% ${getDirectionText(direction)}`}</span>
+  return (
+    <span>{`${parseFloat(confidence.toString()).toFixed(0)}% ${getDirectionText(
+      direction
+    )}`}</span>
+  )
 }
