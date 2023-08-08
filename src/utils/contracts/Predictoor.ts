@@ -259,23 +259,23 @@ class Predictoor {
           .getAggPredval(block, authorizationData)
 
         const nominator = ethers.utils.formatUnits(nom, 18)
-        const denominator = ethers.utils.formatUnits(nom, 18)
+        const denominator = ethers.utils.formatUnits(denom, 18)
 
-        // TODO - Review in scale/testnet/production.
-        // This will be either 1 or 0 right now.
-        let confidence: number =
-          (parseFloat(nominator) / parseFloat(denominator)) * 100
-        if (isNaN(confidence)) {
-          confidence = 0
-        }
+        let confidence: number = parseFloat(nominator) / parseFloat(denominator)
         let dir: number = confidence >= 0.5 ? 1 : 0
+        if (confidence > 0.5) {
+          confidence -= 0.5
+        } else {
+          confidence = 0.5 - confidence
+        }
+        confidence = (confidence / 0.5) * 100
 
         return {
           nom: nominator,
           denom: denominator,
           confidence: confidence,
           dir: dir,
-          stake: denom?.toString()
+          stake: parseFloat(ethers.utils.formatUnits(denom, 18))
         }
       }
 

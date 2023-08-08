@@ -39,7 +39,7 @@ export default function ProgressBar({
       maxCompleted={max}
       bgColor="#FF9E9E"
       width="100%"
-      height="5px"
+      height="3px"
       className={styles.wrapper}
       isLabelVisible={false}
     />

@@ -2,7 +2,7 @@
   width: 100%;
   color: var(--color-primary);
   border-spacing: 0;
-  border-top: 1px solid var(--shadow-grey);
+  border-top: 1px solid var(--dark-grey);
   table-layout: fixed;
 }
 

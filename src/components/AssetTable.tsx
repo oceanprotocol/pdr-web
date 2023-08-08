@@ -12,6 +12,9 @@ export type TAssetData = {
   tokenName: string
   pairName: string
   market: string
+  baseToken: string
+  quoteToken: string
+  interval: string
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
@@ -61,9 +64,6 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
       Object.entries(contracts).forEach(([, contract]) => {
         const [tokenName, pairName] = contract.name.split('-')
-
-        const subscriptionPrice = contract.price
-        const market = contract.market
         const subscriptionStatus = getSubscriptionStatus(contract)
         const subscriptionDuration =
           parseInt(contract.blocksPerSubscription) / 3600
@@ -72,8 +72,11 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           tokenName,
           pairName,
           contract,
-          market,
-          subscriptionPrice,
+          market: contract.market,
+          baseToken: contract.baseToken,
+          quoteToken: contract.quoteToken,
+          subscriptionPrice: contract.price,
+          interval: contract.interval,
           subscriptionDuration,
           subscription: subscriptionStatus
         })
