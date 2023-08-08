@@ -50,9 +50,9 @@ export const checkForBannerMessage = (
   let type: States = States.WARNING
   console.log(connectedNetwork, chainId)
   if (!userAddress) {
-    message = 'Wallet not connected'
+    message = 'Wallet not connected!'
   } else if (connectedNetwork != parseInt(chainId)) {
-    message = 'Connected to wrong network'
+    message = 'Connected to wrong network!'
   }
   return {
     message,
