@@ -11,9 +11,9 @@ import Token from './Token'
 
 export type TAuthorizationUser = {
   userAddress: string
-  v: string
-  r: string
-  s: string
+  v: string | undefined
+  r: string | undefined
+  s: string | undefined
   validUntil: number
 }
 
