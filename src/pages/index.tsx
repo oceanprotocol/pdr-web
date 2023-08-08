@@ -1,4 +1,5 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
+import Balance from '@/components/Balance'
 import Header from '@/components/Header'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
@@ -17,6 +18,7 @@ export default function Home() {
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
+        <Balance />
         <AssetsContainer />
       </main>
     </>

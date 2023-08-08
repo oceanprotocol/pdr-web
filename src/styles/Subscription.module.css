@@ -5,6 +5,16 @@
   justify-content: center;
 }
 
+.price {
+  margin-bottom: calc(var(--spacer) / 12);
+}
+
 .status {
-  color: green;
+  color: rgb(102, 207, 0);
+  line-height: 1;
+}
+
+.tokenImage {
+  height: 13px;
+  margin-right: 3px;
 }

@@ -4,6 +4,7 @@ export type TRuntimeConfig = Record<
   {
     chainId: string
     subgraph: string
+    oceanTokenAddress: `0x${string}`
     tokenPredictions: Array<{
       tokenName: string
       pairName: string
@@ -17,6 +18,7 @@ export type TRuntimeConfig = Record<
 export const config: TRuntimeConfig = {
   staging: {
     chainId: '23295',
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     subgraph:
       'https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -31,6 +33,7 @@ export const config: TRuntimeConfig = {
   },
   production: {
     chainId: '23295',
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     subgraph:
       'https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -45,8 +48,8 @@ export const config: TRuntimeConfig = {
   },
   barge: {
     chainId: '8996',
-    subgraph:
-      'http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
+    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`,
+    oceanTokenAddress: '0x2473f4f7bf40ed9310838edfca6262c17a59df64',
     tokenPredictions: [
       {
         tokenName: 'ETH',
@@ -64,16 +67,13 @@ export const config: TRuntimeConfig = {
         market: 'kraken'
       }
     ],
-    opfProvidedPredictions: [
-      '0x4d7495e0d4bd74b531b4bf50e4a585207356e8fa',
-      '0x7ed5b0876e9df6f81db71f0450db09c0f522cc7b'
-    ],
+    opfProvidedPredictions: [],
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   },
   mock: {
     chainId: '23295',
-    subgraph:
-      'http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
+    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
+    subgraph: `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`,
     tokenPredictions: [
       {
         tokenName: 'ETH',

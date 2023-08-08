@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: calc(var(--spacer) / 4);
+  font-weight: bold;
+}
+
+.component {
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tokenImage {
+  height: 13px;
+  margin-right: 3px;
+}

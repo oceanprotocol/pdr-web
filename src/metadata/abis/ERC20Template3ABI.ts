@@ -224,6 +224,37 @@ export const ERC20Template3ABI = [
       {
         indexed: true,
         internalType: 'address',
+        name: 'caller',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_newPaymentCollector',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'timestamp',
+        type: 'uint256'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'blockNumber',
+        type: 'uint256'
+      }
+    ],
+    name: 'NewPaymentCollector',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
         name: 'user',
         type: 'address'
       },
@@ -1108,6 +1139,38 @@ export const ERC20Template3ABI = [
         internalType: 'uint256',
         name: 'blocknum',
         type: 'uint256'
+      },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'userAddress',
+            type: 'address'
+          },
+          {
+            internalType: 'uint8',
+            name: 'v',
+            type: 'uint8'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'r',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'bytes32',
+            name: 's',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'uint256',
+            name: 'validUntil',
+            type: 'uint256'
+          }
+        ],
+        internalType: 'struct ERC20Template3.userAuth',
+        name: '_userAuth',
+        type: 'tuple'
       }
     ],
     name: 'getAggPredval',
@@ -1245,6 +1308,38 @@ export const ERC20Template3ABI = [
         internalType: 'address',
         name: 'predictoor',
         type: 'address'
+      },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'userAddress',
+            type: 'address'
+          },
+          {
+            internalType: 'uint8',
+            name: 'v',
+            type: 'uint8'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'r',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'bytes32',
+            name: 's',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'uint256',
+            name: 'validUntil',
+            type: 'uint256'
+          }
+        ],
+        internalType: 'struct ERC20Template3.userAuth',
+        name: '_userAuth',
+        type: 'tuple'
       }
     ],
     name: 'getPrediction',
