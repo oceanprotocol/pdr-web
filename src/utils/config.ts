@@ -71,7 +71,7 @@ export const config: TRuntimeConfig = {
         market: 'kraken'
       }
     ],
-    opfProvidedPredictions: [],
+    opfProvidedPredictions: ['0x4e7eaeb4ab569e82af8c5fa9fa9191a9563ca35c'],
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   }
 }

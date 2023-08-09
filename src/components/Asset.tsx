@@ -15,7 +15,7 @@ export default function Asset({
         src={`/assets/icons/${assetData.symbol}.svg`}
         alt="Coin symbol image"
       />
-      {assetData.symbol.toUpperCase()}-USDT
+      {assetData.name.toUpperCase()}
     </div>
   )
 }
