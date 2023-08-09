@@ -1,16 +1,14 @@
 import { ethers } from 'ethers'
 import networksData from '../metadata/networks.json'
 
-type NetworkNames = 'development' | 'mock' | 'testnet' | 'mainnet'
+type NetworkNames = 'development' | 'testnet' | 'mainnet'
 
 type NetworkConfig = Record<NetworkNames, string>
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: `${
-    process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST || 'http://localhost:8545'
-  }`,
-  mock: 'http://localhost:8545',
+  development:
+    process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://localhost:8545',
   testnet: '',
   mainnet: ''
 }
@@ -19,10 +17,11 @@ class NetworkProvider {
   provider: ethers.providers.JsonRpcProvider
 
   constructor() {
-    const env = process.env.NEXT_PUBLIC_ENV || 'development'
+    const env = process.env.ENVIRONMENT || 'development'
     const networkURL =
       networkConfig[env as NetworkNames] || networkConfig['development']
 
+    //console.log('networkURL', networkURL)
     this.provider = new ethers.providers.JsonRpcProvider(networkURL)
   }
 
@@ -32,6 +31,10 @@ class NetworkProvider {
 
   getNetworkName(chainId: number): string | undefined {
     return networksData.find((data) => data.chainId == chainId)?.name
+  }
+
+  getSigner(address: string) {
+    return this.provider.getSigner(address)
   }
 }
 

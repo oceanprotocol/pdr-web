@@ -1,6 +1,58 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Setup App
+
+#### Configure .env file
+
+Before running the app setup your .env file.
+Create a '.env.local' file, copy the content from '.env.sample' and change the values accordingly.
+
+Mandatory:
+
+```
+NEXT_PUBLIC_ENV = barge
+NEXT_PUBLIC_WC2_PROJECT_ID = "Wallet Connect project ID"
+```
+
+Optional:
+
+```
+NEXT_PUBLIC_SOCKET_IO_URL = SOCKET_IO_URL:8888
+NEXT_PUBLIC_DEV_GRAPHQL_HOST = DEV_GRAPHQL_HOST:9000
+NEXT_PUBLIC_DEV_GANACHE_HOST = DEV_GANACHE_HOST:8545
+```
+
+#### Configure App
+
+There are a few configs you might want to change inside the config.ts file:
+
+- oceanTokenAddress - If you are using Barge with Ganache network, change this address to your local OCEAN token address.
+- opfOwnerAddress - Contract address used to filter all Predictoor contracts based on the contract owner.
+- opfProvidedPredictions - List of Predictoor contract addresses for which predictions are going to be provided FREE by the websocket app. This contracts are not going to be interacted with on the frontend.
+
+#### Install dependecies
+
+```bash
+npm i
+```
+
+#### Run the App
+
+Finally, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+Then, open [http://localhost:3000](http://localhost:3000) to visit the app.
+
 ## Setup Barge Env
+
+If you want to connect the App to Barge environment you should look into the following steps to run Barge:
 
 #### Deploy Barge
 
@@ -61,48 +113,6 @@ cat ~/.ocean/ocean-contracts/artifacts/contracts/templates/ERC20Template3.sol/ER
 cat ~/.ocean/ocean-contracts/artifacts/contracts/pools/fixedRate/FixedRateExchange.sol/FixedRateExchange.json | jq .abi | sed '1s/^/export const FixedRateExchangeABI = /' > src/metadata/abis/FixedRateExchangeABI.js
 cat ~/.ocean/ocean-contracts/artifacts/contracts/interfaces/IERC20.sol/IERC20.json | jq .abi | sed '1s/^/export const IERC20ABI = /' > src/metadata/abis/IERC20ABI.js
 ```
-
-#### Configure .env file
-
-You might need to setup your .env file, especially in Barge such as by using the following PK and configuring it to run locally.
-
-```
-NEXT_PUBLIC_ENV = barge
-NEXT_PUBLIC_SOCKET_IO_URL = http://localhost:8888
-NEXT_PUBLIC_WC2_PROJECT_ID =
-```
-
-#### Run the App
-
-Finally, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-## Update the Predictoor Data feeds
-
-From a second terminal, use curl to call the `api/admin/consume-feed` endpoint. You may pipe the result into `| jq .` to easily view the JSON response like so.
-
-```
-curl -X POST http://localhost:3000/api/admin/consume-feeds -H "Content-Type: application/json" -d '{"adminPassword": "password"}' | jq .
-```
-
-### Running the App
-
-Open [http://localhost:3000](http://localhost:3000) to visit the app.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 

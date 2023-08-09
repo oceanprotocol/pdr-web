@@ -12,3 +12,8 @@
   justify-content: center;
   align-items: center;
 }
+
+.logo {
+  height: 50px;
+  object-fit: contain;
+}

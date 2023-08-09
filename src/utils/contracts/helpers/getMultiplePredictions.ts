@@ -1,15 +1,17 @@
-import { TPredictedEpochLogItem } from '@/hooks/useBlockchainListener'
-import Predictoor from '../Predictoor'
+import { TPredictedEpochLogItem } from '@/contexts/PredictoorsContext'
+import { ethers } from 'ethers'
+import Predictoor, { TAuthorizationUser } from '../Predictoor'
 
 export type TGetMultiplePredictionsArgs = {
-  currentBlockNumber: number
+  currentTs: number
   epochs: Array<number>
   contracts: Array<Predictoor>
-  userWallet: string
+  userWallet: ethers.Signer
   registerPrediction?: (args: {
     contractAddress: string
     item: TPredictedEpochLogItem
   }) => void
+  authorizationData?: TAuthorizationUser
 }
 
 export type TGetMultiplePredictionsResult = Promise<
@@ -26,15 +28,23 @@ export const getMultiplePredictions = ({
   epochs,
   contracts,
   userWallet,
-  registerPrediction
+  registerPrediction,
+  authorizationData
 }: TGetMultiplePredictionsArgs): TGetMultiplePredictionsResult =>
   Promise.all(
     epochs.flatMap((epoch) =>
       contracts.map(async (contract) => {
-        const epochStartTs =
-          await contract.getCurrentEpochStartTs(currentTs)
+        const epochStartTs = await contract.getCurrentEpochStartTs(currentTs)
         const secondsPerEpoch = await contract.getSecondsPerEpoch()
-        const aggPredVal = await contract.getAggPredval(epoch, userWallet)
+
+        if (!authorizationData) return null
+
+        const aggPredVal = await contract.getAggPredval(
+          epoch,
+          userWallet,
+          authorizationData
+        )
+
         if (!aggPredVal) return null
 
         const predVal = {

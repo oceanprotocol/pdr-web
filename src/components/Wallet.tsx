@@ -3,7 +3,7 @@ import { currentConfig } from '@/utils/appconstants'
 import { networkProvider } from '@/utils/networkProvider'
 import { useWeb3Modal } from '@web3modal/react'
 import { useCallback, useEffect, useState } from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import Button from '../elements/Button'
 
 export default function Wallet() {
@@ -14,7 +14,6 @@ export default function Wallet() {
 
   // Custom Hooks
   const { chain } = useNetwork()
-  const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
   const { open } = useWeb3Modal()
   const { address, isConnected } = useAccount()
   const { chainId } = currentConfig
@@ -59,18 +58,6 @@ export default function Wallet() {
           text={buttonText}
         />
       </div>
-      {!loading && chain && parseInt(chainId) !== chain?.id && (
-        <Button
-          disabled={!switchNetwork || parseInt(chainId) === chain?.id}
-          onClick={() => switchNetwork?.(parseInt(chainId))}
-          className={styles.switchNetwork}
-          text={
-            isLoading && pendingChainId === parseInt(chainId)
-              ? 'Switching to Ethereum...'
-              : 'Switch Network to Ethereum'
-          }
-        />
-      )}
     </div>
   )
 }

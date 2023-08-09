@@ -11,11 +11,11 @@ export type TProviderFee = {
   providerFeeAddress: string
   providerFeeToken: string
   providerFeeAmount: number
-  v: number
-  r: number
-  s: number
+  v: number | string
+  r: number | string
+  s: number | string
   validUntil: number
-  providerData: number
+  providerData: number | string
 }
 
 export type TGetAggPredvalResult = {

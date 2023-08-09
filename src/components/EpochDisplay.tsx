@@ -1,9 +1,11 @@
 import { useSocketContext } from '@/contexts/SocketContext'
 import ProgressBar from '@/elements/ProgressBar'
+import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
 import { useMemo } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
+import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
 import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
@@ -55,20 +57,26 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
             direction={relatedData.dir}
             stake={relatedData.stake}
           />
-          <EpochDirection
-            direction={relatedData.dir}
-            confidence={relatedData.confidence}
-          />
+          {relatedData.stake ? (
+            <EpochDirection
+              direction={relatedData.dir}
+              confidence={relatedData.confidence}
+            />
+          ) : (
+            'NO PRED'
+          )}
           {status === EEpochDisplayStatus.NextPrediction && (
             <ProgressBar
+              refreshOnData={relatedData.epochStartTsNumber}
               progress={
                 relatedData.epochStartTsNumber +
                 relatedData.secondsPerEpoch -
-                relatedData.currentTimestamp
+                relatedData.currentTs
               }
-              max={relatedData.secondsPerEpoch}
+              max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
             />
           )}
+          <EpochStakedTokens stakedAmount={relatedData.stake} />
         </>
       ) : (
         <span>??</span>

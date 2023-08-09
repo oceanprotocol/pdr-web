@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { assetTableColumns, currentConfig } from '@/utils/appconstants'
-import Predictoor from '@/utils/contracts/Predictoor'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
@@ -12,32 +12,33 @@ export type TAssetData = {
   tokenName: string
   pairName: string
   market: string
+  baseToken: string
+  quoteToken: string
+  interval: string
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
+  subscriptionDuration: number
 }
 
 export type TAssetTableProps = {
   //contracts: TPredictionContract[]
   contracts: Record<string, TPredictionContract>
-  subscribedContracts: Array<Predictoor>
 }
 
 export type TAssetTableState = {
   AssetsData: Array<TAssetData>
 }
 
-export const AssetTable: React.FC<TAssetTableProps> = ({
-  contracts,
-  subscribedContracts
-}) => {
+export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
+  const { subscribedPredictoors } = usePredictoorsContext()
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
 
   const subscribedContractAddresses = useMemo(
-    () => subscribedContracts.map((contract) => contract.address),
-    [subscribedContracts]
+    () => subscribedPredictoors.map((contract) => contract.address),
+    [subscribedPredictoors]
   )
 
   const getSubscriptionStatus = useCallback<
@@ -63,21 +64,23 @@ export const AssetTable: React.FC<TAssetTableProps> = ({
 
       Object.entries(contracts).forEach(([, contract]) => {
         const [tokenName, pairName] = contract.name.split('-')
-
-        const subscriptionPrice = contract.price
-        const market = contract.market
         const subscriptionStatus = getSubscriptionStatus(contract)
+        const subscriptionDuration =
+          parseInt(contract.secondsPerSubscription) / 3600
 
         assetsData.push({
           tokenName,
           pairName,
           contract,
-          market,
-          subscriptionPrice,
+          market: contract.market,
+          baseToken: contract.baseToken,
+          quoteToken: contract.quoteToken,
+          subscriptionPrice: contract.price,
+          interval: contract.interval,
+          subscriptionDuration,
           subscription: subscriptionStatus
         })
       })
-      console.log(assetsData)
       setAssetsData(assetsData)
     },
     [getSubscriptionStatus]
