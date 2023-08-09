@@ -1,0 +1,21 @@
+.container {
+  width: 100%;
+  height: calc(var(--spacer) / 1.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.warning {
+  background-color: var(--warning);
+  color: black;
+}
+
+.error {
+  background-color: red;
+  color: black;
+}
+
+.text {
+  margin: 0 calc(var(--spacer) / 4);
+}
