@@ -37,6 +37,8 @@ export const getAllInterestingPredictionContracts = async (
         variables,
         subgraphURL
       )
+
+    console.log('dataeee', data)
     const predictContracts = data?.predictContracts
 
     if (errors || !predictContracts || predictContracts.length === 0) {

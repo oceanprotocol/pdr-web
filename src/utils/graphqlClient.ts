@@ -41,4 +41,4 @@ class GraphqlClient {
 //const client = new GraphqlClient('https://my.graphql.api/endpoint', { 'Authorization': 'Bearer your_token' });
 const graphqlClientInstance = new GraphqlClient(currentConfig.subgraph)
 
-export { graphqlClientInstance, GraphqlClient }
+export { GraphqlClient, graphqlClientInstance }

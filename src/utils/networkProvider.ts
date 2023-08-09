@@ -7,7 +7,9 @@ type NetworkConfig = Record<NetworkNames, string>
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: 'http://localhost:8545',
+  development: `${
+    process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST || 'http://localhost:8545'
+  }`,
   mock: 'http://localhost:8545',
   testnet: '',
   mainnet: ''
