@@ -14,7 +14,7 @@ export type TSocketFeedItem = {
     dir: number
     stake: number
     epoch: number
-    epochStartTsNumber: number
+    epochStartTs: number
     secondsPerEpoch: number
     currentTs: number
   }>
