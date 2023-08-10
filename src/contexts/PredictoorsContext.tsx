@@ -233,14 +233,23 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', async (blockNumber) => {
+      console.log('block', blockNumber)
       const block = await provider.getBlock(blockNumber)
       const currentTs = block.timestamp
       const currentEpoch = Math.floor(currentTs / SPE)
+
+      console.log(
+        'currentEpoch === lastCheckedEpoch.current',
+        currentEpoch === lastCheckedEpoch.current
+      )
       if (
-        blockNumber - lastCheckedEpoch.current * SPE <
-        SPE + PREDICTION_FETCH_EPOCHS_DELAY
+        currentEpoch === lastCheckedEpoch.current ||
+        currentTs <
+          lastCheckedEpoch.current * SPE + PREDICTION_FETCH_EPOCHS_DELAY
       )
         return
+
+      console.log('currentEpoch', currentEpoch)
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
 
