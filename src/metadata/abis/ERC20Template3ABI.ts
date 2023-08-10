@@ -179,19 +179,6 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         indexed: false,
-        internalType: 'address',
-        name: 'dispenserContract',
-        type: 'address'
-      }
-    ],
-    name: 'NewDispenser',
-    type: 'event'
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: 'bytes32',
         name: 'exchangeId',
         type: 'bytes32'
@@ -267,7 +254,7 @@ export const ERC20Template3ABI = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch',
         type: 'uint256'
       }
     ],
@@ -576,7 +563,7 @@ export const ERC20Template3ABI = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'trueValueSubmitTimeoutBlock',
+        name: 'trueValueSubmitTimeout',
         type: 'uint256'
       },
       {
@@ -764,51 +751,6 @@ export const ERC20Template3ABI = [
       }
     ],
     name: 'balanceOf',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'blocknum',
-        type: 'uint256'
-      }
-    ],
-    name: 'blocknumIsOnSlot',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool'
-      }
-    ],
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    inputs: [],
-    name: 'secondsPerEpoch',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    inputs: [],
-    name: 'secondsPerSubscription',
     outputs: [
       {
         internalType: 'uint256',
@@ -1086,25 +1028,6 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
-        type: 'uint256'
-      }
-    ],
-    name: 'epoch',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
         name: '',
         type: 'uint256'
       }
@@ -1137,7 +1060,7 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       },
       {
@@ -1301,7 +1224,7 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       },
       {
@@ -1402,11 +1325,11 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       }
     ],
-    name: 'getSubscriptionRevenueAtBlock',
+    name: 'getsubscriptionRevenueAtEpoch',
     outputs: [
       {
         internalType: 'uint256',
@@ -1624,7 +1547,7 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       },
       {
@@ -1684,26 +1607,7 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
-        type: 'uint256'
-      }
-    ],
-    name: 'railBlocknumToSlot',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       }
     ],
@@ -1739,14 +1643,40 @@ export const ERC20Template3ABI = [
     type: 'function'
   },
   {
-    inputs: [
+    inputs: [],
+    name: 'secondsPerEpoch',
+    outputs: [
       {
-        internalType: 'bytes',
-        name: '_value',
-        type: 'bytes'
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
       }
     ],
-    name: 'setData',
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'secondsPerSubscription',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_newFeeCollector',
+        type: 'address'
+      }
+    ],
+    name: 'setFeeCollector',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
@@ -1791,11 +1721,11 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'prediction_block',
+        name: 'prediction_ts',
         type: 'uint256'
       }
     ],
-    name: 'soonestBlockToPredict',
+    name: 'soonestEpochToPredict',
     outputs: [
       {
         internalType: 'uint256',
@@ -1920,7 +1850,7 @@ export const ERC20Template3ABI = [
       },
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       }
     ],
@@ -1933,7 +1863,7 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       },
       {
@@ -1961,7 +1891,7 @@ export const ERC20Template3ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'blocknum',
+        name: 'epoch_start',
         type: 'uint256'
       },
       {
@@ -2013,6 +1943,25 @@ export const ERC20Template3ABI = [
         internalType: 'string',
         name: '',
         type: 'string'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_timestamp',
+        type: 'uint256'
+      }
+    ],
+    name: 'toEpochStart',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
       }
     ],
     stateMutability: 'view',
@@ -2086,7 +2035,7 @@ export const ERC20Template3ABI = [
   },
   {
     inputs: [],
-    name: 'trueValSubmitTimeoutBlock',
+    name: 'trueValSubmitTimeout',
     outputs: [
       {
         internalType: 'uint256',
@@ -2118,11 +2067,6 @@ export const ERC20Template3ABI = [
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: 's_per_block',
-        type: 'uint256'
-      },
       {
         internalType: 'uint256',
         name: 's_per_subscription',
