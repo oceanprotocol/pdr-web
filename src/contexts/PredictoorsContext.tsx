@@ -275,7 +275,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         authorizationData:
           authorizationDataInstance.current?.getAuthorizationData()
       }).then((result) => {
-        console.log(result)
         subscribedPredictoors.forEach((contract) => {
           const pickedResults = result.filter(
             (item) => item !== null && item.contractAddress === contract.address
