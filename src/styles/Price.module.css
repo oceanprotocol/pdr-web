@@ -5,5 +5,5 @@
 }
 
 .price {
-  margin-left: calc(var(--spacer) / 4);
+  margin-left: calc(var(--spacer) / 6);
 }
