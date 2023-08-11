@@ -79,7 +79,7 @@ export default function Subscription({
               src={'oceanToken.png'}
               alt="Coin symbol image"
             />
-            <b>{subscriptionData.price}</b> / {subscriptionData.duration}H
+            <b>{subscriptionData.price}</b> / {subscriptionData.duration}h
           </div>
         ) : (
           'FREE'

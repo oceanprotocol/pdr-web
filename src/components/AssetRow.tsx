@@ -65,8 +65,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       pairName,
       market
     })
-    const name = `${baseToken} - ${quoteToken}`
-    setTokenData({ price: parseFloat(price), name, symbol: baseToken })
+    const name = `${baseToken}-${quoteToken} ${interval.toLocaleLowerCase()}`
+    setTokenData({
+      price: parseFloat(price),
+      name,
+      symbol: baseToken
+    })
   }
 
   const renewPrice = useCallback<() => Promise<void>>(async () => {
@@ -130,7 +134,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
         subsciption={subscription}
       />
-      <span>{interval}</span>
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),
