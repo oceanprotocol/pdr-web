@@ -54,7 +54,8 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   getPredictorInstanceByAddress: (data) => undefined,
   runCheckContracts: () => {},
   subscribedPredictoors: [],
-  contracts: undefined
+  contracts: undefined,
+  contractPricesDurations: {}
 })
 
 // Custom hook to use the OPFOwnerPredictoorsContext
@@ -73,9 +74,15 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     TPredictoorsContext['predictoorInstances']
   >([])
   const [subscribedPredictoors, setSubscribedPredictoors] = useState<
-    Predictoor[]
+    TPredictoorsContext['subscribedPredictoors']
   >([])
-  const [contracts, setContracts] = useState<TContractsState>()
+  const [contracts, setContracts] = useState<TPredictoorsContext['contracts']>()
+
+  const [contractPricesDurations, setContractPricesDurations] = useState<
+    TPredictoorsContext['contractPricesDurations']
+  >({})
+
+  const contractPricesDurationsRef = useRef(contractPricesDurations)
 
   const lastCheckedEpoch = useRef<number>(0)
   const predictedEpochs =
@@ -92,6 +99,58 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     })
     authorizationDataInstance.current = authorizationData
   }, [])
+
+  useEffect(() => {
+    if (predictoorInstances.length === 0) return
+
+    const contractAddresses = predictoorInstances.map(
+      (predictorInstance) => predictorInstance.address
+    )
+
+    const alreadyFetchedPrices = Object.keys(contractPricesDurationsRef.current)
+
+    const contractsToFetch = contractAddresses.filter(
+      (contractAddress) => !alreadyFetchedPrices.includes(contractAddress)
+    )
+
+    if (contractsToFetch.length === 0) return
+
+    Promise.all(
+      predictoorInstances
+        .filter((predictorInstance) =>
+          contractsToFetch.includes(predictorInstance.address)
+        )
+        .map((predictorInstance) =>
+          predictorInstance.getContractSubscriptionInfo()
+        )
+    ).then(
+      (
+        contractSubscriptionInfos: Array<
+          Awaited<ReturnType<Predictoor['getContractSubscriptionInfo']>>
+        >
+      ) => {
+        const contractPricesObject = predictoorInstances.reduce(
+          (acc, contract, index) => {
+            const contractSubscriptionInfo = contractSubscriptionInfos[index]
+
+            return {
+              ...acc,
+              [contract.address]: contractSubscriptionInfo
+            }
+          },
+          {}
+        )
+        setContractPricesDurations((prev) => {
+          const newStateValue = {
+            ...prev,
+            ...contractPricesObject
+          }
+          contractPricesDurationsRef.current = newStateValue
+          return newStateValue
+        })
+      }
+    )
+  }, [predictoorInstances])
 
   useEffect(() => {
     if (!address) return undefined
@@ -185,6 +244,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       )
 
       setPredictorInstances(contractsResult)
+
       const validSubscriptions = await checkAllContractsForSubscriptions({
         predictoorInstances: contractsResult,
         address
@@ -372,7 +432,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         checkAndAddInstance,
         getPredictorInstanceByAddress,
         contracts,
-        subscribedPredictoors
+        subscribedPredictoors,
+        contractPricesDurations
       }}
     >
       {children}
