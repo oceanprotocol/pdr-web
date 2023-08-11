@@ -31,7 +31,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     symbol: '--',
     price: 0
   })
-  let {
+  const {
     tokenName,
     pairName,
     subscription,

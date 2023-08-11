@@ -1,6 +1,8 @@
 import { BigNumber, ethers } from 'ethers'
 import { ERC20Template3ABI } from '../../metadata/abis/ERC20Template3ABI'
+import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
+import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -25,16 +27,19 @@ class Predictoor {
   public FRE: FixedRateExchange | null
   public exchangeId: BigNumber
   public token: Token | null
+  public details: TPredictionContract
   // Constructor
   public constructor(
     address: string,
-    provider: ethers.providers.JsonRpcProvider
+    provider: ethers.providers.JsonRpcProvider,
+    details: TPredictionContract
   ) {
     this.address = address
     this.token = null
     this.provider = provider
     this.instance = null
     this.FRE = null
+    this.details = details
     this.exchangeId = BigNumber.from(0)
   }
   // Initialize method
@@ -112,9 +117,9 @@ class Predictoor {
       serviceIndex: 0,
       _providerFee: providerFee,
       _consumeMarketFee: {
-        consumeMarketFeeAddress: ethers.constants.AddressZero,
-        consumeMarketFeeToken: ethers.constants.AddressZero,
-        consumeMarketFeeAmount: 0
+        consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
+        consumeMarketFeeToken: this.details.publishMarketFeeToken,
+        consumeMarketFeeAmount: this.details.publishMarketFeeAmount
       }
     }
   }
@@ -150,14 +155,19 @@ class Predictoor {
       //  const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE))
       //  if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit
       //}
+      const gasLimit = (await networkProvider.getProvider().getBlock('latest'))
+        .gasLimit
 
-      const gasLimit = BigNumber.from(16000000)
+      const currentNonce = await user.getTransactionCount()
+      console.log('currentNonce', currentNonce)
       // Execute transaction and wait for receipt
       const tx = await this.instance
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
-          gasLimit
+          gasLimit,
+          nonce: currentNonce + 1
         })
+
       const receipt = await tx.wait()
 
       return receipt
@@ -229,14 +239,6 @@ class Predictoor {
     )
     return formattedEpoch
   }
-  // Get blocks per epoch
-  async getBlocksPerEpoch(): Promise<number> {
-    const blocksPerEpoch: BigNumber = await this.instance?.blocksPerEpoch()
-    const formattedBlocksPerEpoch: number = parseInt(
-      ethers.utils.formatUnits(blocksPerEpoch, 0)
-    )
-    return formattedBlocksPerEpoch
-  }
 
   async getCurrentEpochStartBlockNumber(blockNumber: number): Promise<number> {
     const soonestBlockToPredict: BigNumber =
@@ -248,7 +250,7 @@ class Predictoor {
   }
 
   async getAggPredval(
-    block: number,
+    ts: number,
     user: ethers.Signer,
     authorizationData: TAuthorizationUser
   ): Promise<TGetAggPredvalResult | null> {
@@ -256,7 +258,7 @@ class Predictoor {
       if (this.instance) {
         const [nom, denom] = await this.instance
           .connect(user)
-          .getAggPredval(block, authorizationData)
+          .getAggPredval(ts, authorizationData)
 
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
@@ -286,5 +288,23 @@ class Predictoor {
       return null
     }
   }
+
+  async getSecondsPerEpoch(): Promise<number> {
+    const secondsPerEpoch: BigNumber = await this.instance?.secondsPerEpoch()
+    const formattedSecondsPerEpoch: number = parseInt(
+      ethers.utils.formatUnits(secondsPerEpoch, 0)
+    )
+    return formattedSecondsPerEpoch
+  }
+
+  async getCurrentEpochStartTs(seconds: number): Promise<number> {
+    const soonestTsToPredict: BigNumber =
+      await this.instance?.toEpochStart(seconds)
+    const formattedSoonestTsToPredict: number = parseInt(
+      ethers.utils.formatUnits(soonestTsToPredict, 0)
+    )
+    return formattedSoonestTsToPredict
+  }
 }
+
 export default Predictoor

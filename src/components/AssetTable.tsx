@@ -66,7 +66,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         const [tokenName, pairName] = contract.name.split('-')
         const subscriptionStatus = getSubscriptionStatus(contract)
         const subscriptionDuration =
-          parseInt(contract.blocksPerSubscription) / 3600
+          parseInt(contract.secondsPerSubscription) / 3600
 
         assetsData.push({
           tokenName,
