@@ -227,8 +227,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const initializeContracts = useCallback(
     async (contracts: Record<string, TPredictionContract>) => {
-      if (!address) return
-
       const contractsToWatch = eleminateFreeContracts(contracts)
 
       const contractsResult = await Promise.all(
@@ -244,6 +242,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       )
 
       setPredictorInstances(contractsResult)
+
+      if (!address) return
 
       const validSubscriptions = await checkAllContractsForSubscriptions({
         predictoorInstances: contractsResult,
