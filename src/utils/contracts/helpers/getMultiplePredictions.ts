@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import Predictoor, { TAuthorizationUser } from '../Predictoor'
 
 export type TGetMultiplePredictionsArgs = {
-  currentBlockNumber: number
+  currentTs: number
   epochs: Array<number>
   contracts: Array<Predictoor>
   userWallet: ethers.Signer
@@ -24,7 +24,7 @@ export type TGetMultiplePredictionsResult = Promise<
 >
 
 export const getMultiplePredictions = ({
-  currentBlockNumber,
+  currentTs,
   epochs,
   contracts,
   userWallet,
@@ -34,9 +34,8 @@ export const getMultiplePredictions = ({
   Promise.all(
     epochs.flatMap((epoch) =>
       contracts.map(async (contract) => {
-        const epochStartBlockNumber =
-          await contract.getCurrentEpochStartBlockNumber(currentBlockNumber)
-        const blocksPerEpoch = await contract.getBlocksPerEpoch()
+        const epochStartTs = await contract.getCurrentEpochStartTs(currentTs)
+        const secondsPerEpoch = await contract.getSecondsPerEpoch()
 
         if (!authorizationData) return null
 
@@ -45,14 +44,15 @@ export const getMultiplePredictions = ({
           userWallet,
           authorizationData
         )
+
         if (!aggPredVal) return null
 
         const predVal = {
           ...aggPredVal,
           epoch,
-          epochStartBlockNumber,
-          blocksPerEpoch,
-          currentBlockNumber
+          epochStartTs,
+          secondsPerEpoch,
+          currentTs
         }
         if (registerPrediction)
           registerPrediction({

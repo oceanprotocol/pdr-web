@@ -16,9 +16,13 @@ export type TPredictionContract = {
   quoteToken: string
   interval: string
   owner: string
-  blocksPerEpoch: string
-  blocksPerSubscription: string
+  secondsPerEpoch: string
+  secondsPerSubscription: string
   last_submitted_epoch: number
+  publishMarketFeeAddress: string
+  publishMarketFeeAmount: string
+  publishMarketFeeToken: string
+  paymentCollector: string
 }
 
 export const getAllInterestingPredictionContracts = async (
@@ -40,6 +44,7 @@ export const getAllInterestingPredictionContracts = async (
         variables,
         subgraphURL
       )
+
     const predictContracts = data?.predictContracts
 
     if (errors || !predictContracts || predictContracts.length === 0) {
@@ -73,9 +78,13 @@ export const getAllInterestingPredictionContracts = async (
         interval: interval,
         symbol: item.token.symbol,
         price: item.token.lastPriceValue,
-        blocksPerEpoch: item.blocksPerEpoch,
-        blocksPerSubscription: item.blocksPerSubscription,
-        last_submitted_epoch: 0
+        secondsPerEpoch: item.secondsPerEpoch,
+        secondsPerSubscription: item.secondsPerSubscription,
+        last_submitted_epoch: 0,
+        publishMarketFeeAddress: item.token.publishMarketFeeAddress,
+        publishMarketFeeAmount: item.token.publishMarketFeeAmount,
+        paymentCollector: item.token.paymentCollector,
+        publishMarketFeeToken: item.token.publishMarketFeeToken
       }
     }
 

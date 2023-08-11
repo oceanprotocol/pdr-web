@@ -42,9 +42,9 @@ type TContractsState = Awaited<
 
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
-  epochStartBlockNumber: number
-  blocksPerEpoch: number
-  currentBlockNumber: number
+  epochStartTs: number
+  secondsPerEpoch: number
+  currentTs: number
 }
 
 // OPFOwnerPredictoorsContext
@@ -176,7 +176,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         contractsToWatch.map(async (contract) => {
           const predictoor = new Predictoor(
             contract.address,
-            networkProvider.getProvider()
+            networkProvider.getProvider(),
+            contract
           )
           await predictoor.init()
           return predictoor
@@ -229,17 +230,19 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !contracts || !signer) return
 
-    const BPE = await subscribedPredictoors[0]?.getBlocksPerEpoch()
+    const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
-    provider.on('block', (blockNumber) => {
-      const currentEpoch = Math.floor(blockNumber / BPE)
+    provider.on('block', async (blockNumber) => {
+      const block = await provider.getBlock(blockNumber)
+      const currentTs = block.timestamp
+      const currentEpoch = Math.floor(currentTs / SPE)
       if (
-        blockNumber - lastCheckedEpoch.current * BPE <
-        BPE + PREDICTION_FETCH_EPOCHS_DELAY
+        currentTs - lastCheckedEpoch.current * SPE <
+        SPE + PREDICTION_FETCH_EPOCHS_DELAY
       )
         return
       lastCheckedEpoch.current = currentEpoch
-      const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE)
+      const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
 
       const newEpochs = detectNewEpochs({
         subscribedPredictoors,
@@ -264,7 +267,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       )
 
       getMultiplePredictions({
-        currentBlockNumber: blockNumber,
+        currentTs: currentTs,
         epochs: newEpochs,
         contracts: subscribedPredictoors,
         userWallet: signer,
@@ -272,7 +275,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         authorizationData:
           authorizationDataInstance.current?.getAuthorizationData()
       }).then((result) => {
-        console.log(result)
         subscribedPredictoors.forEach((contract) => {
           const pickedResults = result.filter(
             (item) => item !== null && item.contractAddress === contract.address

@@ -67,13 +67,13 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           )}
           {status === EEpochDisplayStatus.NextPrediction && (
             <ProgressBar
-              refreshOnData={relatedData.epochStartBlockNumber}
+              refreshOnData={relatedData.epochStartTs}
               progress={
-                relatedData.epochStartBlockNumber +
-                relatedData.blocksPerEpoch -
-                relatedData.currentBlockNumber
+                relatedData.epochStartTs +
+                relatedData.secondsPerEpoch -
+                relatedData.currentTs
               }
-              max={relatedData.blocksPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
+              max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
             />
           )}
           <EpochStakedTokens stakedAmount={relatedData.stake} />

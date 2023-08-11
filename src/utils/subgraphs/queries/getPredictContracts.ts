@@ -6,6 +6,10 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
         name
         symbol
         lastPriceValue
+        publishMarketFeeAddress
+        publishMarketFeeAmount
+        paymentCollector
+        publishMarketFeeToken
         nft {
           owner{
             id
@@ -16,9 +20,8 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
            }
         }
       }
-      blocksPerEpoch
-      blocksPerSubscription
-      truevalSubmitTimeoutBlock
+      secondsPerEpoch
+      secondsPerSubscription
     }
   }`
 
@@ -49,14 +52,17 @@ type TPredictToken = {
   symbol: string
   lastPriceValue: string
   nft: TNftData
+  publishMarketFeeAddress: string
+  publishMarketFeeAmount: string
+  paymentCollector: string
+  publishMarketFeeToken: string
 }
 
 export type TPredictContract = {
   id: string
   token: TPredictToken
-  blocksPerEpoch: string
-  blocksPerSubscription: string
-  truevalSubmitTimeoutBlock: number
+  secondsPerEpoch: string
+  secondsPerSubscription: string
 }
 
 export type TGetPredictContractsQueryResult = {
