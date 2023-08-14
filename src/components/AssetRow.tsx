@@ -48,18 +48,22 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     (args: {
       tokenName: string
       pairName: string
+      timestamp?: number
       market: string
     }) => Promise<string>
   >(
-    ({ tokenName, pairName }) =>
+    ({ tokenName, pairName, timestamp }) =>
       getAssetPairPrice({
         assetPair: `${tokenName}${pairName}`,
+        timestamp: timestamp,
         market: market
       }),
     []
   )
 
   const loadData = async () => {
+    const currentDate = new Date()
+    const timestamp = currentDate.getTime() - 100000
     const price = await getAssetPairPriceForRow({
       tokenName,
       pairName,
@@ -89,7 +93,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         ? {
             tokenName,
             pairName,
-            subscription
+            subscription,
+            market
           }
         : null,
     [tokenName, pairName, subscription]
@@ -117,16 +122,19 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LivePrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.HistoricalPrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />

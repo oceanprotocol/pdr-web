@@ -37,3 +37,17 @@
   height: 6px;
   margin-right: 2px;
 }
+
+.footerConfidence {
+  font-size: var(--font-size-mini);
+  font-weight: bold;
+  color: black;
+}
+
+.metricsFooter {
+  width: 100%;
+  padding: 0 calc(var(--spacer) / 10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

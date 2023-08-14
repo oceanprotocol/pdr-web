@@ -1,7 +1,8 @@
 import { useSocketContext } from '@/contexts/SocketContext'
 import ProgressBar from '@/elements/ProgressBar'
 import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
-import { useMemo } from 'react'
+import { getAssetPairPrice } from '@/utils/marketPrices'
+import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
 import { EpochDirection } from './EpochDetails/EpochDirection'
@@ -17,6 +18,8 @@ export enum EEpochDisplayStatus {
 
 export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
+  price: number
+  market: string
   tokenName: string
   pairName: string
   subsciption: SubscriptionStatus
@@ -24,11 +27,25 @@ export type TEpochDisplayProps = {
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   status,
+  price,
+  market,
   tokenName,
   pairName,
   subsciption
 }) => {
   const { epochData } = useSocketContext()
+  const [delta, setDelta] = useState<number>()
+
+  useEffect(() => {
+    if (status !== EEpochDisplayStatus.LivePrediction) return
+    getAssetPairPrice({
+      assetPair: pairName,
+      timestamp: relatedData?.epochStartTs,
+      market: market
+    }).then((initialPrice) => {
+      setDelta(parseFloat(initialPrice) - price)
+    })
+  }, [price])
 
   const relatedPredictionIndex = useMemo(() => {
     switch (status) {
@@ -56,11 +73,14 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           <EpochBackground
             direction={relatedData.dir}
             stake={relatedData.stake}
+            delta={delta}
           />
-          {relatedData.stake ? (
+          {!relatedData.stake ? (
             <EpochDirection
               direction={relatedData.dir}
               confidence={relatedData.confidence}
+              delta={delta}
+              status={status}
             />
           ) : (
             'NO PRED'
@@ -76,7 +96,23 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
             />
           )}
-          <EpochStakedTokens stakedAmount={relatedData.stake} />
+          {delta ? (
+            <div
+              className={styles.metricsFooter}
+              style={{
+                backgroundColor: `rgba(${
+                  relatedData.dir == 1 ? '102,207,0' : '220,20,60'
+                }, ${relatedData.stake > 0 ? relatedData.stake / 5 + 0.5 : 0})`
+              }}
+            >
+              <span className={styles.footerConfidence}>
+                {relatedData.confidence}%
+              </span>
+              <EpochStakedTokens stakedAmount={relatedData.stake} />
+            </div>
+          ) : (
+            <EpochStakedTokens stakedAmount={relatedData.stake} />
+          )}
         </>
       ) : (
         <span>??</span>
