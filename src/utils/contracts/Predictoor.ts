@@ -183,26 +183,25 @@ class Predictoor {
     | Error
   > {
     try {
-      const contractPrice = await this.getContractPrice()
+      return await Promise.all([
+        this.getContractPrice(),
+        this.instance?.secondsPerSubscription()
+      ]).then(([contractPrice, duration]) => {
+        if (contractPrice instanceof Error) {
+          return contractPrice
+        }
+        if (!duration) {
+          return Error('Assert contract requirements.')
+        }
+        const price = parseFloat(contractPrice.formattedBaseTokenAmount)
 
-      if (contractPrice instanceof Error) {
-        return contractPrice
-      }
-      const price = parseFloat(contractPrice.formattedBaseTokenAmount)
-      const duration =
-        (await this.instance?.secondsPerSubscription()) as ethers.BigNumber
+        const durationInHours = duration.div(60 * 60).toString()
 
-      if (!duration) {
-        return Error('Assert contract requirements.')
-      }
-
-      // Convert duration to hours
-      const durationInHours = duration.div(60 * 60).toString()
-
-      return {
-        price,
-        duration: durationInHours
-      }
+        return {
+          price,
+          duration: durationInHours
+        }
+      })
     } catch (e: any) {
       console.error(e)
       return e
