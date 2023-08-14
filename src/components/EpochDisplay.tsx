@@ -85,6 +85,25 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           ) : (
             'NO PRED'
           )}
+          {status !== EEpochDisplayStatus.NextPrediction ? (
+            <div
+              className={styles.metricsFooter}
+              style={{
+                backgroundColor: `rgba(${
+                  relatedData.dir !== 1 ? '102,207,0' : '220,20,60'
+                }, ${relatedData.stake > 0 ? relatedData.stake / 5 + 0.5 : 1})`
+              }}
+            >
+              <span className={styles.footerConfidence}>
+                {relatedData.confidence}%
+              </span>
+              <EpochStakedTokens stakedAmount={relatedData.stake} />
+            </div>
+          ) : (
+            <div style={{ marginBottom: '4px' }}>
+              <EpochStakedTokens stakedAmount={relatedData.stake} />
+            </div>
+          )}
           {status === EEpochDisplayStatus.NextPrediction && (
             <ProgressBar
               refreshOnData={relatedData.epochStartTs}
@@ -95,23 +114,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               }
               max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
             />
-          )}
-          {delta ? (
-            <div
-              className={styles.metricsFooter}
-              style={{
-                backgroundColor: `rgba(${
-                  relatedData.dir == 1 ? '102,207,0' : '220,20,60'
-                }, ${relatedData.stake > 0 ? relatedData.stake / 5 + 0.5 : 0})`
-              }}
-            >
-              <span className={styles.footerConfidence}>
-                {relatedData.confidence}%
-              </span>
-              <EpochStakedTokens stakedAmount={relatedData.stake} />
-            </div>
-          ) : (
-            <EpochStakedTokens stakedAmount={relatedData.stake} />
           )}
         </>
       ) : (

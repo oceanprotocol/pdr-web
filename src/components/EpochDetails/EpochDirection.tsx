@@ -1,3 +1,4 @@
+import styles from '../../styles/Epoch.module.css'
 import { EEpochDisplayStatus } from '../EpochDisplay'
 
 export type TEpochDirectionProps = {
@@ -17,12 +18,14 @@ export const EpochDirection: React.FC<TEpochDirectionProps> = ({
     return direction == 1 ? 'BULL' : 'BEAR'
   }
   return (
-    <span>
-      {status !== EEpochDisplayStatus.LivePrediction
-        ? `${parseFloat(confidence.toString()).toFixed(0)}% ${getDirectionText(
-            direction
-          )}`
-        : `${delta}%`}
-    </span>
+    <div className={styles.epochDirectionContainer}>
+      <span>
+        {status !== EEpochDisplayStatus.LivePrediction
+          ? `${parseFloat(confidence.toString()).toFixed(
+              0
+            )}% ${getDirectionText(direction)}`
+          : `${delta}%`}
+      </span>
+    </div>
   )
 }
