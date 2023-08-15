@@ -8,7 +8,7 @@ import { getAssetPairPrice } from '@/utils/marketPrices'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
-import Price, { Markets } from './Price'
+import Price from './Price'
 import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
@@ -29,7 +29,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '--',
     symbol: '--',
-    price: 0
+    price: 0,
+    market: ''
   })
   const {
     tokenName,
@@ -65,11 +66,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       pairName,
       market
     })
-    const name = `${baseToken}-${quoteToken} ${interval.toLocaleLowerCase()}`
+    const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
       name,
-      symbol: baseToken
+      symbol: baseToken,
+      market: market
     })
   }
 
@@ -115,10 +117,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       }}
     >
       <Asset assetData={tokenData} />
-      <Price
-        assetData={tokenData}
-        market={market == Markets.BINANCE ? Markets.BINANCE : Markets.KRAKEN}
-      />
+      <Price assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         {...slotProps}

@@ -2,11 +2,18 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  position: relative;
 }
 
 .image {
+  position: absolute;
+  left: 18px;
   height: 20px;
   width: 20px;
   object-fit: contain;
   margin-right: calc(var(--spacer) / 6);
+}
+
+.assetName {
+  margin-left: calc(var(--spacer) / 2.5);
 }
