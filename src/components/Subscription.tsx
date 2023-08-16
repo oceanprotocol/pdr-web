@@ -26,9 +26,8 @@ export type TSubscriptionProps = {
   contractAddress: string
 }
 
-type TContractPriceInfo = NonError<
-  NonNullable<ValueOf<TPredictoorsContext['contractPricesDurations']>>
-> & {
+type TContractPriceInfo = {
+  price: NonError<NonNullable<ValueOf<TPredictoorsContext['contractPrices']>>>
   alternativeText?: string
 }
 
@@ -42,29 +41,25 @@ export default function Subscription({
   const { refetchBalance } = useUserContext()
   const signer = useEthersSigner({})
 
-  const {
-    getPredictorInstanceByAddress,
-    runCheckContracts,
-    contractPricesDurations
-  } = usePredictoorsContext()
+  const { getPredictorInstanceByAddress, runCheckContracts, contractPrices } =
+    usePredictoorsContext()
   const [isBuying, setIsBuying] = useState(false)
 
   const contractPriceInfo: TContractPriceInfo = useMemo(() => {
     const loadingResult = {
       price: 0,
-      duration: '',
+      // duration: 0,
       alternativeText: 'Loading...'
     }
 
-    if (Object.keys(contractPricesDurations).length === 0) return loadingResult
+    if (Object.keys(contractPrices).length === 0) return loadingResult
 
-    const contractPriceAndDuration = contractPricesDurations[contractAddress]
+    const contractPrice = contractPrices[contractAddress]
 
-    if (!contractPriceAndDuration || contractPriceAndDuration instanceof Error)
-      return loadingResult
+    if (!contractPrice || contractPrice instanceof Error) return loadingResult
 
-    return contractPriceAndDuration
-  }, [contractPricesDurations, contractAddress])
+    return { price: contractPrice }
+  }, [contractPrices, contractAddress])
 
   const BuyAction = useCallback<
     (args: { currentStatus: SubscriptionStatus }) => Promise<void>
@@ -107,7 +102,7 @@ export default function Subscription({
               src={'oceanToken.png'}
               alt="Coin symbol image"
             />
-            <b>{contractPriceInfo.price}</b> / {contractPriceInfo.duration}H
+            <b>{contractPriceInfo.price}</b> / {subscriptionData.duration}H
           </div>
         ) : (
           `${contractPriceInfo.alternativeText || 'FREE'}`

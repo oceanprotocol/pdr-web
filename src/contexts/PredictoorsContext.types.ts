@@ -9,12 +9,10 @@ export type TPredictoorsContext = {
   runCheckContracts: () => void
   contracts: Record<string, TPredictionContract> | undefined
   subscribedPredictoors: Array<Predictoor>
-  contractPricesDurations: Record<
+  contractPrices: Record<
     string,
     Maybe<
-      Awaited<
-        ReturnType<typeof Predictoor.prototype.getContractSubscriptionInfo>
-      >
+      Awaited<ReturnType<typeof Predictoor.prototype.getReadableContractPrice>>
     >
   >
 }

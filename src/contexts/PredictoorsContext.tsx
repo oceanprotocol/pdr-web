@@ -78,11 +78,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   >([])
   const [contracts, setContracts] = useState<TPredictoorsContext['contracts']>()
 
-  const [contractPricesDurations, setContractPricesDurations] = useState<
-    TPredictoorsContext['contractPricesDurations']
+  const [contractPrices, setContractPrices] = useState<
+    TPredictoorsContext['contractPrices']
   >({})
 
-  const contractPricesDurationsRef = useRef(contractPricesDurations)
+  const contractPricesRef = useRef(contractPrices)
 
   const lastCheckedEpoch = useRef<number>(0)
   const predictedEpochs =
@@ -107,7 +107,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       (predictorInstance) => predictorInstance.address
     )
 
-    const alreadyFetchedPrices = Object.keys(contractPricesDurationsRef.current)
+    const alreadyFetchedPrices = Object.keys(contractPricesRef.current)
 
     const contractsToFetch = contractAddresses.filter(
       (contractAddress) => !alreadyFetchedPrices.includes(contractAddress)
@@ -121,31 +121,30 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           contractsToFetch.includes(predictorInstance.address)
         )
         .map((predictorInstance) =>
-          predictorInstance.getContractSubscriptionInfo()
+          predictorInstance.getReadableContractPrice()
         )
     ).then(
       (
-        contractSubscriptionInfos: Array<
-          Awaited<ReturnType<Predictoor['getContractSubscriptionInfo']>>
+        prices: Array<
+          Awaited<ReturnType<Predictoor['getReadableContractPrice']>>
         >
       ) => {
         const contractPricesObject = predictoorInstances.reduce(
           (acc, contract, index) => {
-            const contractSubscriptionInfo = contractSubscriptionInfos[index]
-
             return {
               ...acc,
-              [contract.address]: contractSubscriptionInfo
+              [contract.address]: prices[index]
             }
           },
           {}
         )
-        setContractPricesDurations((prev) => {
+
+        setContractPrices((prev) => {
           const newStateValue = {
             ...prev,
             ...contractPricesObject
           }
-          contractPricesDurationsRef.current = newStateValue
+          contractPricesRef.current = newStateValue
           return newStateValue
         })
       }
@@ -433,7 +432,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         getPredictorInstanceByAddress,
         contracts,
         subscribedPredictoors,
-        contractPricesDurations
+        contractPrices
       }}
     >
       {children}

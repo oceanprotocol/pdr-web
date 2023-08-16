@@ -208,6 +208,20 @@ class Predictoor {
     }
   }
 
+  async getReadableContractPrice(): Promise<number | Error> {
+    try {
+      const contractPrice = await this.getContractPrice()
+      if (contractPrice instanceof Error) {
+        return contractPrice
+      }
+
+      return parseFloat(contractPrice.formattedBaseTokenAmount)
+    } catch (e: any) {
+      console.error(e)
+      return e
+    }
+  }
+
   async getContractPrice(): Promise<
     | {
         formattedBaseTokenAmount: string
