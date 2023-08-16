@@ -24,8 +24,8 @@ export const EpochFooter: React.FC<TEpochFooterProps> = ({
           className={styles.metricsFooter}
           style={{
             backgroundColor: `rgba(${
-              direction !== 1 ? '102,207,0' : '220,20,60'
-            }, ${stake > 0 ? stake / 5 + 0.5 : 1})`
+              direction !== 1 ? '102,207,0,1' : '220,20,60,1'
+            })`
           }}
         >
           <span className={styles.footerConfidence}>

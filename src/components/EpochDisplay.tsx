@@ -58,8 +58,12 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     : null
 
   useEffect(() => {
-    if (status !== EEpochDisplayStatus.LivePrediction) return
-    console.log(initialPrice)
+    if (
+      status !== EEpochDisplayStatus.LivePrediction ||
+      !relatedData ||
+      relatedData.stake == 0
+    )
+      return
     if (!initialPrice) {
       getAssetPairPrice({
         assetPair: tokenName + pairName,
@@ -70,9 +74,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         setDelta(parseFloat(p) - price)
       })
     } else {
-      setDelta(
-        100 * Math.abs((price - initialPrice) / ((price + initialPrice) / 2))
-      )
+      setDelta((100 * (price - initialPrice)) / ((price + initialPrice) / 2))
     }
   }, [price])
 
@@ -88,22 +90,14 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       timestamp: relatedData?.epochStartTs + relatedData?.secondsPerEpoch,
       market: market
     })
-    console.log(
-      finalPrice,
-      initialPrice,
-      relatedData?.epochStartTs + relatedData?.secondsPerEpoch
-    )
     const delta =
-      100 *
-      Math.abs(
-        (parseFloat(finalPrice) - parseFloat(initialPrice)) /
-          ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
-      )
+      (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
+      ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
+
     setDelta(delta)
   }
 
   useEffect(() => {
-    console.log(epochData)
     if (status !== EEpochDisplayStatus.HistoricalPrediction) return
     getHistoryEpochPriceDelta()
   }, [relatedData])

@@ -243,7 +243,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         return
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
-      console.log(predictedEpochs)
 
       const newEpochs = detectNewEpochs({
         subscribedPredictoors,
@@ -303,8 +302,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           }
 
           setEpochData((prev) => {
-            console.log('prev', prev)
-            console.log('FeedData From Blockchain', blockchainFeedData)
             if (!prev) return [blockchainFeedData]
 
             const prevItems = prev.filter(

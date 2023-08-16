@@ -7,7 +7,6 @@ export async function getBinancePrice(
   symbol: string,
   timestamp: number
 ): Promise<string> {
-  console.log(timestamp)
   return fetch(
     `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&startTime=${
       timestamp * 1000
@@ -15,7 +14,6 @@ export async function getBinancePrice(
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(timestamp, response[0][1])
       return response[0][1]
     })
     .catch((error) => {
