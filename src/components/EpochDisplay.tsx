@@ -125,7 +125,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               <EpochFooter
                 stake={relatedData.stake}
                 confidence={relatedData.confidence}
-                delta={delta}
                 direction={relatedData.dir}
                 status={status}
               />
