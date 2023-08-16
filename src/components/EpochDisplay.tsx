@@ -22,6 +22,7 @@ export type TEpochDisplayProps = {
   market: string
   tokenName: string
   pairName: string
+  historyIndex?: number
   subsciption: SubscriptionStatus
 }
 
@@ -31,6 +32,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   market,
   tokenName,
   pairName,
+  historyIndex,
   subsciption
 }) => {
   const { epochData } = useSocketContext()
@@ -41,11 +43,11 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   const relatedPredictionIndex = useMemo(() => {
     switch (status) {
       case EEpochDisplayStatus.NextPrediction:
-        return 2
+        return 3
       case EEpochDisplayStatus.LivePrediction:
-        return 1
-      default:
-        return 0
+        return 2
+      case EEpochDisplayStatus.HistoricalPrediction:
+        return historyIndex === 0 ? 0 : 1
     }
   }, [status])
 
@@ -101,6 +103,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
+    console.log(epochData)
     if (status !== EEpochDisplayStatus.HistoricalPrediction) return
     getHistoryEpochPriceDelta()
   }, [relatedData])

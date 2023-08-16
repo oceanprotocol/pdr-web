@@ -133,12 +133,14 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <div className={styles.historyEpochsContainer}>
         <EpochDisplay
           status={EEpochDisplayStatus.HistoricalPrediction}
+          historyIndex={1}
           price={tokenData.price}
           {...slotProps}
           subsciption={subscription}
         />
         <EpochDisplay
           status={EEpochDisplayStatus.HistoricalPrediction}
+          historyIndex={0}
           price={tokenData.price}
           {...slotProps}
           subsciption={subscription}

@@ -34,7 +34,7 @@ export const getMultiplePredictions = ({
   Promise.all(
     epochs.flatMap((epoch) =>
       contracts.map(async (contract) => {
-        const epochStartTs = await contract.getCurrentEpochStartTs(currentTs)
+        const epochStartTs = epoch
         const secondsPerEpoch = await contract.getSecondsPerEpoch()
 
         if (!authorizationData) return null
