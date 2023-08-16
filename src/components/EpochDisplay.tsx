@@ -112,6 +112,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           <EpochBackground
             direction={relatedData.dir}
             stake={relatedData.stake}
+            state={status}
             delta={delta}
           />
           {relatedData.stake ? (
@@ -136,9 +137,9 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
             <ProgressBar
               refreshOnData={relatedData.epochStartTs}
               progress={
-                relatedData.epochStartTs +
-                relatedData.secondsPerEpoch -
-                relatedData.currentTs
+                relatedData.epochStartTs -
+                relatedData.currentTs -
+                PREDICTION_FETCH_EPOCHS_DELAY
               }
               max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
             />
