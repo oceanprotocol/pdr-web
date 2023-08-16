@@ -62,8 +62,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   )
 
   const loadData = async () => {
-    const currentDate = new Date()
-    const timestamp = currentDate.getTime() - 100000
     const price = await getAssetPairPriceForRow({
       tokenName,
       pairName,
@@ -132,12 +130,20 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
         subsciption={subscription}
       />
-      <EpochDisplay
-        status={EEpochDisplayStatus.HistoricalPrediction}
-        price={tokenData.price}
-        {...slotProps}
-        subsciption={subscription}
-      />
+      <div className={styles.historyEpochsContainer}>
+        <EpochDisplay
+          status={EEpochDisplayStatus.HistoricalPrediction}
+          price={tokenData.price}
+          {...slotProps}
+          subsciption={subscription}
+        />
+        <EpochDisplay
+          status={EEpochDisplayStatus.HistoricalPrediction}
+          price={tokenData.price}
+          {...slotProps}
+          subsciption={subscription}
+        />
+      </div>
       <span>{interval}</span>
       <Subscription
         subscriptionData={{

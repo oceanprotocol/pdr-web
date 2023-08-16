@@ -243,6 +243,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         return
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
+      console.log(predictedEpochs)
 
       const newEpochs = detectNewEpochs({
         subscribedPredictoors,

@@ -1,22 +1,22 @@
-import { binance, kraken } from 'ccxt'
 import {
   binancePriceEndpoint,
   krakenPriceEndpoint
 } from './endpoints/thirdPartyEndpoints'
 
-const binanceExchange = new binance()
-const krakenExchange = new kraken()
-
 export async function getBinancePrice(
   symbol: string,
-  timestamp?: number
+  timestamp: number
 ): Promise<string> {
   console.log(timestamp)
-  return binanceExchange
-    .fetchOHLCV(symbol, undefined, timestamp)
+  return fetch(
+    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&startTime=${
+      timestamp * 1000
+    }`
+  )
+    .then((response) => response.json())
     .then((response) => {
-      console.log(response)
-      return response[0][1].toString()
+      console.log(timestamp, response[0][1])
+      return response[0][1]
     })
     .catch((error) => {
       console.error(error)
@@ -28,17 +28,12 @@ export const getKrakenPrice = async (
   assetPair: string,
   timestamp: number
 ): Promise<string> => {
-  console.log(krakenPriceEndpoint(assetPair))
-  //return '10'
-  return krakenExchange
-    .fetchOHLCV(assetPair)
+  return fetch(
+    `https://api.kraken.com/0/public/OHLC?pair=${assetPair}&since=${timestamp}`
+  )
+    .then((response) => response.json())
     .then((response) => {
-      console.log(response)
-      return response.json()
-    })
-    .then((response) => {
-      console.log(response)
-      return response.result[assetPair].a[0]
+      return response.result[assetPair][0][1]
     })
     .catch((error) => {
       console.error(error)

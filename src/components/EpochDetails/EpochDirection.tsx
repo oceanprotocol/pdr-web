@@ -20,11 +20,15 @@ export const EpochDirection: React.FC<TEpochDirectionProps> = ({
   return (
     <div className={styles.epochDirectionContainer}>
       <span>
-        {status !== EEpochDisplayStatus.LivePrediction
+        {status === EEpochDisplayStatus.NextPrediction
           ? `${parseFloat(confidence.toString()).toFixed(
               0
             )}% ${getDirectionText(direction)}`
-          : `${delta}%`}
+          : `${delta && delta > 0 ? '+' : ''}${
+              delta && delta !== 0
+                ? parseFloat(delta?.toString()).toFixed(3)
+                : 0
+            }%`}
       </span>
     </div>
   )

@@ -8,6 +8,7 @@
   border-radius: var(--small-border-radius);
   width: 100px;
   height: 35px;
+  width: 100px;
   margin: 0 auto;
   background-color: var(--dark-grey);
 }

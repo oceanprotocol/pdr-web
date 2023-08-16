@@ -35,3 +35,9 @@
 #alignStart {
   text-align: start;
 }
+
+.historyEpochsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

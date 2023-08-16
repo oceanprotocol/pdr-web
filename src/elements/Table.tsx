@@ -24,6 +24,7 @@ export default function Table({
                 {...column.getHeaderProps()}
                 className={styles.tableHeaderCell}
                 key={key}
+                colSpan={key == 4 ? 2 : 1}
               >
                 {column.render('Header')}
               </th>
@@ -37,11 +38,13 @@ export default function Table({
           return (
             <tr {...row.getRowProps()} className={styles.tableRow} key={key}>
               {row.cells.map((cell, key) => {
+                console.log(key)
                 return (
                   <td
                     {...cell.getCellProps()}
                     className={styles.tableRowCell}
                     key={key}
+                    colSpan={key == 4 ? 2 : 1}
                   >
                     {cell.render('Cell')}
                   </td>

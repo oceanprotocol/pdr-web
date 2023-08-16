@@ -2,10 +2,12 @@ import styles from '../../styles/Epoch.module.css'
 
 export type TEpochStakedTokensProps = {
   stakedAmount: number
+  showLabel?: boolean
 }
 
 export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
-  stakedAmount
+  stakedAmount,
+  showLabel
 }) => {
   return (
     <div className={styles.stake}>
@@ -14,9 +16,9 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
         src={'oceanToken.png'}
         alt="Coin symbol image"
       />
-      <span
-        className={styles.stakeText}
-      >{`${stakedAmount.toLocaleString()} STAKED`}</span>
+      <span className={styles.stakeText}>{`${stakedAmount.toLocaleString()} ${
+        showLabel ? 'STAKED' : ''
+      }`}</span>
     </div>
   )
 }
