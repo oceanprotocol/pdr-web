@@ -38,7 +38,6 @@ export default function Table({
           return (
             <tr {...row.getRowProps()} className={styles.tableRow} key={key}>
               {row.cells.map((cell, key) => {
-                console.log(key)
                 return (
                   <td
                     {...cell.getCellProps()}

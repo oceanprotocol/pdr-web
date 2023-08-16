@@ -80,20 +80,21 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   const getHistoryEpochPriceDelta = async () => {
     if (!relatedData) return
-    const initialPrice = await getAssetPairPrice({
-      assetPair: tokenName + pairName,
-      timestamp: relatedData?.epochStartTs,
-      market: market
-    })
-    const finalPrice = await getAssetPairPrice({
-      assetPair: tokenName + pairName,
-      timestamp: relatedData?.epochStartTs + relatedData?.secondsPerEpoch,
-      market: market
-    })
+    const [initialPrice, finalPrice] = await Promise.all([
+      getAssetPairPrice({
+        assetPair: tokenName + pairName,
+        timestamp: relatedData?.epochStartTs,
+        market: market
+      }),
+      getAssetPairPrice({
+        assetPair: tokenName + pairName,
+        timestamp: relatedData?.epochStartTs + relatedData?.secondsPerEpoch,
+        market: market
+      })
+    ])
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
       ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
-
     setDelta(delta)
   }
 

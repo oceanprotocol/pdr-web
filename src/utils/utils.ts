@@ -21,10 +21,10 @@ export const calculatePredictionEpochs = (
   currentEpoch: number,
   SPE: number
 ): number[] => [
-  SPE * (currentEpoch - 3),
   SPE * (currentEpoch - 2),
   SPE * (currentEpoch - 1),
-  SPE * currentEpoch
+  SPE * currentEpoch,
+  SPE * (currentEpoch + 1)
 ]
 
 export type DeepNonNullable<T> = T extends null | undefined
