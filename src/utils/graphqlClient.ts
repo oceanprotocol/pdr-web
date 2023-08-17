@@ -21,20 +21,26 @@ class GraphqlClient {
     variables: { [name: string]: any } = {},
     endpoint?: string
   ): Promise<GraphQLResponse<T>> {
-    const response = await fetch(endpoint ? endpoint : this.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.headers
-      },
-      body: JSON.stringify({ query, variables })
-    })
+    try {
+      const response = await fetch(endpoint ? endpoint : this.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.headers
+        },
+        body: JSON.stringify({ query, variables })
+      })
+      if (!response.ok) {
+        throw new Error(
+          `Network error, received status code ${response.status}`
+        )
+      }
 
-    if (!response.ok) {
-      throw new Error(`Network error, received status code ${response.status}`)
+      return await response.json()
+    } catch (error) {
+      console.error(error)
+      return { data: undefined }
     }
-
-    return await response.json()
   }
 }
 
