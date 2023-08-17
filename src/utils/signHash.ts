@@ -11,7 +11,13 @@ export async function signHash(signerAddress: string, message: string) {
   const signerInstance = networkProvider.getSigner(
     signerAddress
   ) as providers.JsonRpcSigner
-  let signedMessage = await signerInstance._legacySignMessage(messageHashBytes)
+  let signedMessage
+  try {
+    signedMessage = await signerInstance._legacySignMessage(messageHashBytes)
+  } catch (e) {
+    console.error(e)
+    return {}
+  }
   signedMessage = signedMessage.substr(2) // remove 0x
   const r = '0x' + signedMessage.slice(0, 64)
   const s = '0x' + signedMessage.slice(64, 128)

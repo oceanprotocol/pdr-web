@@ -13,9 +13,9 @@ import Token from './Token'
 
 export type TAuthorizationUser = {
   userAddress: string
-  v: string
-  r: string
-  s: string
+  v: string | undefined
+  r: string | undefined
+  s: string | undefined
   validUntil: number
 }
 
@@ -45,6 +45,7 @@ class Predictoor {
   // Initialize method
   async init() {
     // Create contract instance
+    console.log('herre')
     this.instance = new ethers.Contract(
       this.address,
       ERC20Template3ABI,
@@ -75,6 +76,7 @@ class Predictoor {
   // Calculate provider fee
   async getCalculatedProviderFee(user: ethers.Signer): Promise<TProviderFee> {
     const address = await user.getAddress()
+    console.log('herrre')
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
     const providerFeeAmount = 0
