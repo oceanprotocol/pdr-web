@@ -60,3 +60,6 @@ export const checkForBannerMessage = (
     type
   }
 }
+
+export type ValueOf<T> = T[keyof T]
+export type NonError<T> = Exclude<T, Error>

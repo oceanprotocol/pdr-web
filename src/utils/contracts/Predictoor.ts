@@ -176,21 +176,94 @@ class Predictoor {
       return e
     }
   }
-  // Buy and start subscription
-  async buyAndStartSubscription(
-    user: ethers.Signer
-  ): Promise<ethers.ContractReceipt | Error | null> {
+
+  async getContractSubscriptionInfo(): Promise<
+    | {
+        price: number
+        duration: string
+      }
+    | Error
+  > {
+    try {
+      return await Promise.all([
+        this.getContractPrice(),
+        this.instance?.secondsPerSubscription()
+      ]).then(([contractPrice, duration]) => {
+        if (contractPrice instanceof Error) {
+          return contractPrice
+        }
+        if (!duration) {
+          return Error('Assert contract requirements.')
+        }
+        const price = parseFloat(contractPrice.formattedBaseTokenAmount)
+
+        const durationInHours = duration.div(60 * 60).toString()
+
+        return {
+          price,
+          duration: durationInHours
+        }
+      })
+    } catch (e: any) {
+      console.error(e)
+      return e
+    }
+  }
+
+  async getReadableContractPrice(): Promise<number | Error> {
+    try {
+      const contractPrice = await this.getContractPrice()
+      if (contractPrice instanceof Error) {
+        return contractPrice
+      }
+
+      return parseFloat(contractPrice.formattedBaseTokenAmount)
+    } catch (e: any) {
+      console.error(e)
+      return e
+    }
+  }
+
+  async getContractPrice(): Promise<
+    | {
+        formattedBaseTokenAmount: string
+        baseTokenAmount: ethers.BigNumber
+      }
+    | Error
+  > {
     try {
       const dtPrice: any = await this.FRE?.getDtPrice(
         this.exchangeId?.toString()
       )
-      const baseTokenAmount = dtPrice.baseTokenAmount
+      const baseTokenAmount = dtPrice.baseTokenAmount as ethers.BigNumber
       // Check if baseTokenAmount is valid and token exists
       if (!baseTokenAmount || baseTokenAmount instanceof Error || !this.token) {
         return Error('Assert token requirements.')
       }
       const formattedBaseTokenAmount = ethers.utils.formatEther(baseTokenAmount)
-      // Approve token and execute buy and order
+
+      return {
+        formattedBaseTokenAmount,
+        baseTokenAmount
+      }
+    } catch (e: any) {
+      console.error(e)
+      return e
+    }
+  }
+
+  // Buy and start subscription
+  async buyAndStartSubscription(
+    user: ethers.Signer
+  ): Promise<ethers.ContractReceipt | Error | null> {
+    try {
+      const priceInfo = await this.getContractPrice()
+
+      if (priceInfo instanceof Error || !this.token) {
+        throw new Error('Error getting price')
+      }
+
+      const { formattedBaseTokenAmount, baseTokenAmount } = priceInfo
 
       const address = await user.getAddress()
       const aprrovedTokenAmount = await this.token.allowance(
@@ -298,8 +371,9 @@ class Predictoor {
   }
 
   async getCurrentEpochStartTs(seconds: number): Promise<number> {
-    const soonestTsToPredict: BigNumber =
-      await this.instance?.toEpochStart(seconds)
+    const soonestTsToPredict: BigNumber = await this.instance?.toEpochStart(
+      seconds
+    )
     const formattedSoonestTsToPredict: number = parseInt(
       ethers.utils.formatUnits(soonestTsToPredict, 0)
     )
