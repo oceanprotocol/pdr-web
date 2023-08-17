@@ -33,24 +33,31 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
 
   const { address } = useAccount()
   const { chainId, oceanTokenAddress } = currentConfig
-  const { data, refetch } = useContractRead({
+  const balanceResponse = useContractRead({
     address: oceanTokenAddress,
     abi: IERC20ABI,
     functionName: 'balanceOf',
     args: [address],
-    chainId: parseInt(chainId)
+    chainId: parseInt(chainId),
+    onError(error) {
+      console.log('Error', error)
+    }
   })
   useEffect(() => {
-    data &&
+    balanceResponse.data &&
       setBalance(
-        parseInt(ethers.utils.formatEther(BigInt(data.toString()).toString(10)))
+        parseInt(
+          ethers.utils.formatEther(
+            BigInt(balanceResponse.data.toString()).toString(10)
+          )
+        )
       )
-  }, [data])
+  }, [balanceResponse.data])
 
   const refetchBalance = () => {
-    refetch().then((result: any) => {
+    balanceResponse.refetch().then((result: any) => {
       setBalance(
-        !address
+        !address || !result.data
           ? 0
           : parseInt(
               ethers.utils.formatEther(
@@ -63,7 +70,7 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
 
   useEffect(() => {
     refetchBalance()
-  }, [address])
+  }, [])
 
   // Provide the state using the UserContext.Provider
   return (
