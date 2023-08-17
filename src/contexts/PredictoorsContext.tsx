@@ -55,7 +55,7 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   runCheckContracts: () => {},
   subscribedPredictoors: [],
   contracts: undefined,
-  contractPricesDurations: {}
+  contractPrices: {}
 })
 
 // Custom hook to use the OPFOwnerPredictoorsContext
