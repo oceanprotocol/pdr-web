@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:staging": "env-cmd -f ./.env.staging next dev",
     "build": "next build",
     "start": "next start",
+    "start:staging": "NODE_ENV=staging next start",
     "lint": "next lint",
     "prettier": "prettier --write ."
   },
@@ -37,6 +39,7 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@types/react-table": "^7.7.14",
-    "@types/uuid": "^9.0.2"
+    "@types/uuid": "^9.0.2",
+    "env-cmd": "^10.1.0"
   }
 }

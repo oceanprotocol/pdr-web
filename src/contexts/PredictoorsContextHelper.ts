@@ -1,19 +1,26 @@
 import Predictoor from '@/utils/contracts/Predictoor'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { Maybe } from '@/utils/utils'
 import { TPredictedEpochLogItem } from './PredictoorsContext'
 
 export type TFilterAllowedContractsArgs = {
   contracts: Record<string, TPredictionContract>
   opfOwnerAddress: string
+  allowedPredConfig: Maybe<Array<string>>
 }
 
 export const filterAllowedContracts = ({
   contracts,
-  opfOwnerAddress
+  opfOwnerAddress,
+  allowedPredConfig
 }: TFilterAllowedContractsArgs) => {
   const filteredContracts: Record<string, TPredictionContract> = {}
+  const filterMethod = allowedPredConfig
+    ? (contractKey: string) => allowedPredConfig.includes(contractKey)
+    : (contractKey: string) => contracts[contractKey].owner === opfOwnerAddress
+
   Object.keys(contracts).forEach((contractKey) => {
-    if (contracts[contractKey].owner === opfOwnerAddress) {
+    if (filterMethod(contractKey)) {
       filteredContracts[contractKey] = contracts[contractKey]
     }
   })

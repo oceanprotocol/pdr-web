@@ -345,8 +345,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       (contracts) => {
         const filteredContracts = filterAllowedContracts({
           contracts,
-          opfOwnerAddress: currentConfig.opfOwnerAddress
+          opfOwnerAddress: currentConfig.opfOwnerAddress,
+          allowedPredConfig: currentConfig.allowedPredictions
         })
+        console.log('filteredContracts', filteredContracts)
         setContracts(filteredContracts)
       }
     )

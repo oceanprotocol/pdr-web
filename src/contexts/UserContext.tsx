@@ -32,6 +32,7 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
   const [balance, setBalance] = useState<number>(0)
 
   const { address } = useAccount()
+
   const { chainId, oceanTokenAddress } = currentConfig
   const balanceResponse = useContractRead({
     address: oceanTokenAddress,
@@ -43,6 +44,7 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
       console.log('Error', error)
     }
   })
+
   useEffect(() => {
     balanceResponse.data &&
       setBalance(

@@ -45,15 +45,17 @@ class Predictoor {
   // Initialize method
   async init() {
     // Create contract instance
-    console.log('herre')
     this.instance = new ethers.Contract(
       this.address,
       ERC20Template3ABI,
       this.provider.getSigner()
     )
+
     // Get stake token and create new token instance
     const stakeToken = await this.instance?.stakeToken()
+
     this.token = new Token(stakeToken, this.provider)
+
     // Get exchanges and log fixed rates
     const fixedRates = await this.getExchanges()
 
@@ -298,8 +300,9 @@ class Predictoor {
   }
 
   async getCurrentEpochStartTs(seconds: number): Promise<number> {
-    const soonestTsToPredict: BigNumber =
-      await this.instance?.toEpochStart(seconds)
+    const soonestTsToPredict: BigNumber = await this.instance?.toEpochStart(
+      seconds
+    )
     const formattedSoonestTsToPredict: number = parseInt(
       ethers.utils.formatUnits(soonestTsToPredict, 0)
     )
