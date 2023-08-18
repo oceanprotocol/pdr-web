@@ -105,7 +105,13 @@ export default function Subscription({
             <b>{contractPriceInfo.price}</b> / {subscriptionData.duration}H
           </div>
         ) : (
-          `${contractPriceInfo.alternativeText || 'FREE'}`
+          `${
+            contractPriceInfo.price
+              ? contractPriceInfo.alternativeText
+                ? contractPriceInfo.alternativeText
+                : 'FREE'
+              : contractPriceInfo.alternativeText
+          }`
         )}
       </span>
 
@@ -124,7 +130,10 @@ export default function Subscription({
 
       {[SubscriptionStatus.ACTIVE, SubscriptionStatus.FREE].includes(
         subscriptionData.status
-      ) && <span className={styles.status}>{subscriptionData.status}</span>}
+      ) &&
+        contractPriceInfo.price > 0 && (
+          <span className={styles.status}>{subscriptionData.status}</span>
+        )}
     </div>
   )
 }
