@@ -8,9 +8,11 @@ class Token {
 
   constructor(address: string, provider: ethers.providers.JsonRpcProvider) {
     this.provider = provider
-    this.contractAddress = ethers.utils.getAddress(address)
+    //console.log('address', address)
+    //this.contractAddress = ethers.utils.getAddress(address)
+    this.contractAddress = address
     this.contractInstance = new ethers.Contract(
-      this.contractAddress,
+      address,
       IERC20ABI,
       provider.getSigner()
     )

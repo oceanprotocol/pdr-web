@@ -9,7 +9,8 @@ class FixedRateExchange {
 
   constructor(address: string, provider: ethers.providers.Provider) {
     this.provider = provider
-    this.address = ethers.utils.getAddress(address)
+    //this.address = ethers.utils.getAddress(address)
+    this.address = address
     this.instance = new ethers.Contract(
       this.address,
       FixedRateExchangeABI,
