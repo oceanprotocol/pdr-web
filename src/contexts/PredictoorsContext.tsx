@@ -226,7 +226,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const initializeContracts = useCallback(
     async (contracts: Record<string, TPredictionContract>) => {
-      const contractsToWatch = eleminateFreeContracts(contracts)
+      //const contractsToWatch = eleminateFreeContracts(contracts)
+      const contractsToWatch = Object.values(contracts)
 
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
