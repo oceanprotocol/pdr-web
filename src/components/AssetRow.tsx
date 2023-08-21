@@ -49,12 +49,14 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     (args: {
       tokenName: string
       pairName: string
+      timestamp?: number
       market: string
     }) => Promise<string>
   >(
-    ({ tokenName, pairName }) =>
+    ({ tokenName, pairName, timestamp }) =>
       getAssetPairPrice({
         assetPair: `${tokenName}${pairName}`,
+        timestamp: timestamp,
         market: market
       }),
     []
@@ -95,7 +97,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         ? {
             tokenName,
             pairName,
-            subscription
+            subscription,
+            market
           }
         : null,
     [tokenName, pairName, subscription]
@@ -120,19 +123,32 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Price assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LivePrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
-      <EpochDisplay
-        status={EEpochDisplayStatus.HistoricalPrediction}
-        {...slotProps}
-        subsciption={subscription}
-      />
+      <div className={styles.historyEpochsContainer}>
+        <EpochDisplay
+          status={EEpochDisplayStatus.HistoricalPrediction}
+          historyIndex={1}
+          price={tokenData.price}
+          {...slotProps}
+          subsciption={subscription}
+        />
+        <EpochDisplay
+          status={EEpochDisplayStatus.HistoricalPrediction}
+          historyIndex={0}
+          price={tokenData.price}
+          {...slotProps}
+          subsciption={subscription}
+        />
+      </div>
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),

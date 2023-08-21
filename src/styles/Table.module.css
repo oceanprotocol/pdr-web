@@ -36,6 +36,12 @@
   text-align: start;
 }
 
+.historyEpochsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .message {
   display: block;
   margin: calc(var(--spacer) / 2) auto;
