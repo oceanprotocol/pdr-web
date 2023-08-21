@@ -6,9 +6,6 @@
   table-layout: fixed;
 }
 
-.tableHeader {
-}
-
 .tableRow {
   border: 0;
   border-bottom: 1px solid var(--dark-grey);
@@ -20,12 +17,6 @@
   padding: calc(var(--spacer) / 8) calc(var(--spacer) / 3);
   border: 0;
   border-bottom: 1px solid var(--dark-grey);
-}
-
-.tableHeaderCell {
-}
-
-.tableRowCell {
 }
 
 .inactiveRow {
