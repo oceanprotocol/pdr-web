@@ -65,12 +65,13 @@ export type ValueOf<T> = T[keyof T]
 export type NonError<T> = Exclude<T, Error>
 
 export function handleTransactionError(error: any) {
-  if (error.code === 4001) {
+  console.log(error.code)
+  if (error.code == 'ACTION_REJECTED') {
     // User rejected the transaction
     console.log('Transaction rejected by the user')
     // Display a user-friendly message to the user
     return 'Transaction was canceled by the user'
-  } else if (error.code === -32603) {
+  } else if (error.code == -32603) {
     // Transaction failed due to out of gas or gas limit exceeded
     console.log('Transaction failed due to gas issues')
     // Display a user-friendly message
