@@ -45,6 +45,8 @@ export const getMultiplePredictions = ({
           authorizationData
         )
 
+        console.log('aggPredVal', aggPredVal)
+
         if (!aggPredVal) return null
 
         const predVal = {

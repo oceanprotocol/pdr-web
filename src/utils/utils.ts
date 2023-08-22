@@ -62,3 +62,6 @@ export const checkForBannerMessage = (
 
 export type ValueOf<T> = T[keyof T]
 export type NonError<T> = Exclude<T, Error>
+
+export const isSapphireNetwork = (): boolean =>
+  currentConfig.chainId === '23295'

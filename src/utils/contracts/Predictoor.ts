@@ -1,5 +1,7 @@
+import * as sapphire from '@oasisprotocol/sapphire-paratime'
 import { BigNumber, ethers } from 'ethers'
 import { ERC20Template3ABI } from '../../metadata/abis/ERC20Template3ABI'
+import { TAuthorization } from '../authorize'
 import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
 import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
@@ -11,50 +13,57 @@ import {
 import FixedRateExchange from './FixedRateExchange'
 import Token from './Token'
 
-export type TAuthorizationUser = {
-  userAddress: string
-  v: string | undefined
-  r: string | undefined
-  s: string | undefined
-  validUntil: number
+export type TPredictoorArgs = {
+  address: string
+  provider: ethers.providers.JsonRpcProvider
+  details: TPredictionContract
+  signer: ethers.providers.JsonRpcSigner
+  isSapphire?: boolean
 }
-
 // Predictoor class
 class Predictoor {
-  public provider: ethers.providers.JsonRpcProvider
-  public address: string
-  public instance: ethers.Contract | null
-  public FRE: FixedRateExchange | null
-  public exchangeId: BigNumber
-  public token: Token | null
-  public details: TPredictionContract
+  public instance: ethers.Contract | null = null
+  public instanceWrite: ethers.Contract | null = null
+  public FRE: FixedRateExchange | null = null
+  public exchangeId: BigNumber = BigNumber.from(0)
+  public token: Token | null = null
   // Constructor
   public constructor(
-    address: string,
-    provider: ethers.providers.JsonRpcProvider,
-    details: TPredictionContract
-  ) {
-    this.address = address
-    this.token = null
-    this.provider = provider
-    this.instance = null
-    this.FRE = null
-    this.details = details
-    this.exchangeId = BigNumber.from(0)
-  }
+    public address: string,
+    public provider: ethers.providers.JsonRpcProvider,
+    public details: TPredictionContract,
+    public signer: ethers.providers.JsonRpcSigner,
+    public isSapphire?: boolean
+  ) {}
+
   // Initialize method
   async init() {
-    // Create contract instance
+    if (!this.signer) return
+    //x1 Create contract instance
+
     this.instance = new ethers.Contract(
       this.address,
       ERC20Template3ABI,
-      this.provider.getSigner()
+      this.signer
     )
 
-    // Get stake token and create new token instance
-    const stakeToken = await this.instance?.stakeToken()
+    this.instanceWrite = !this.isSapphire
+      ? this.instance
+      : new ethers.Contract(
+          this.address,
+          ERC20Template3ABI,
+          sapphire.wrap(this.signer)
+        )
 
-    this.token = new Token(stakeToken, this.provider)
+    // Get stake token and create new token instance
+    const stakeToken = await this.instance.connect(this.signer).stakeToken()
+
+    this.token = new Token(
+      stakeToken,
+      this.provider,
+      this.signer,
+      this.isSapphire
+    )
 
     // Get exchanges and log fixed rates
     const fixedRates = await this.getExchanges()
@@ -76,9 +85,11 @@ class Predictoor {
     return this.instance?.subscriptions(address)
   }
   // Calculate provider fee
-  async getCalculatedProviderFee(user: ethers.Signer): Promise<TProviderFee> {
-    const address = await user.getAddress()
-    console.log('herrre')
+  async getCalculatedProviderFee(
+    user: ethers.providers.JsonRpcSigner
+  ): Promise<TProviderFee> {
+    const address = user._address
+
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
     const providerFeeAmount = 0
@@ -112,7 +123,7 @@ class Predictoor {
     }
   }
   // Get order parameters
-  async getOrderParams(address: string, user: ethers.Signer) {
+  async getOrderParams(address: string, user: ethers.providers.JsonRpcSigner) {
     const providerFee = await this.getCalculatedProviderFee(user)
     return {
       consumer: address,
@@ -127,16 +138,16 @@ class Predictoor {
   }
   // Buy from Fixed Rate Exchange (FRE) and order
   async buyFromFreAndOrder(
-    user: ethers.Signer,
+    user: ethers.providers.JsonRpcSigner,
     exchangeId: string,
     baseTokenAmount: string
   ): Promise<ethers.ContractReceipt | Error> {
     try {
       // Check if FRE and token exist
-      if (!this.FRE || !this.token || !this.instance) {
+      if (!this.FRE || !this.token || !this.instanceWrite) {
         return Error('Assert FRE and token requirements.')
       }
-      const address = await user.getAddress()
+      const address = user._address
       const orderParams = await this.getOrderParams(address, user)
       const freParams = {
         exchangeContract: this.FRE.address,
@@ -161,9 +172,9 @@ class Predictoor {
         .gasLimit
 
       const currentNonce = await user.getTransactionCount()
-      console.log('currentNonce', currentNonce)
+
       // Execute transaction and wait for receipt
-      const tx = await this.instance
+      const tx = await this.instanceWrite
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
           gasLimit,
@@ -256,22 +267,27 @@ class Predictoor {
 
   // Buy and start subscription
   async buyAndStartSubscription(
-    user: ethers.Signer
+    user: ethers.providers.JsonRpcSigner
   ): Promise<ethers.ContractReceipt | Error | null> {
     try {
       const priceInfo = await this.getContractPrice()
+      console.log('eee')
 
       if (priceInfo instanceof Error || !this.token) {
         throw new Error('Error getting price')
       }
 
       const { formattedBaseTokenAmount, baseTokenAmount } = priceInfo
+      console.log('bbbbb')
 
-      const address = await user.getAddress()
+      const address = user._address
+      console.log('cccc')
+
       const aprrovedTokenAmount = await this.token.allowance(
         address,
         this.address
       )
+      console.log('zzzzz')
 
       if (
         ethers.utils.formatEther(aprrovedTokenAmount) <
@@ -284,6 +300,8 @@ class Predictoor {
           this.provider
         )
       }
+
+      console.log('123123123')
       return await this.buyFromFreAndOrder(
         user,
         this.exchangeId?.toString(),
@@ -327,14 +345,16 @@ class Predictoor {
   async getAggPredval(
     ts: number,
     user: ethers.Signer,
-    authorizationData: TAuthorizationUser
+    authorizationData: TAuthorization
   ): Promise<TGetAggPredvalResult | null> {
     try {
-      if (this.instance) {
-        const [nom, denom] = await this.instance
+      if (this.instanceWrite) {
+        const [nom, denom] = await this.instanceWrite
           .connect(user)
           .getAggPredval(ts, authorizationData)
 
+        console.log('nom', nom)
+        console.log('denom', denom)
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
 

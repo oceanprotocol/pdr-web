@@ -24,6 +24,10 @@ class NetworkProvider {
     this.provider = new ethers.providers.JsonRpcProvider(networkURL)
   }
 
+  async init() {
+    await this.provider.send('eth_accounts', [])
+  }
+
   getProvider() {
     return this.provider
   }
