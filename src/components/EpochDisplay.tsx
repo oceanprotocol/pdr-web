@@ -127,6 +127,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
                 stake={relatedData.stake}
                 confidence={relatedData.confidence}
                 direction={relatedData.dir}
+                delta={delta}
                 status={status}
               />
             </>

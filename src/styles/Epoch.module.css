@@ -59,3 +59,16 @@
   justify-content: center;
   align-items: center;
 }
+
+.eyesContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 19px; /*(eye-radius * 2) + 1*/
+}
+
+.eye {
+  width: 9px;
+  height: 9px;
+  border: 2px solid #FF4292;
+  border-radius: 50%;
+}

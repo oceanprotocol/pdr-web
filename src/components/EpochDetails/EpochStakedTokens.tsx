@@ -10,7 +10,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
   showLabel
 }) => {
   return (
-    <div className={styles.stake}>
+  <div className={styles.stake}>
       <img
         className={styles.tokenImage}
         src={'oceanToken.png'}
