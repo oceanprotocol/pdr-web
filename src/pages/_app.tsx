@@ -5,11 +5,13 @@ import '@/styles/globals.css'
 import { ethereumClient, w3mProjectId, wagmiConfig } from '@/utils/web3Clients'
 import { Web3Modal } from '@web3modal/react'
 import type { AppProps } from 'next/app'
+import { NotificationContainer } from 'react-notifications'
 import { WagmiConfig } from 'wagmi'
 
 function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      <NotificationContainer />
       <WagmiConfig config={wagmiConfig}>
         <UserProvider>
           <SocketProvider>

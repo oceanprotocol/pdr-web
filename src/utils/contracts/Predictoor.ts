@@ -289,7 +289,7 @@ class Predictoor {
       )
     } catch (e: any) {
       console.error(e)
-      return null
+      throw e
     }
   }
   // Start order

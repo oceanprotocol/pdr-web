@@ -63,3 +63,22 @@ export const checkForBannerMessage = (
 
 export type ValueOf<T> = T[keyof T]
 export type NonError<T> = Exclude<T, Error>
+
+export function handleTransactionError(error: any) {
+  if (error.code === 4001) {
+    // User rejected the transaction
+    console.log('Transaction rejected by the user')
+    // Display a user-friendly message to the user
+    return 'Transaction was canceled by the user'
+  } else if (error.code === -32603) {
+    // Transaction failed due to out of gas or gas limit exceeded
+    console.log('Transaction failed due to gas issues')
+    // Display a user-friendly message
+    return 'Transaction failed due to gas issues. Please try again with more gas.'
+  } else {
+    // Other types of errors
+    console.error('Transaction error:', error)
+    // Display a general error message
+    return 'An error occurred while processing the transaction.'
+  }
+}
