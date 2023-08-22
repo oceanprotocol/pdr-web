@@ -3,6 +3,7 @@ import { ERC20Template3ABI } from '../../metadata/abis/ERC20Template3ABI'
 import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
 import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
+import { handleTransactionError } from '../utils'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -178,7 +179,7 @@ class Predictoor {
 
       return receipt
     } catch (e: any) {
-      throw e
+      throw e.code ? handleTransactionError(e) : e
     }
   }
 
