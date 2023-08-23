@@ -4,7 +4,7 @@ import { Maybe } from './utils'
 
 export type TAuthorization = {
   userAddress: string
-  v?: string
+  v?: number | string
   r?: string
   s?: string
   validUntil: number
