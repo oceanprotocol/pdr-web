@@ -6,6 +6,7 @@ import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { currentConfig } from '@/utils/appconstants'
 import { NonError, ValueOf } from '@/utils/utils'
 import { useCallback, useMemo, useState } from 'react'
+import { NotificationManager } from 'react-notifications'
 import { useAccount, useNetwork } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
 
@@ -72,20 +73,32 @@ export default function Subscription({
       )
         return
 
-      console.log('buying')
-      const predictorInstance = getPredictorInstanceByAddress(contractAddress)
-      console.log('predictorinstance found', !!predictorInstance)
-      if (!predictorInstance) return
-      setIsBuying(true)
-      console.log('setIsBuying true')
-      if (!signer) return
-      const receipt = await predictorInstance.buyAndStartSubscription(signer)
-      console.log('receipt', receipt)
-      if (!!receipt) {
-        runCheckContracts()
+      try {
+        console.log('buying')
+        const predictorInstance = getPredictorInstanceByAddress(contractAddress)
+        console.log('predictorinstance found', !!predictorInstance)
+        if (!predictorInstance) return
+        setIsBuying(true)
+        console.log('setIsBuying true')
+        if (!signer) return
+        const receipt = await predictorInstance.buyAndStartSubscription(signer)
+        console.log('receipt', receipt)
+        if (!!receipt) {
+          runCheckContracts()
+        }
+        refetchBalance()
+        setIsBuying(false)
+        NotificationManager.success(
+          '',
+          'Subscription purchase succesful!',
+          5000
+        )
+      } catch (e: any) {
+        console.error(e)
+        console.log(e)
+        setIsBuying(false)
+        NotificationManager.error(e, 'Subscription purchase failed!', 5000)
       }
-      refetchBalance()
-      setIsBuying(false)
     },
     [isConnected, address, getPredictorInstanceByAddress, contractAddress]
   )
@@ -102,10 +115,16 @@ export default function Subscription({
               src={'oceanToken.png'}
               alt="Coin symbol image"
             />
-            <b>{contractPriceInfo.price}</b> / {subscriptionData.duration}H
+            <b>{contractPriceInfo.price}</b> / {subscriptionData.duration}h
           </div>
         ) : (
-          `${contractPriceInfo.alternativeText || 'FREE'}`
+          `${
+            contractPriceInfo.price
+              ? contractPriceInfo.alternativeText
+                ? contractPriceInfo.alternativeText
+                : 'FREE'
+              : contractPriceInfo.alternativeText
+          }`
         )}
       </span>
 
@@ -124,7 +143,10 @@ export default function Subscription({
 
       {[SubscriptionStatus.ACTIVE, SubscriptionStatus.FREE].includes(
         subscriptionData.status
-      ) && <span className={styles.status}>{subscriptionData.status}</span>}
+      ) &&
+        contractPriceInfo.price > 0 && (
+          <span className={styles.status}>{subscriptionData.status}</span>
+        )}
     </div>
   )
 }

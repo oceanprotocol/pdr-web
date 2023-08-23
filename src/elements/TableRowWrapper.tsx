@@ -35,6 +35,7 @@ export const TableRowWrapper: React.FC<TTableRowWrapperProps> = ({
           {
             ...cellProps,
             ...cellKeyIndex,
+            colSpan: index === 4 || index === 0 ? 2 : 1,
             id:
               child?.props?.children === 'Asset' ||
               child?.props?.children === 'Price'

@@ -5,6 +5,7 @@ import { TAuthorization } from '../authorize'
 import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
 import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
+import { handleTransactionError } from '../utils'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -84,12 +85,12 @@ class Predictoor {
   async getSubscriptions(address: string): Promise<TGetSubscriptions> {
     return this.instance?.subscriptions(address)
   }
+
   // Calculate provider fee
   async getCalculatedProviderFee(
     user: ethers.providers.JsonRpcSigner
   ): Promise<TProviderFee> {
     const address = user._address
-
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
     const providerFeeAmount = 0
@@ -107,33 +108,41 @@ class Predictoor {
     )
     // Sign the message
     console.log('message', message)
-    const { v, r, s } = await signHashWithUser(user, message)
+    try {
+      const { v, r, s } = await signHashWithUser(user, message)
 
-    return {
-      providerFeeAddress: address,
-      providerFeeToken,
-      providerFeeAmount,
-      v,
-      r,
-      s,
-      providerData: ethers.utils.hexlify(
-        ethers.utils.toUtf8Bytes(providerData)
-      ),
-      validUntil: providerValidUntil
+      return {
+        providerFeeAddress: address,
+        providerFeeToken,
+        providerFeeAmount,
+        v,
+        r,
+        s,
+        providerData: ethers.utils.hexlify(
+          ethers.utils.toUtf8Bytes(providerData)
+        ),
+        validUntil: providerValidUntil
+      }
+    } catch (error) {
+      throw error
     }
   }
   // Get order parameters
   async getOrderParams(address: string, user: ethers.providers.JsonRpcSigner) {
-    const providerFee = await this.getCalculatedProviderFee(user)
-    return {
-      consumer: address,
-      serviceIndex: 0,
-      _providerFee: providerFee,
-      _consumeMarketFee: {
-        consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
-        consumeMarketFeeToken: this.details.publishMarketFeeToken,
-        consumeMarketFeeAmount: this.details.publishMarketFeeAmount
+    try {
+      const providerFee = await this.getCalculatedProviderFee(user)
+      return {
+        consumer: address,
+        serviceIndex: 0,
+        _providerFee: providerFee,
+        _consumeMarketFee: {
+          consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
+          consumeMarketFeeToken: this.details.publishMarketFeeToken,
+          consumeMarketFeeAmount: this.details.publishMarketFeeAmount
+        }
       }
+    } catch (error) {
+      throw error
     }
   }
   // Buy from Fixed Rate Exchange (FRE) and order
@@ -185,8 +194,7 @@ class Predictoor {
 
       return receipt
     } catch (e: any) {
-      console.error(e)
-      return e
+      throw e.code ? handleTransactionError(e) : e
     }
   }
 
@@ -308,8 +316,7 @@ class Predictoor {
         formattedBaseTokenAmount
       )
     } catch (e: any) {
-      console.error(e)
-      return null
+      throw e
     }
   }
   // Start order
