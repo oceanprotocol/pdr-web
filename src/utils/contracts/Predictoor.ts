@@ -107,24 +107,30 @@ class Predictoor {
       ]
     )
     // Sign the message
-    console.log('message', message)
-    try {
-      const { v, r, s } = await signHashWithUser(user, message)
+    const { v, r, s } = await signHashWithUser(user, message)
 
-      return {
-        providerFeeAddress: address,
-        providerFeeToken,
-        providerFeeAmount,
+    localStorage.setItem(
+      'purchaseAuth',
+      JSON.stringify({
+        userAddress: address,
         v,
         r,
         s,
-        providerData: ethers.utils.hexlify(
-          ethers.utils.toUtf8Bytes(providerData)
-        ),
         validUntil: providerValidUntil
-      }
-    } catch (error) {
-      throw error
+      })
+    )
+
+    return {
+      providerFeeAddress: address,
+      providerFeeToken,
+      providerFeeAmount,
+      v,
+      r,
+      s,
+      providerData: ethers.utils.hexlify(
+        ethers.utils.toUtf8Bytes(providerData)
+      ),
+      validUntil: providerValidUntil
     }
   }
   // Get order parameters
@@ -356,9 +362,16 @@ class Predictoor {
   ): Promise<TGetAggPredvalResult | null> {
     try {
       if (this.instanceWrite) {
+        let tempAuthData = authorizationData
+        const storedAuthData = localStorage.getItem('purchaseAuth')
+        if (storedAuthData) {
+          tempAuthData = JSON.parse(storedAuthData)
+        }
+
+        console.log('beforeAggPredVal')
         const [nom, denom] = await this.instanceWrite
           .connect(user)
-          .getAggPredval(ts, authorizationData)
+          .getAggPredval(ts, tempAuthData)
 
         console.log('nom', nom)
         console.log('denom', denom)

@@ -4,7 +4,7 @@ import {
   PREDICTION_FETCH_EPOCHS_DELAY,
   currentConfig
 } from '@/utils/appconstants'
-import { TAuthorization, authorizeWithWallet } from '@/utils/authorize'
+import { TAuthorization } from '@/utils/authorize'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor from '@/utils/contracts/Predictoor'
 import {
@@ -102,13 +102,12 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const initializeAuthorizationData = useCallback(
     async (signer: ethers.providers.JsonRpcSigner) => {
-      const initialData = await authorizeWithWallet(signer, 86400)
-
-      const authorizationData = new AuthorizationData<TAuthorization>({
-        initialData,
-        createCallback: () => authorizeWithWallet(signer, 86400)
-      })
-      authorizationDataInstance.current = authorizationData
+      //const initialData = await authorizeWithWallet(signer, 86400)
+      //const authorizationData = new AuthorizationData<TAuthorizationUser>({
+      //  initialData,
+      //  createCallback: () => authorizeWithWallet(signer, 86400)
+      //})
+      authorizationDataInstance.current
     },
     []
   )
