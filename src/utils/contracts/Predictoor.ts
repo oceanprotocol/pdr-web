@@ -108,17 +108,6 @@ class Predictoor {
     // Sign the message
     const { v, r, s } = await signHashWithUser(user, message)
 
-    localStorage.setItem(
-      'purchaseAuth',
-      JSON.stringify({
-        userAddress: address,
-        v,
-        r,
-        s,
-        validUntil: providerValidUntil
-      })
-    )
-
     return {
       providerFeeAddress: address,
       providerFeeToken,
@@ -359,16 +348,9 @@ class Predictoor {
   ): Promise<TGetAggPredvalResult | null> {
     try {
       if (this.instanceWrite) {
-        let tempAuthData = authorizationData
-        const storedAuthData = localStorage.getItem('purchaseAuth')
-        if (storedAuthData) {
-          tempAuthData = JSON.parse(storedAuthData)
-        }
-
-        console.log('beforeAggPredVal')
         const [nom, denom] = await this.instanceWrite
           .connect(user)
-          .getAggPredval(ts, tempAuthData)
+          .getAggPredval(ts, authorizationData)
 
         console.log('nom', nom)
         console.log('denom', denom)

@@ -4,6 +4,7 @@ import {
   PREDICTION_FETCH_EPOCHS_DELAY,
   currentConfig
 } from '@/utils/appconstants'
+import { authorizeWithWallet } from '@/utils/authorize'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor, { TAuthorizationUser } from '@/utils/contracts/Predictoor'
 import {
@@ -102,13 +103,13 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const initializeAuthorizationData = useCallback(
     async (signer: ethers.providers.JsonRpcSigner) => {
-      //const initialData = await authorizeWithWallet(signer, 86400)
+      const initialData = await authorizeWithWallet(signer, 86400)
 
-      //const authorizationData = new AuthorizationData<TAuthorizationUser>({
-      //  initialData,
-      //  createCallback: () => authorizeWithWallet(signer, 86400)
-      //})
-      authorizationDataInstance.current
+      const authorizationData = new AuthorizationData<TAuthorizationUser>({
+        initialData,
+        createCallback: () => authorizeWithWallet(signer, 86400)
+      })
+      authorizationDataInstance.current = authorizationData
     },
     []
   )
@@ -326,9 +327,14 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       const block = await provider.getBlock(blockNumber)
       const currentTs = block.timestamp
       const currentEpoch = Math.floor(currentTs / SPE)
+      const authorizationData =
+        authorizationDataInstance.current?.getAuthorizationData()
+
+      console.log('authorizationData', authorizationData)
       if (
         currentTs - lastCheckedEpoch.current * SPE <
-        SPE + PREDICTION_FETCH_EPOCHS_DELAY
+          SPE + PREDICTION_FETCH_EPOCHS_DELAY ||
+        !authorizationData
       )
         return
       lastCheckedEpoch.current = currentEpoch
@@ -362,8 +368,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         contracts: subscribedPredictoors,
         userWallet: signer,
         registerPrediction: addItemToPredictedEpochs,
-        authorizationData:
-          authorizationDataInstance.current?.getAuthorizationData()
+        authorizationData
       }).then((result) => {
         subscribedPredictoors.forEach((contract) => {
           const pickedResults = result.filter(

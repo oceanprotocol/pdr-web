@@ -37,7 +37,7 @@ export async function authorizeWithWallet(
   //if (lsSignedMessage) {
   //  return lsSignedMessage
   //}
-  const userAddress = await rpcSigner.getAddress()
+  const userAddress = rpcSigner._address
   const validUntil = Math.round(Date.now() / 1000) + validity
   const message = ethers.utils.solidityKeccak256(
     ['address', 'uint256'],
