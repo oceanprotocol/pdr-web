@@ -4,9 +4,9 @@ import {
   PREDICTION_FETCH_EPOCHS_DELAY,
   currentConfig
 } from '@/utils/appconstants'
-import { authorizeWithWallet } from '@/utils/authorize'
+import { TAuthorization, authorizeWithWallet } from '@/utils/authorize'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
-import Predictoor, { TAuthorizationUser } from '@/utils/contracts/Predictoor'
+import Predictoor from '@/utils/contracts/Predictoor'
 import {
   TGetMultiplePredictionsResult,
   getMultiplePredictions
@@ -98,14 +98,13 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const predictedEpochs =
     useRef<Record<string, Array<TPredictedEpochLogItem>>>()
 
-  const authorizationDataInstance =
-    useRef<AuthorizationData<TAuthorizationUser>>()
+  const authorizationDataInstance = useRef<AuthorizationData<TAuthorization>>()
 
   const initializeAuthorizationData = useCallback(
     async (signer: ethers.providers.JsonRpcSigner) => {
       const initialData = await authorizeWithWallet(signer, 86400)
 
-      const authorizationData = new AuthorizationData<TAuthorizationUser>({
+      const authorizationData = new AuthorizationData<TAuthorization>({
         initialData,
         createCallback: () => authorizeWithWallet(signer, 86400)
       })
@@ -255,7 +254,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       }
 
       const contractsToWatch = eleminateFreeContracts(contracts)
-
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
           const predictoor = new Predictoor(
@@ -291,8 +289,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       const tempData = predictedEpochs.current?.[contractAddress]
       if (tempData) {
         const sortedEpochs = tempData.sort((a, b) => a.epoch - b.epoch)
-        const lastTwoEpochs = sortedEpochs.slice(-2)
-        return lastTwoEpochs
+        const lastThreeEpochs = sortedEpochs.slice(-3)
+        return lastThreeEpochs
       }
       return []
     },

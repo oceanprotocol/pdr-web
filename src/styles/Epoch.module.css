@@ -8,6 +8,7 @@
   border-radius: var(--small-border-radius);
   width: 100px;
   height: 35px;
+  width: 100px;
   margin: 0 auto;
   background-color: var(--dark-grey);
 }
@@ -36,4 +37,38 @@
 .tokenImage {
   height: 6px;
   margin-right: 2px;
+}
+
+.footerConfidence {
+  font-size: var(--font-size-mini);
+  font-weight: bold;
+  color: black;
+}
+
+.metricsFooter {
+  width: 100%;
+  padding: 0 calc(var(--spacer) / 10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.epochDirectionContainer {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eyesContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 19px; /*(eye-radius * 2) + 1*/
+}
+
+.eye {
+  width: 9px;
+  height: 9px;
+  border: 2px solid #FF4292;
+  border-radius: 50%;
 }

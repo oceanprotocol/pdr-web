@@ -8,7 +8,7 @@ import { getAssetPairPrice } from '@/utils/marketPrices'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
-import Price, { Markets } from './Price'
+import Price from './Price'
 import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
@@ -29,7 +29,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '--',
     symbol: '--',
-    price: 0
+    price: 0,
+    market: ''
   })
   const {
     tokenName,
@@ -48,12 +49,14 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     (args: {
       tokenName: string
       pairName: string
+      timestamp?: number
       market: string
     }) => Promise<string>
   >(
-    ({ tokenName, pairName }) =>
+    ({ tokenName, pairName, timestamp }) =>
       getAssetPairPrice({
         assetPair: `${tokenName}${pairName}`,
+        timestamp: timestamp,
         market: market
       }),
     []
@@ -65,8 +68,13 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       pairName,
       market
     })
-    const name = `${baseToken} - ${quoteToken}`
-    setTokenData({ price: parseFloat(price), name, symbol: baseToken })
+    const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
+    setTokenData({
+      price: parseFloat(price),
+      name,
+      symbol: baseToken,
+      market: market
+    })
   }
 
   const renewPrice = useCallback<() => Promise<void>>(async () => {
@@ -89,7 +97,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         ? {
             tokenName,
             pairName,
-            subscription
+            subscription,
+            market
           }
         : null,
     [tokenName, pairName, subscription]
@@ -111,26 +120,35 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       }}
     >
       <Asset assetData={tokenData} />
-      <Price
-        assetData={tokenData}
-        market={market == Markets.BINANCE ? Markets.BINANCE : Markets.KRAKEN}
-      />
+      <Price assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LivePrediction}
+        price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
-      <EpochDisplay
-        status={EEpochDisplayStatus.HistoricalPrediction}
-        {...slotProps}
-        subsciption={subscription}
-      />
-      <span>{interval}</span>
+      <div className={styles.historyEpochsContainer}>
+        <EpochDisplay
+          status={EEpochDisplayStatus.HistoricalPrediction}
+          historyIndex={1}
+          price={tokenData.price}
+          {...slotProps}
+          subsciption={subscription}
+        />
+        <EpochDisplay
+          status={EEpochDisplayStatus.HistoricalPrediction}
+          historyIndex={0}
+          price={tokenData.price}
+          {...slotProps}
+          subsciption={subscription}
+        />
+      </div>
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),

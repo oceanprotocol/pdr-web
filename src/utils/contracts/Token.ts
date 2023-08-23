@@ -1,6 +1,7 @@
 import * as sapphire from '@oasisprotocol/sapphire-paratime'
 import { Contract, ethers } from 'ethers'
 import { IERC20ABI } from '../../metadata/abis/IERC20ABI'
+import { handleTransactionError } from '../utils'
 
 class Token {
   public contractInstance: Contract
@@ -60,9 +61,10 @@ class Token {
       // console.log(`Got receipt`);
 
       return receipt
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error)
       console.error(error)
-      return null
+      throw handleTransactionError(error)
     }
   }
 }
