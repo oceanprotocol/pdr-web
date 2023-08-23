@@ -37,7 +37,7 @@ export const getMultiplePredictions = ({
         const epochStartTs = await contract.getCurrentEpochStartTs(currentTs)
         const secondsPerEpoch = await contract.getSecondsPerEpoch()
 
-        if (!authorizationData) return null
+        //if (!authorizationData) return null
 
         const aggPredVal = await contract.getAggPredval(
           epoch,

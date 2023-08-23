@@ -365,6 +365,7 @@ class Predictoor {
           tempAuthData = JSON.parse(storedAuthData)
         }
 
+        console.log('beforeAggPredVal')
         const [nom, denom] = await this.instanceWrite
           .connect(user)
           .getAggPredval(ts, tempAuthData)
