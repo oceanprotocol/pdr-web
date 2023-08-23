@@ -1,6 +1,7 @@
 // @ts-ignore
 import { ethers, providers } from 'ethers'
 import { networkProvider } from './networkProvider'
+import { handleTransactionError } from './utils'
 
 export async function signHash(signerAddress: string, message: string) {
   // Since ganache has no support yet for personal_sign, we must use the legacy implementation
@@ -33,8 +34,14 @@ export async function signHashWithUser(user: ethers.Signer, message: string) {
   // const signedMessage = await user2.signMessage(message)
 
   const messageHashBytes = ethers.utils.arrayify(message)
+  let signature
+  try {
+    signature = await user.signMessage(messageHashBytes)
+  } catch (error) {
+    console.error(error)
+    throw handleTransactionError(error)
+  }
 
-  const signature = await user.signMessage(messageHashBytes)
   const v = ethers.utils.hexStripZeros(
     ethers.utils.hexlify(ethers.utils.hexDataSlice(signature, 0, 1))
   )

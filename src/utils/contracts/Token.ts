@@ -1,5 +1,6 @@
 import { Contract, ethers } from 'ethers'
 import { IERC20ABI } from '../../metadata/abis/IERC20ABI'
+import { handleTransactionError } from '../utils'
 
 class Token {
   public provider: ethers.providers.JsonRpcProvider
@@ -51,9 +52,10 @@ class Token {
       // console.log(`Got receipt`);
 
       return receipt
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error)
       console.error(error)
-      return null
+      throw handleTransactionError(error)
     }
   }
 }
