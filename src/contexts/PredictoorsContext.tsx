@@ -328,7 +328,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       const authorizationData =
         authorizationDataInstance.current?.getAuthorizationData()
 
-      console.log('authorizationData', authorizationData)
       if (
         currentTs - lastCheckedEpoch.current * SPE <
           SPE + PREDICTION_FETCH_EPOCHS_DELAY ||

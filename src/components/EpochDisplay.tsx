@@ -40,7 +40,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   subsciption
 }) => {
   const { epochData } = useSocketContext()
-  //console.log(epochData)
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
 
@@ -111,8 +110,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     if (status !== EEpochDisplayStatus.HistoricalPrediction) return
     getHistoryEpochPriceDelta()
   }, [relatedData])
-
-  if (tokenName === 'ETH') console.log('subsciption', tokenName, relatedData)
 
   return (
     <div className={styles.container}>

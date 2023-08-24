@@ -37,7 +37,6 @@ export const getMultiplePredictions = ({
       contracts.map(async (contract) => {
         const epochStartTs = epoch
         const secondsPerEpoch = await contract.getSecondsPerEpoch()
-        console.log('authorizationData', authorizationData)
         if (!authorizationData) return null
 
         const aggPredVal = await contract.getAggPredval(
@@ -45,8 +44,6 @@ export const getMultiplePredictions = ({
           userWallet,
           authorizationData
         )
-
-        console.log('aggPredVal', aggPredVal)
 
         if (!aggPredVal) return null
 
