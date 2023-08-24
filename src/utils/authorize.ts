@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
-import { ELocalStorageKeys } from './config'
+import { getLocalStorageSignedMessage } from './localStorage/getSignedMessageFromLS'
+import { saveSignedMessageToLS } from './localStorage/saveSignedMessageToLS'
 import { signHash, signHashWithUser } from './signHash'
 import { Maybe } from './utils'
 
@@ -11,6 +12,13 @@ export type TAuthorization = {
   validUntil: number
 }
 
+/**
+ * Create an authorization object for the user
+ * @param address - The user address
+ * @param validity - The validity of the authorization in seconds
+ * @returns The authorization object
+ *
+ */
 export async function authorize(
   address: string,
   validity = 86400
@@ -30,6 +38,12 @@ export async function authorize(
   }
 }
 
+/**
+ * Create an authorization object for the user and store it in local storage
+ * @param rpcSigner - The rpc signer
+ * @param validity - The validity of the authorization in seconds
+ * @returns The authorization object
+ */
 export async function authorizeWithWallet(
   rpcSigner: ethers.providers.JsonRpcSigner,
   validity = 86400
@@ -53,25 +67,30 @@ export async function authorizeWithWallet(
     s: signedMessage.s,
     validUntil: validUntil
   }
-  localStorage.setItem(
-    ELocalStorageKeys.signedMessage,
-    JSON.stringify(authResult)
-  )
+
+  saveSignedMessageToLS(userAddress, authResult)
 
   return authResult
 }
 
+/**
+ * Get the signed message if it is valid from local storage
+ * @param rpcSigner - The rpc signer
+ * @returns The authorization object or null
+ * @example
+ * getValidSignedMessageFromLS(rpcSigner) // { userAddress: '0x1234...', v: 27, r: '0x1234...', s: '0x1234...', validUntil: 1234567890 }
+ */
 export const getValidSignedMessageFromLS = async (
   rpcSigner: ethers.providers.JsonRpcSigner
 ): Promise<Maybe<TAuthorization>> => {
-  const lsSignedMessage = localStorage.getItem('signedMessage')
-  if (lsSignedMessage) {
-    const signedMessage = JSON.parse(lsSignedMessage) as TAuthorization
+  const signerAddress = await rpcSigner.getAddress()
 
+  const signedMessage = getLocalStorageSignedMessage(signerAddress)
+  if (signedMessage) {
     const now = Math.round(Date.now() / 1000)
     if (
       now < signedMessage.validUntil &&
-      signedMessage.userAddress === (await rpcSigner.getAddress())
+      signedMessage.userAddress === signerAddress
     ) {
       return signedMessage
     }
