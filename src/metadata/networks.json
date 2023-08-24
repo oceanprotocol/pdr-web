@@ -27,6 +27,33 @@
     ]
   },
   {
+    "name": "Oasis Sapphire Testnet",
+    "chain": "OST",
+    "icon": "oasis",
+    "rpc": ["https://testnet.sapphire.oasis.dev"],
+    "faucets": [],
+    "nativeCurrency": {
+      "name": "Oasis Network",
+      "symbol": "ROSE",
+      "decimals": 18
+    },
+    "infoURL": "https://testnet.explorer.sapphire.oasis.dev/",
+    "shortName": "ost",
+    "chainId": 23295,
+    "networkId": 23295,
+    "slip44": 60,
+    "ens": {
+      "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+    },
+    "explorers": [
+      {
+        "name": "etherscan",
+        "url": "https://testnet.explorer.sapphire.oasis.dev/",
+        "standard": "EIP3091"
+      }
+    ]
+  },
+  {
     "name": "Ethereum Mainnet",
     "chain": "ETH",
     "icon": "ethereum",
