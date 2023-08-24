@@ -274,23 +274,17 @@ class Predictoor {
   ): Promise<ethers.ContractReceipt | Error | null> {
     try {
       const priceInfo = await this.getContractPrice()
-      console.log('eee')
 
       if (priceInfo instanceof Error || !this.token) {
         throw new Error('Error getting price')
       }
 
       const { formattedBaseTokenAmount, baseTokenAmount } = priceInfo
-      console.log('bbbbb')
-
       const address = user._address
-      console.log('cccc')
-
       const aprrovedTokenAmount = await this.token.allowance(
         address,
         this.address
       )
-      console.log('zzzzz')
 
       if (
         ethers.utils.formatEther(aprrovedTokenAmount) <
@@ -304,7 +298,6 @@ class Predictoor {
         )
       }
 
-      console.log('123123123')
       return await this.buyFromFreAndOrder(
         user,
         this.exchangeId?.toString(),
@@ -355,8 +348,6 @@ class Predictoor {
           .connect(user)
           .getAggPredval(ts, authorizationData)
 
-        console.log('nom', nom)
-        console.log('denom', denom)
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
 
