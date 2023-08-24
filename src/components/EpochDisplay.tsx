@@ -2,6 +2,10 @@ import { useSocketContext } from '@/contexts/SocketContext'
 import ProgressBar from '@/elements/ProgressBar'
 import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
 import { getAssetPairPrice } from '@/utils/marketPrices'
+import {
+  compareSplittedNames,
+  splitContractName
+} from '@/utils/splitContractName'
 import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochBackground } from './EpochDetails/EpochBackground'
@@ -53,7 +57,12 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   const relatedData = Array.isArray(epochData)
     ? epochData
-        ?.find((data) => data.contractInfo.name === `${tokenName}-${pairName}`)
+        ?.find((data) =>
+          compareSplittedNames(splitContractName(data.contractInfo.name), [
+            tokenName,
+            pairName
+          ])
+        )
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
 
@@ -102,6 +111,8 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     if (status !== EEpochDisplayStatus.HistoricalPrediction) return
     getHistoryEpochPriceDelta()
   }, [relatedData])
+
+  if (tokenName === 'ETH') console.log('subsciption', tokenName, relatedData)
 
   return (
     <div className={styles.container}>

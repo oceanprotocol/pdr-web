@@ -84,3 +84,10 @@ export const config: TRuntimeConfig = {
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   }
 }
+
+/**
+ * TODO: Fix the linting error
+ */
+export enum ELocalStorageKeys {
+  'signedMessage' = 'signedMessage'
+}

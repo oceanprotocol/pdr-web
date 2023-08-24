@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { ELocalStorageKeys } from './config'
 import { signHash, signHashWithUser } from './signHash'
 import { Maybe } from './utils'
 
@@ -33,11 +34,10 @@ export async function authorizeWithWallet(
   rpcSigner: ethers.providers.JsonRpcSigner,
   validity = 86400
 ): Promise<TAuthorization> {
-  //const lsSignedMessage = getValidSignedMessageFromLS(rpcSigner)
-  //if (lsSignedMessage) {
-  //  return lsSignedMessage
-  //}
-  const userAddress = rpcSigner._address
+  const lsSignedMessage = await getValidSignedMessageFromLS(rpcSigner)
+  if (lsSignedMessage) return lsSignedMessage
+
+  const userAddress = await rpcSigner.getAddress()
   const validUntil = Math.round(Date.now() / 1000) + validity
   const message = ethers.utils.solidityKeccak256(
     ['address', 'uint256'],
@@ -53,7 +53,10 @@ export async function authorizeWithWallet(
     s: signedMessage.s,
     validUntil: validUntil
   }
-  //localStorage.setItem('signedMessage', JSON.stringify(authResult))
+  localStorage.setItem(
+    ELocalStorageKeys.signedMessage,
+    JSON.stringify(authResult)
+  )
 
   return authResult
 }
