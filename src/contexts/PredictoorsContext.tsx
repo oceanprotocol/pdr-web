@@ -61,6 +61,7 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   runCheckContracts: () => {},
   subscribedPredictoors: [],
   contracts: undefined,
+  currentChainTime: 0,
   contractPrices: {}
 })
 
@@ -78,6 +79,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     chainId: parseInt(currentConfig.chainId)
   })
   const { setEpochData, initialEpochData } = useSocketContext()
+  const [currentChainTime, setCurrentChainTime] = useState<number>(0)
 
   const [predictoorInstances, setPredictorInstances] = useState<
     TPredictoorsContext['predictoorInstances']
@@ -324,10 +326,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     provider.on('block', async (blockNumber) => {
       const block = await provider.getBlock(blockNumber)
       const currentTs = block.timestamp
+      setCurrentChainTime(currentTs)
       const currentEpoch = Math.floor(currentTs / SPE)
       const authorizationData =
         authorizationDataInstance.current?.getAuthorizationData()
-
       if (
         currentTs - lastCheckedEpoch.current * SPE <
           SPE + PREDICTION_FETCH_EPOCHS_DELAY ||
@@ -465,7 +467,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         getPredictorInstanceByAddress,
         contracts,
         subscribedPredictoors,
-        contractPrices
+        contractPrices,
+        currentChainTime
       }}
     >
       {children}

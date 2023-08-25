@@ -1,3 +1,4 @@
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import ProgressBar from '@/elements/ProgressBar'
 import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
@@ -40,6 +41,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   subsciption
 }) => {
   const { epochData } = useSocketContext()
+  const { currentChainTime } = usePredictoorsContext()
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
 
@@ -147,7 +149,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               refreshOnData={relatedData.epochStartTs}
               progress={
                 relatedData.epochStartTs -
-                new Date().getTime() / 1000 -
+                currentChainTime -
                 PREDICTION_FETCH_EPOCHS_DELAY
               }
               max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}

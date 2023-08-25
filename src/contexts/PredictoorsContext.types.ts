@@ -9,6 +9,7 @@ export type TPredictoorsContext = {
   runCheckContracts: () => void
   contracts: Record<string, TPredictionContract> | undefined
   subscribedPredictoors: Array<Predictoor>
+  currentChainTime: number
   contractPrices: Record<
     string,
     Maybe<
