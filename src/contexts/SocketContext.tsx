@@ -1,3 +1,4 @@
+import { currentConfig } from '@/utils/appconstants'
 import { Maybe } from '@/utils/utils'
 import React, {
   createContext,
@@ -40,6 +41,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   const isFirstDataEnter = useRef<boolean>(false)
 
   const setInitialData = useCallback((data: Maybe<TSocketFeedData>) => {
+    if (currentConfig.opfProvidedPredictions.length === 0) return
     if (isFirstDataEnter.current || !data) return
     // transform TInitialData to TSocketFeedData
     console.log(data)
