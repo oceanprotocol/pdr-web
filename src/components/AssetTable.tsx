@@ -124,7 +124,11 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           ))}
         </tbody>
       ) : (
-        <span className={styles.message}>No contracts found</span>
+        <tbody className={styles.message}>
+          <tr>
+            <td>No contracts found</td>
+          </tr>
+        </tbody>
       )}
     </table>
   )
