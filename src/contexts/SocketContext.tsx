@@ -41,7 +41,6 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   const isFirstDataEnter = useRef<boolean>(false)
 
   const setInitialData = useCallback((data: Maybe<TSocketFeedData>) => {
-    if (currentConfig.opfProvidedPredictions.length === 0) return
     if (isFirstDataEnter.current || !data) return
     // transform TInitialData to TSocketFeedData
     console.log(data)
@@ -50,6 +49,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   }, [])
 
   useEffect(() => {
+    if (currentConfig.opfProvidedPredictions.length === 0) return
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_IO_URL || ''
     console.log('socketUrl', socketUrl)
     const newSocket = io(socketUrl, {
