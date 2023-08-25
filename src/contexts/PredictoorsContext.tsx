@@ -319,7 +319,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !contracts || !signer) return
 
-    let theInitialRun = true
     const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', async (blockNumber) => {
@@ -330,14 +329,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         authorizationDataInstance.current?.getAuthorizationData()
 
       if (
-        (!theInitialRun &&
-          currentTs - lastCheckedEpoch.current * SPE <
-            SPE + PREDICTION_FETCH_EPOCHS_DELAY) ||
+        currentTs - lastCheckedEpoch.current * SPE <
+          SPE + PREDICTION_FETCH_EPOCHS_DELAY ||
         !authorizationData
       )
         return
-
-      theInitialRun = false
       lastCheckedEpoch.current = currentEpoch
       const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
 
