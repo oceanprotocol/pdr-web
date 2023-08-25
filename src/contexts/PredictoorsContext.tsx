@@ -320,7 +320,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !contracts || !signer) return
-
+    console.log(address)
     const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', async (blockNumber) => {
