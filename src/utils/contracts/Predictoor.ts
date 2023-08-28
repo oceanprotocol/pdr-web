@@ -19,6 +19,35 @@ export type TAuthorizationUser = {
   validUntil: number
 }
 
+type PredictionResult = {
+  nom: string;
+  denom: string;
+  confidence: number;
+  dir: number;
+  stake: number;
+};
+
+// Helper function to calculate the prediction direction and confidence
+export const calculatePrediction = (nom: string, denom: string): PredictionResult => {
+  let confidence: number = parseFloat(nom) / parseFloat(denom);
+  let dir: number = confidence >= 0.5 ? 1 : 0;
+  if (confidence > 0.5) {
+      confidence -= 0.5;
+  } else {
+      confidence = 0.5 - confidence;
+  }
+  confidence = (confidence / 0.5) * 100;
+
+  return {
+      nom: nom,
+      denom: denom,
+      confidence: confidence,
+      dir: dir,
+      stake: parseFloat(ethers.utils.formatUnits(denom, 18)),
+  };
+}
+
+
 // Predictoor class
 class Predictoor {
   public provider: ethers.providers.JsonRpcProvider
@@ -336,22 +365,8 @@ class Predictoor {
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
 
-        let confidence: number = parseFloat(nominator) / parseFloat(denominator)
-        let dir: number = confidence >= 0.5 ? 1 : 0
-        if (confidence > 0.5) {
-          confidence -= 0.5
-        } else {
-          confidence = 0.5 - confidence
-        }
-        confidence = (confidence / 0.5) * 100
-
-        return {
-          nom: nominator,
-          denom: denominator,
-          confidence: confidence,
-          dir: dir,
-          stake: parseFloat(ethers.utils.formatUnits(denom, 18))
-        }
+        const result:any = calculatePrediction(nominator, denominator)
+        return result
       }
 
       return null
