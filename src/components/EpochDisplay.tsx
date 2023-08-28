@@ -108,6 +108,8 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     setDelta(delta)
   }
 
+  console.log(epochData)
+
   useEffect(() => {
     if (status !== EEpochDisplayStatus.HistoricalPrediction) return
     getHistoryEpochPriceDelta()
