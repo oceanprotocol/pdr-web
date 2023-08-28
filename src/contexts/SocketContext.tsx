@@ -1,3 +1,4 @@
+import { currentConfig } from '@/utils/appconstants'
 import { Maybe } from '@/utils/utils'
 import React, {
   createContext,
@@ -48,6 +49,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   }, [])
 
   useEffect(() => {
+    if (currentConfig.opfProvidedPredictions.length === 0) return
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_IO_URL || ''
     console.log('socketUrl', socketUrl)
     const newSocket = io(socketUrl, {

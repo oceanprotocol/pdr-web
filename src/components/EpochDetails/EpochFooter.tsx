@@ -29,12 +29,15 @@ export const EpochFooter: React.FC<TEpochFooterProps> = ({
           <span className={styles.footerConfidence}>
             {parseFloat(confidence.toString()).toFixed(0)}%
           </span>
-          { delta && ((direction == 1 && delta > 0.0) ||
-            (direction == 0 && delta < 0.0)) && (
-              <div className={styles.eyesContainer}>
-                <div className={styles.eye}></div>
-                <div className={styles.eye}></div>
-              </div>
+          {delta &&
+          ((direction == 1 && delta > 0.0) ||
+            (direction == 0 && delta < 0.0)) ? (
+            <div className={styles.eyesContainer}>
+              <div className={styles.eye}></div>
+              <div className={styles.eye}></div>
+            </div>
+          ) : (
+            ''
           )}
           <EpochStakedTokens stakedAmount={stake} />
         </div>

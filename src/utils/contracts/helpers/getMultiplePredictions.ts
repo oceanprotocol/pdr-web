@@ -1,6 +1,7 @@
 import { TPredictedEpochLogItem } from '@/contexts/PredictoorsContext'
+import { TAuthorization } from '@/utils/authorize'
 import { ethers } from 'ethers'
-import Predictoor, { TAuthorizationUser } from '../Predictoor'
+import Predictoor from '../Predictoor'
 
 export type TGetMultiplePredictionsArgs = {
   currentTs: number
@@ -11,7 +12,7 @@ export type TGetMultiplePredictionsArgs = {
     contractAddress: string
     item: TPredictedEpochLogItem
   }) => void
-  authorizationData?: TAuthorizationUser
+  authorizationData?: TAuthorization
 }
 
 export type TGetMultiplePredictionsResult = Promise<
@@ -36,7 +37,6 @@ export const getMultiplePredictions = ({
       contracts.map(async (contract) => {
         const epochStartTs = epoch
         const secondsPerEpoch = await contract.getSecondsPerEpoch()
-
         if (!authorizationData) return null
 
         const aggPredVal = await contract.getAggPredval(

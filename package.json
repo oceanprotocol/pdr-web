@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "staging": "env-cmd -f ./.env.staging next dev",
     "build": "next build",
     "start": "next start",
+    "start:staging": "NODE_ENV=staging next start",
     "lint": "next lint",
     "prettier": "prettier --write ."
   },
@@ -13,6 +15,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@oasisprotocol/sapphire-paratime": "^1.1.1",
     "@ramonak/react-progress-bar": "^5.0.3",
     "@web3modal/ethereum": "^2.3.7",
     "@web3modal/react": "^2.3.7",
@@ -38,6 +41,7 @@
     "@types/react-dom": "^18.2.6",
     "@types/react-table": "^7.7.14",
     "@types/uuid": "^9.0.2",
+    "env-cmd": "^10.1.0",
     "react-notifications": "^1.7.4"
   }
 }

@@ -3,13 +3,12 @@ import { FixedRateExchangeABI } from '../../metadata/abis/FixedRateExchangeABI'
 import { TCalcBaseInGivenOutDTResult } from './ContractReturnTypes'
 
 class FixedRateExchange {
-  public provider: ethers.providers.Provider
-  public address: string
   public instance: ethers.Contract
 
-  constructor(address: string, provider: ethers.providers.Provider) {
-    this.provider = provider
-    this.address = ethers.utils.getAddress(address)
+  constructor(
+    public address: string,
+    public provider: ethers.providers.Provider
+  ) {
     this.instance = new ethers.Contract(
       this.address,
       FixedRateExchangeABI,

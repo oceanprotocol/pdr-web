@@ -64,6 +64,9 @@ export const checkForBannerMessage = (
 export type ValueOf<T> = T[keyof T]
 export type NonError<T> = Exclude<T, Error>
 
+export const isSapphireNetwork = (): boolean =>
+  currentConfig.chainId === '23295'
+
 export function handleTransactionError(error: any) {
   console.log(error.code)
   if (error.code == 'ACTION_REJECTED') {
