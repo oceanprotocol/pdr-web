@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
@@ -111,9 +112,16 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           cellType="th"
         >
           {assetTableColumns.map((item) => (
-            <div className={styles.assetHeaderContainer}>
-              <span key={`assetHeader${item.accessor}`}>{item.Header}</span>
-              <Tooltip selector={item.Header} text={item.Header} />
+            <div
+              className={styles.assetHeaderContainer}
+              id={item.Header}
+              key={`assetHeader${item.accessor}`}
+            >
+              <span>{item.Header}</span>
+              <Tooltip
+                selector={item.Header}
+                text={tooltipsText[item.Header as keyof typeof tooltipOptions]}
+              />
             </div>
           ))}
         </TableRowWrapper>

@@ -8,3 +8,7 @@
 .tooltipIcon:hover {
   cursor: pointer;
 }
+
+.tooltipText {
+  text-align: start;
+}

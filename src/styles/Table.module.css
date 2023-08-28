@@ -23,8 +23,8 @@
   background-color: var(--shadow-grey);
 }
 
-#alignStart {
-  text-align: start;
+#alignStart div {
+  justify-content: flex-start !important;
 }
 
 .historyEpochsContainer {
