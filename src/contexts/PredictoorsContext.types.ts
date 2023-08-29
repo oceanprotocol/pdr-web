@@ -7,6 +7,7 @@ export type TPredictoorsContext = {
   checkAndAddInstance: (data: Predictoor) => void
   getPredictorInstanceByAddress: (address: string) => Predictoor | undefined
   runCheckContracts: () => void
+  setCurrentChainTime: (data: number) => void
   contracts: Record<string, TPredictionContract> | undefined
   subscribedPredictoors: Array<Predictoor>
   currentChainTime: number

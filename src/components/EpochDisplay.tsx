@@ -108,8 +108,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     setDelta(delta)
   }
 
-  console.log(epochData)
-
   useEffect(() => {
     if (status !== EEpochDisplayStatus.HistoricalPrediction) return
     getHistoryEpochPriceDelta()
@@ -151,7 +149,9 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               refreshOnData={relatedData.epochStartTs}
               progress={
                 relatedData.epochStartTs -
-                currentChainTime -
+                (currentChainTime > 0
+                  ? currentChainTime
+                  : relatedData.currentTs) -
                 PREDICTION_FETCH_EPOCHS_DELAY
               }
               max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
