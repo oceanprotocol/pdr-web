@@ -74,15 +74,14 @@ export default function Subscription({
         return
 
       try {
-        console.log('buying')
         const predictorInstance = getPredictorInstanceByAddress(contractAddress)
-        console.log('predictorinstance found', !!predictorInstance)
+
         if (!predictorInstance) return
         setIsBuying(true)
-        console.log('setIsBuying true')
+
         if (!signer) return
         const receipt = await predictorInstance.buyAndStartSubscription(signer)
-        console.log('receipt', receipt)
+
         if (!!receipt) {
           runCheckContracts()
         }
@@ -95,7 +94,6 @@ export default function Subscription({
         )
       } catch (e: any) {
         console.error(e)
-        console.log(e)
         setIsBuying(false)
         NotificationManager.error(e, 'Subscription purchase failed!', 5000)
       }
