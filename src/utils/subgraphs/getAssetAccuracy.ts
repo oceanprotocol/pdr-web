@@ -49,8 +49,6 @@ export const fetchSlots24Hours = async(
   subgraphURL: string,
   assets: string[]
 ): Promise<Record<string, Array<TPredictSlots>>> => {
-    console.log("assets", assets)  
-  
     const { data, errors } = await graphqlClientInstance.query<TGetPredictContracts24hQueryResult>(
       GET_PREDICT_CONTRACTS_24H,
       { assetIds: assets },
@@ -93,7 +91,6 @@ export const calculateAverageAccuracy = async(
   assets: string[]
 ): Promise<Record<string, number>> => {
   const slotsData = await fetchSlots24Hours(subgraphURL, assets);
-  console.log("slotData: ", slotsData);
   const contractAccuracy: Record<string, number> = {};
 
   for (const assetId in slotsData) {

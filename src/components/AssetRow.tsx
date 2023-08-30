@@ -73,12 +73,13 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       market
     })
 
-    const accuracy = contractAccuracies[contract.address];
+    let accuracy = contractAccuracies[contract.address] ? contractAccuracies[contract.address] : 0.0;
+    accuracy = accuracy > 0.0 ? parseFloat(accuracy.toFixed(2)) : 0.0;
     
     const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
-      accuracy: parseFloat(accuracy.toFixed(2)),
+      accuracy: accuracy,
       name,
       symbol: baseToken,
       market: market
