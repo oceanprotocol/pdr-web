@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
+import Tooltip from '@/elements/Tooltip'
 import styles from '@/styles/Table.module.css'
 import { assetTableColumns, currentConfig } from '@/utils/appconstants'
 import { splitContractName } from '@/utils/splitContractName'
@@ -110,7 +112,17 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           cellType="th"
         >
           {assetTableColumns.map((item) => (
-            <span key={`assetHeader${item.accessor}`}>{item.Header}</span>
+            <div
+              className={styles.assetHeaderContainer}
+              id={item.Header}
+              key={`assetHeader${item.accessor}`}
+            >
+              <span>{item.Header}</span>
+              <Tooltip
+                selector={item.Header}
+                text={tooltipsText[item.Header as keyof typeof tooltipOptions]}
+              />
+            </div>
           ))}
         </TableRowWrapper>
       </thead>
