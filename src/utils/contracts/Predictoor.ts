@@ -46,7 +46,7 @@ export const calculatePrediction = (nom: string, denom: string): PredictionResul
       denom: denom,
       confidence: confidence,
       dir: dir,
-      stake: parseFloat(ethers.utils.formatUnits(denom, 18)),
+      stake: parseFloat(denom),
   };
 }
 

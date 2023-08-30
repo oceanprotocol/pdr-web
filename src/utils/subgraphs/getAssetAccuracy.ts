@@ -100,23 +100,49 @@ export const calculateAverageAccuracy = async(
       let totalSlots = 0;
       let correctPredictions = 0;
 
-      for (const slot of slotsData[assetId]) {
-          const prediction = calculatePrediction(
-            slot.roundSumStakesUp.toString(),
-            slot.roundSumStakes.toString()
-          )
-
-          // Check if prediction direction matches true value
-          const hasAnswer = slot.trueValues ? true : false;
-          if (
-            hasAnswer === true &&
-            prediction.dir === (slot.trueValues?.trueValue ? 1 : 0)
-          ) {
-            correctPredictions++;
-          }
-
-          totalSlots++;
+      if (!slotsData[assetId] || slotsData[assetId].length === 0) {
+        contractAccuracy[assetId] = 0;
+        continue
       }
+
+      for (const slot of slotsData[assetId]) {
+        console.log("calc dummy slot");
+
+        let mockRoundSumStakesUp = Math.random() * 1000000;
+        let mockRoundSumStakes = Math.random() * 1000000;
+
+        // create random boolean value
+        let trueValue = Math.random() < 0.5;
+
+        const prediction = calculatePrediction(
+          mockRoundSumStakesUp.toString(),
+          mockRoundSumStakes.toString()
+        )
+
+        // Check if prediction direction matches true value
+        if (prediction.dir === (trueValue ? 1 : 0)) {
+          correctPredictions++;
+        }
+
+        totalSlots++;
+      }
+      // for (const slot of slotsData[assetId]) {
+      //     const prediction = calculatePrediction(
+      //       slot.roundSumStakesUp.toString(),
+      //       slot.roundSumStakes.toString()
+      //     )
+
+      //     // Check if prediction direction matches true value
+      //     const hasAnswer = slot.trueValues ? true : false;
+      //     if (
+      //       hasAnswer === true &&
+      //       prediction.dir === (slot.trueValues?.trueValue ? 1 : 0)
+      //     ) {
+      //       correctPredictions++;
+      //     }
+
+      //     totalSlots++;
+      // }
 
       const averageAccuracy = (correctPredictions / totalSlots) * 100;
       contractAccuracy[assetId] = averageAccuracy;
