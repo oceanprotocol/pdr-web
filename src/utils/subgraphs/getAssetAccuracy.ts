@@ -14,14 +14,15 @@ export const getSlots = async(
   address: string, 
   slot24h: number, 
   skip: number = 0, 
-  slots: Record<string, Array<TPredictSlots>> = {}
-): Promise<Record<string, Array<TPredictSlots>>> => {
+  slots: Array<TPredictSlots> = []
+): Promise<Array<TPredictSlots>> => {
+  const records_per_page = 1000;
   const { data, errors } = await graphqlClientInstance.query<TGetPredictSlots24hQueryResult>(
     GET_PREDICT_SLOTS_24H,
     {
       asset: address,
       initialSlot: slot24h,
-      first: 1000,
+      first: records_per_page,
       skip: skip,
     },
     subgraphURL
@@ -32,17 +33,12 @@ export const getSlots = async(
     return slots;
   }
 
-  // Initialize the array if it doesn't exist
-  if (!slots[address]) {
-    slots[address] = [];
-  }
-
   // Append new slots to existing ones
-  slots[address].push(...predictSlots);
+  slots.push(...predictSlots);
   
-  if (predictSlots.length === 1000) {
+  if (predictSlots.length === records_per_page) {
       // If we returned max results, resively get remaining data
-      return getSlots(subgraphURL, address, slot24h, skip + 1000, slots)
+      return getSlots(subgraphURL, address, slot24h, skip + records_per_page, slots)
   } else {
       // All data retrieved
       return slots
@@ -53,6 +49,8 @@ export const fetchSlots24Hours = async(
   subgraphURL: string,
   assets: string[]
 ): Promise<Record<string, Array<TPredictSlots>>> => {
+    console.log("assets", assets)  
+  
     const { data, errors } = await graphqlClientInstance.query<TGetPredictContracts24hQueryResult>(
       GET_PREDICT_CONTRACTS_24H,
       { assetIds: assets },
@@ -68,18 +66,22 @@ export const fetchSlots24Hours = async(
 
     // Iterate through contracts and get slots from 24h ago
     for (const predictoor of predictContracts) {
-      const lastSlot = predictoor.slots.slot
-      const slot24h = lastSlot - (SECONDS_IN_24_HOURS + predictoor.secondsPerEpoch)
+      if (!predictoor.slots || predictoor.slots.length === 0) {
+        predictoorSlots[predictoor.id] = []
+        continue
+      }
+      
+      const lastSlot = predictoor.slots[0].slot
+      const slot24h = lastSlot - SECONDS_IN_24_HOURS
 
       // Fetch slots for the given asset ID and 24-hour slot
       const slots = await getSlots(
         subgraphURL, 
-        predictoor.id, 
+        predictoor.id,
         slot24h
       )
 
-      // Merge slots for this asset ID
-      predictoorSlots[predictoor.id] = slots[predictoor.id] || []
+      predictoorSlots[predictoor.id] = slots || []
     }
 
     return predictoorSlots;
@@ -91,7 +93,7 @@ export const calculateAverageAccuracy = async(
   assets: string[]
 ): Promise<Record<string, number>> => {
   const slotsData = await fetchSlots24Hours(subgraphURL, assets);
-
+  console.log("slotData: ", slotsData);
   const contractAccuracy: Record<string, number> = {};
 
   for (const assetId in slotsData) {
@@ -105,7 +107,11 @@ export const calculateAverageAccuracy = async(
           )
 
           // Check if prediction direction matches true value
-          if (prediction.dir === (slot.trueValues.trueValue ? 1 : 0)) {
+          const hasAnswer = slot.trueValues ? true : false;
+          if (
+            hasAnswer === true &&
+            prediction.dir === (slot.trueValues?.trueValue ? 1 : 0)
+          ) {
             correctPredictions++;
           }
 
