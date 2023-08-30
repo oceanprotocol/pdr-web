@@ -47,7 +47,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     interval,
     contract
   } = assetData
-  const { contractAverages } = usePredictoorsContext()
+  const { contractAccuracies } = usePredictoorsContext()
 
   const getAssetPairPriceForRow = useCallback<
     (args: {
@@ -73,14 +73,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       market
     })
 
-    // console.log("address:", contract.address)
-    // const average = contractAverages[contract.address];
-    // console.log("average:", average)
+    const accuracy = contractAccuracies[contract.address];
     
     const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
-      accuracy: 0.0,
+      accuracy: parseFloat(accuracy.toFixed(2)),
       name,
       symbol: baseToken,
       market: market
