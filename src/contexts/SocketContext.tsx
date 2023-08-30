@@ -1,3 +1,4 @@
+import { currentConfig } from '@/utils/appconstants'
 import { Maybe } from '@/utils/utils'
 import React, {
   createContext,
@@ -8,6 +9,7 @@ import React, {
   useState
 } from 'react'
 import { Socket, io } from 'socket.io-client'
+import { usePredictoorsContext } from './PredictoorsContext'
 import {
   TSocketContext,
   TSocketFeedData,
@@ -36,18 +38,19 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   const [epochData, setEpochData] = useState<TSocketFeedData | null>(null)
   const [initialEpochData, setInitialEpochData] =
     useState<TSocketFeedData | null>(null)
+  const { setCurrentChainTime } = usePredictoorsContext()
 
   const isFirstDataEnter = useRef<boolean>(false)
 
   const setInitialData = useCallback((data: Maybe<TSocketFeedData>) => {
     if (isFirstDataEnter.current || !data) return
     // transform TInitialData to TSocketFeedData
-    console.log(data)
     setInitialEpochData(data)
     setEpochData(data)
   }, [])
 
   useEffect(() => {
+    if (currentConfig.opfProvidedPredictions.length === 0) return
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_IO_URL || ''
     console.log('socketUrl', socketUrl)
     const newSocket = io(socketUrl, {
@@ -58,13 +61,13 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
     setSocket(newSocket)
 
     newSocket.on('newEpoch', (data: Maybe<TSocketFeedData>) => {
-      console.log(data)
       if (!data) return
       if (!isFirstDataEnter.current) {
         console.log('firstData', data)
         setInitialData(data)
         isFirstDataEnter.current = true
       }
+      setCurrentChainTime(data[0].predictions[0].currentTs)
       setEpochData(data)
     })
 

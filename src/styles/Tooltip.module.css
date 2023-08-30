@@ -1,0 +1,15 @@
+.tooltipIcon {
+  height: calc(var(--spacer) / 4);
+  width: calc(var(--spacer) / 4);
+  fill: var(--primary-color);
+  margin-left: calc(var(--spacer) / 15);
+}
+
+.tooltipIcon:hover {
+  cursor: pointer;
+}
+
+.tooltipText {
+  text-align: start;
+  font-weight: normal;
+}

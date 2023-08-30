@@ -23,7 +23,7 @@ export default function Banner() {
   })
   const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
   const { address } = useAccount()
-  const { chain } = useNetwork()
+  const { chain, chains } = useNetwork()
 
   useEffect(() => {
     setState(checkForBannerMessage(address, chain?.id))
@@ -44,7 +44,9 @@ export default function Banner() {
           text={
             isLoading && pendingChainId === parseInt(chainId)
               ? 'Switching to Ethereum...'
-              : 'Switch Network to Ethereum'
+              : `Switch Network to ${
+                  chains.find((c) => c.id == parseInt(chainId))?.name
+                }`
           }
         />
       )}

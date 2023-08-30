@@ -1,3 +1,5 @@
+import { Maybe } from './utils'
+
 export type TRunEnvironments = 'staging' | 'production' | 'barge'
 export type TRuntimeConfig = Record<
   TRunEnvironments,
@@ -11,6 +13,7 @@ export type TRuntimeConfig = Record<
       market: string
     }>
     opfProvidedPredictions: Array<string>
+    allowedPredictions: Maybe<Array<string>>
     opfOwnerAddress: string
   }
 >
@@ -18,10 +21,9 @@ export type TRuntimeConfig = Record<
 export const config: TRuntimeConfig = {
   staging: {
     chainId: '23295',
-    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
-    subgraph: process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST
-      ? `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`
-      : 'https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
+    oceanTokenAddress: '0x973e69303259b0c2543a38665122b773d28405fb',
+    subgraph:
+      'https://v4.subgraph.sapphire-testnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
       {
         tokenName: 'ETH',
@@ -29,8 +31,9 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    opfProvidedPredictions: [],
-    opfOwnerAddress: ''
+    opfProvidedPredictions: ['0x8fffc7a9805856efa3d2c1276112eac505143857'],
+    allowedPredictions: null,
+    opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
   production: {
     chainId: '23295',
@@ -46,6 +49,7 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: [],
+    allowedPredictions: null,
     opfOwnerAddress: ''
   },
   barge: {
@@ -71,7 +75,15 @@ export const config: TRuntimeConfig = {
         market: 'kraken'
       }
     ],
-    opfProvidedPredictions: ['0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5'],
+    opfProvidedPredictions: ['0x4e7eaeb4ab569e82af8c5fa9fa9191a9563ca35c'],
+    allowedPredictions: null,
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   }
+}
+
+/**
+ * TODO: Fix the linting error
+ */
+export enum ELocalStorageKeys {
+  'signedMessage' = 'signedMessage'
 }

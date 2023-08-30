@@ -1,23 +1,33 @@
+import * as sapphire from '@oasisprotocol/sapphire-paratime'
 import { Contract, ethers } from 'ethers'
 import { IERC20ABI } from '../../metadata/abis/IERC20ABI'
+import { handleTransactionError } from '../utils'
 
 class Token {
-  public provider: ethers.providers.JsonRpcProvider
-  public contractAddress: string
   public contractInstance: Contract
+  public contractInstanceWrite: Contract
 
-  constructor(address: string, provider: ethers.providers.JsonRpcProvider) {
-    this.provider = provider
-    this.contractAddress = ethers.utils.getAddress(address)
+  constructor(
+    public address: string,
+    public provider: ethers.providers.JsonRpcProvider,
+    public signer: ethers.providers.JsonRpcSigner,
+    public isSapphire: boolean = false
+  ) {
     this.contractInstance = new ethers.Contract(
-      this.contractAddress,
+      address,
       IERC20ABI,
-      provider.getSigner()
+      signer || provider.getSigner()
     )
+
+    this.contractInstanceWrite = !this.isSapphire
+      ? this.contractInstance
+      : new ethers.Contract(address, IERC20ABI, sapphire.wrap(signer))
   }
 
   async allowance(account: string, spender: string): Promise<string> {
-    return await this.contractInstance.allowance(account, spender)
+    const result = await this.contractInstance.allowance(account, spender)
+
+    return result.toString()
   }
 
   async balanceOf(account: string): Promise<string> {
@@ -51,9 +61,10 @@ class Token {
       // console.log(`Got receipt`);
 
       return receipt
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error)
       console.error(error)
-      return null
+      throw handleTransactionError(error)
     }
   }
 }

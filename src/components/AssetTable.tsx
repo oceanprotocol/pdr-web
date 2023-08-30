@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
+import Tooltip from '@/elements/Tooltip'
 import styles from '@/styles/Table.module.css'
 import { assetTableColumns, currentConfig } from '@/utils/appconstants'
+import { splitContractName } from '@/utils/splitContractName'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
@@ -62,12 +65,17 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     (contracts) => {
       const assetsData: TAssetTableState['AssetsData'] = []
 
+      // Iterate over each contract
       Object.entries(contracts).forEach(([, contract]) => {
-        const [tokenName, pairName] = contract.name.split('-')
+        // Split contract name into token name and pair name
+        const [tokenName, pairName] = splitContractName(contract.name)
+
+        // Get subscription status and duration
         const subscriptionStatus = getSubscriptionStatus(contract)
         const subscriptionDuration =
           parseInt(contract.secondsPerSubscription) / 3600
 
+        // Create an object with the required data and push it to the assetsData array
         assetsData.push({
           tokenName,
           pairName,
@@ -81,6 +89,8 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           subscription: subscriptionStatus
         })
       })
+
+      // Update the state with the assetsData array
       setAssetsData(assetsData)
     },
     [getSubscriptionStatus]
@@ -102,7 +112,17 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           cellType="th"
         >
           {assetTableColumns.map((item) => (
-            <span key={`assetHeader${item.accessor}`}>{item.Header}</span>
+            <div
+              className={styles.assetHeaderContainer}
+              id={item.Header}
+              key={`assetHeader${item.accessor}`}
+            >
+              <span>{item.Header}</span>
+              <Tooltip
+                selector={item.Header}
+                text={tooltipsText[item.Header as keyof typeof tooltipOptions]}
+              />
+            </div>
           ))}
         </TableRowWrapper>
       </thead>
@@ -116,11 +136,9 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           ))}
         </tbody>
       ) : (
-        <tbody>
+        <tbody className={styles.message}>
           <tr>
-            <td>
-              <span className={styles.message}>No contracts found</span>
-            </td>
+            <td>No contracts found</td>
           </tr>
         </tbody>
       )}
