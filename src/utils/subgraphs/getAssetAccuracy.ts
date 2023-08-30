@@ -105,6 +105,7 @@ export const calculateAverageAccuracy = async(
         continue
       }
 
+      // TODO - Remove when slots are available
       for (const slot of slotsData[assetId]) {
         console.log("calc dummy slot");
 
@@ -126,6 +127,8 @@ export const calculateAverageAccuracy = async(
 
         totalSlots++;
       }
+
+      // TODO - Enable when slots are available
       // for (const slot of slotsData[assetId]) {
       //     const prediction = calculatePrediction(
       //       slot.roundSumStakesUp.toString(),
