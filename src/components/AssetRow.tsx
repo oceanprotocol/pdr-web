@@ -1,10 +1,12 @@
 import { TokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { getAssetPairPrice } from '@/utils/marketPrices'
+import Accuracy from './Accuracy'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
@@ -30,6 +32,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     name: '--',
     symbol: '--',
     price: 0,
+    accuracy: 0.0,
     market: ''
   })
   const {
@@ -44,6 +47,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     interval,
     contract
   } = assetData
+  const { contractAverages } = usePredictoorsContext()
 
   const getAssetPairPriceForRow = useCallback<
     (args: {
@@ -68,9 +72,15 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       pairName,
       market
     })
+
+    // console.log("address:", contract.address)
+    // const average = contractAverages[contract.address];
+    // console.log("average:", average)
+    
     const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
+      accuracy: 0.0,
       name,
       symbol: baseToken,
       market: market
@@ -121,6 +131,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     >
       <Asset assetData={tokenData} />
       <Price assetData={tokenData} />
+      <Accuracy assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         price={tokenData.price}

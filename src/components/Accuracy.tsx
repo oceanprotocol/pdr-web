@@ -1,7 +1,7 @@
 import styles from '../styles/Price.module.css'
 import { TokenData } from '../utils/asset'
 
-export default function Price({
+export default function Accuracy({
   assetData
 }: {
   assetData: TokenData | undefined
@@ -12,7 +12,7 @@ export default function Price({
     <div className={styles.container}>
       <span
         className={styles.price}
-      >{`$${assetData.price.toLocaleString()}`}</span>
+      >{`$${assetData.accuracy.toLocaleString()}%`}</span>
     </div>
   )
 }

@@ -85,16 +85,14 @@ export const fetchSlots24Hours = async(
     return predictoorSlots;
 }
 
-type ContractAverageAccuracyMap = Record<string, number>;
-
 // Function to process slots and calculate average accuracy per predictContract
-async function calculateAverageAccuracy(
+export const calculateAverageAccuracy = async(
   subgraphURL: string,
   assets: string[]
-): Promise<ContractAverageAccuracyMap> {
+): Promise<Record<string, number>> => {
   const slotsData = await fetchSlots24Hours(subgraphURL, assets);
 
-  const contractAccuracyMap: ContractAverageAccuracyMap = {};
+  const contractAccuracy: Record<string, number> = {};
 
   for (const assetId in slotsData) {
       let totalSlots = 0;
@@ -115,8 +113,8 @@ async function calculateAverageAccuracy(
       }
 
       const averageAccuracy = (correctPredictions / totalSlots) * 100;
-      contractAccuracyMap[assetId] = averageAccuracy;
+      contractAccuracy[assetId] = averageAccuracy;
   }
 
-  return contractAccuracyMap;
+  return contractAccuracy;
 }

@@ -16,6 +16,10 @@ export const assetTableColumns = [
     accessor: 'price'
   },
   {
+    Header: '24h Accuracy',
+    accessor: 'accuracy'
+  },
+  {
     Header: 'Next',
     accessor: 'next'
   },

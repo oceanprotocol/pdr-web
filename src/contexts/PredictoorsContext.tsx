@@ -16,6 +16,7 @@ import {
   TPredictionContract,
   getAllInterestingPredictionContracts
 } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { calculateAverageAccuracy } from '@/utils/subgraphs/getAssetAccuracy'
 import { DeepNonNullable, calculatePredictionEpochs, omit } from '@/utils/utils'
 import {
   createContext,
@@ -55,7 +56,8 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   runCheckContracts: () => {},
   subscribedPredictoors: [],
   contracts: undefined,
-  contractPrices: {}
+  contractPrices: {},
+  contractAverages: {}
 })
 
 // Custom hook to use the OPFOwnerPredictoorsContext
@@ -81,6 +83,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const [contractPrices, setContractPrices] = useState<
     TPredictoorsContext['contractPrices']
   >({})
+  const [contractAverages, setContractAverages] = useState<
+    TPredictoorsContext['contractAverages']
+  >({});
 
   const contractPricesRef = useRef(contractPrices)
 
@@ -406,6 +411,17 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           opfOwnerAddress: currentConfig.opfOwnerAddress
         })
         setContracts(filteredContracts)
+
+        // Calculate average accuracies
+        calculateAverageAccuracy(
+          currentConfig.subgraph, 
+          Object.keys(filteredContracts))
+        .then((averages) => {
+            setContractAverages(averages);
+        })
+        .catch((error) => {
+            console.error('Error calculating averages:', error);
+        });
       }
     )
   }, [setContracts])
