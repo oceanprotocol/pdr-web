@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
 import { EpochPrice } from './EpochDetails/EpochPrice'
+import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
 import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
@@ -108,7 +109,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
-    if (status !== EEpochDisplayStatus.NextEpoch) return
+    if (status === EEpochDisplayStatus.NextEpoch) return
     getHistoryEpochPriceDelta()
   }, [relatedData])
 
@@ -118,14 +119,20 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       epochData &&
       relatedData ? (
         <>
-          <>
-            <EpochPrice price={finalPrice} delta={delta} status={status} />
-            <EpochPrediction
+          {status === EEpochDisplayStatus.NextEpoch ? (
+            <EpochStakedTokens
               stakedUp={parseInt(relatedData.nom)}
               totalStaked={parseInt(relatedData.denom)}
-              direction={relatedData.dir}
+              showLabel
             />
-          </>
+          ) : (
+            <EpochPrice price={finalPrice} delta={delta} status={status} />
+          )}
+          <EpochPrediction
+            stakedUp={parseInt(relatedData.nom)}
+            totalStaked={parseInt(relatedData.denom)}
+            direction={relatedData.dir}
+          />
         </>
       ) : (
         <span>Loading...</span>

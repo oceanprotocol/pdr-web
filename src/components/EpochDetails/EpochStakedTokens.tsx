@@ -3,12 +3,14 @@ import styles from '../../styles/Epoch.module.css'
 export type TEpochStakedTokensProps = {
   showLabel?: boolean
   stakedUp?: number
+  direction?: number
   totalStaked?: number
 }
 
 export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
   stakedUp,
   totalStaked,
+  direction,
   showLabel
 }) => {
   return !showLabel ? (
@@ -33,16 +35,24 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
       </div>
     </div>
   ) : (
-    <div className={styles.stake}>
+    <div
+      className={styles.stake}
+      style={{
+        background: `${direction && direction > 0 ? '#BEFFC1' : '#FFB0B0'}`,
+        height: '20px',
+        width: '100%',
+        paddingTop: '5px'
+      }}
+    >
       <img
         className={styles.tokenImage}
         src={'oceanToken.png'}
         alt="Coin symbol image"
       />
       <span className={styles.stakeText}>
-        {totalStaked
-          ? `${totalStaked.toLocaleString()} ${showLabel ? 'STAKED' : ''}`
-          : 'No Stake'}
+        {`${totalStaked ? totalStaked.toLocaleString() : 0} ${
+          showLabel ? 'STAKED' : ''
+        }`}
       </span>
     </div>
   )

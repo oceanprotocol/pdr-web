@@ -7,18 +7,8 @@
   justify-content: center;
   border-radius: var(--small-border-radius);
   height: 35px;
+  width: 90px;
   margin: 0 auto;
-}
-
-.position {
-  font-size: 12px;
-}
-
-.confidence {
-  position: absolute;
-  z-index: -1;
-  border-radius: var(--small-border-radius);
-  height: 100%;
 }
 
 .stake {
@@ -31,7 +21,7 @@
 }
 
 .tokenImage {
-  height: 6px;
+  height: 8px;
   margin-right: 2px;
 }
 
@@ -42,10 +32,11 @@
 }
 
 .predictionContainer {
-  padding: calc(var(--spacer) / 20) calc(var(--spacer) / 10);
+  padding: calc(var(--spacer) / 20) calc(var(--spacer) / 6);
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  width: 100%;
 }
 
 .epochPriceContainer {
