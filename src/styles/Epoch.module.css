@@ -10,7 +10,6 @@
   height: 35px;
   width: 100px;
   margin: 0 auto;
-  background-color: var(--dark-grey);
 }
 
 .position {
@@ -69,6 +68,14 @@
 .eye {
   width: 9px;
   height: 9px;
-  border: 2px solid #FF4292;
+  border: 2px solid #ff4292;
   border-radius: 50%;
+}
+
+.arrow {
+  height: 12px;
+}
+
+.price {
+  font-size: var(--font-size-normal);
 }

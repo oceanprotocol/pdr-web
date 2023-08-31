@@ -2,7 +2,7 @@ import styles from '../../styles/Epoch.module.css'
 import { EEpochDisplayStatus } from '../EpochDisplay'
 import { EpochStakedTokens } from './EpochStakedTokens'
 
-export type TEpochFooterProps = {
+export type TEpochPredictionProps = {
   direction: number
   confidence: number
   stake: number
@@ -10,7 +10,7 @@ export type TEpochFooterProps = {
   status: EEpochDisplayStatus
 }
 
-export const EpochFooter: React.FC<TEpochFooterProps> = ({
+export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
   direction,
   confidence,
   stake,
@@ -19,7 +19,7 @@ export const EpochFooter: React.FC<TEpochFooterProps> = ({
 }) => {
   return (
     <>
-      {status !== EEpochDisplayStatus.NextPrediction ? (
+      {status !== EEpochDisplayStatus.NextEpoch ? (
         <div
           className={styles.metricsFooter}
           style={{

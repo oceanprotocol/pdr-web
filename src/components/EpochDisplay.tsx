@@ -9,16 +9,15 @@ import {
 } from '@/utils/splitContractName'
 import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
-import { EpochBackground } from './EpochDetails/EpochBackground'
-import { EpochDirection } from './EpochDetails/EpochDirection'
-import { EpochFooter } from './EpochDetails/EpochFooter'
+import { EpochPrediction } from './EpochDetails/EpochPrediction'
+import { EpochPrice } from './EpochDetails/EpochPrice'
 import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
 export enum EEpochDisplayStatus {
-  'NextPrediction' = 'next',
-  'LivePrediction' = 'live',
-  'HistoricalPrediction' = 'history'
+  'NextEpoch' = 'next',
+  'LiveEpoch' = 'live',
+  'PastEpoch' = 'history'
 }
 
 export type TEpochDisplayProps = {
@@ -44,15 +43,16 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   const { currentChainTime } = usePredictoorsContext()
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
+  const [finalPrice, setFinalPrice] = useState<number>(0)
 
   const relatedPredictionIndex = useMemo(() => {
     switch (status) {
-      case EEpochDisplayStatus.NextPrediction:
-        return 3
-      case EEpochDisplayStatus.LivePrediction:
+      case EEpochDisplayStatus.NextEpoch:
         return 2
-      case EEpochDisplayStatus.HistoricalPrediction:
-        return historyIndex === 0 ? 0 : 1
+      case EEpochDisplayStatus.LiveEpoch:
+        return 1
+      case EEpochDisplayStatus.PastEpoch:
+        return 0
     }
   }, [status])
 
@@ -69,7 +69,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   useEffect(() => {
     if (
-      status !== EEpochDisplayStatus.LivePrediction ||
+      status !== EEpochDisplayStatus.LiveEpoch ||
       !relatedData ||
       relatedData.stake == 0
     )
@@ -102,6 +102,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         market: market
       })
     ])
+    setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
       ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
@@ -109,7 +110,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
-    if (status !== EEpochDisplayStatus.HistoricalPrediction) return
+    if (status !== EEpochDisplayStatus.NextEpoch) return
     getHistoryEpochPriceDelta()
   }, [relatedData])
 
@@ -119,32 +120,17 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       epochData &&
       relatedData ? (
         <>
-          <EpochBackground
-            direction={relatedData.dir}
-            stake={relatedData.stake}
-            state={status}
-            delta={delta}
-          />
-          {relatedData.stake ? (
-            <>
-              <EpochDirection
-                direction={relatedData.dir}
-                confidence={relatedData.confidence}
-                delta={delta}
-                status={status}
-              />
-              <EpochFooter
-                stake={relatedData.stake}
-                confidence={relatedData.confidence}
-                direction={relatedData.dir}
-                delta={delta}
-                status={status}
-              />
-            </>
-          ) : (
-            'NO PRED'
-          )}
-          {status === EEpochDisplayStatus.NextPrediction && (
+          <>
+            <EpochPrice price={finalPrice} delta={delta} status={status} />
+            <EpochPrediction
+              stake={relatedData.stake}
+              confidence={relatedData.confidence}
+              direction={relatedData.dir}
+              delta={delta}
+              status={status}
+            />
+          </>
+          {status === EEpochDisplayStatus.NextEpoch && (
             <ProgressBar
               refreshOnData={relatedData.epochStartTs}
               progress={
@@ -159,7 +145,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           )}
         </>
       ) : (
-        <span>??</span>
+        <span>Loading...</span>
       )}
     </div>
   )

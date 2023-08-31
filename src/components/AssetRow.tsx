@@ -121,20 +121,20 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     >
       <Asset assetData={tokenData} />
       <EpochDisplay
-        status={EEpochDisplayStatus.NextPrediction}
+        status={EEpochDisplayStatus.PastEpoch}
         price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
       <EpochDisplay
-        status={EEpochDisplayStatus.LivePrediction}
+        status={EEpochDisplayStatus.LiveEpoch}
         price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
       />
       <Price assetData={tokenData} />
       <EpochDisplay
-        status={EEpochDisplayStatus.HistoricalPrediction}
+        status={EEpochDisplayStatus.NextEpoch}
         historyIndex={1}
         price={tokenData.price}
         {...slotProps}
