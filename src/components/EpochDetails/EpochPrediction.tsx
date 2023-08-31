@@ -1,51 +1,34 @@
 import styles from '../../styles/Epoch.module.css'
-import { EEpochDisplayStatus } from '../EpochDisplay'
 import { EpochStakedTokens } from './EpochStakedTokens'
 
 export type TEpochPredictionProps = {
   direction: number
-  confidence: number
-  stake: number
-  delta: number | undefined
-  status: EEpochDisplayStatus
+  stakedUp: number
+  totalStaked: number
 }
 
 export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
   direction,
-  confidence,
-  stake,
-  delta,
-  status
+  stakedUp,
+  totalStaked
 }) => {
   return (
-    <>
-      {status !== EEpochDisplayStatus.NextEpoch ? (
-        <div
-          className={styles.metricsFooter}
-          style={{
-            backgroundColor: `rgb(${direction == 1 ? '102,207,0' : '220,20,60'}`
-          }}
-        >
-          <span className={styles.footerConfidence}>
-            {parseFloat(confidence.toString()).toFixed(0)}%
-          </span>
-          {delta &&
-          ((direction == 1 && delta > 0.0) ||
-            (direction == 0 && delta < 0.0)) ? (
-            <div className={styles.eyesContainer}>
-              <div className={styles.eye}></div>
-              <div className={styles.eye}></div>
-            </div>
-          ) : (
-            ''
-          )}
-          <EpochStakedTokens stakedAmount={stake} />
-        </div>
-      ) : (
-        <div style={{ marginBottom: '4px' }}>
-          <EpochStakedTokens stakedAmount={stake} showLabel />
-        </div>
-      )}
-    </>
+    <div
+      className={styles.predictionContainer}
+      style={{
+        backgroundColor: `${direction == 1 ? '#BEFFC1' : '#FFB0B0'}`
+      }}
+    >
+      <div className={styles.directionConainer}>
+        <span className={styles.predictionText}>Pred</span>
+        <img
+          className={styles.predictionArrow}
+          src={`/assets/icons/${
+            direction == 1 ? 'arrpwUp' : 'arrowDown'
+          }Colored.png`}
+        />
+      </div>
+      <EpochStakedTokens stakedUp={stakedUp} totalStaked={totalStaked} />
+    </div>
   )
 }

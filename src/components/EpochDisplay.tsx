@@ -1,7 +1,5 @@
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
-import ProgressBar from '@/elements/ProgressBar'
-import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
 import { getAssetPairPrice } from '@/utils/marketPrices'
 import {
   compareSplittedNames,
@@ -123,26 +121,11 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           <>
             <EpochPrice price={finalPrice} delta={delta} status={status} />
             <EpochPrediction
-              stake={relatedData.stake}
-              confidence={relatedData.confidence}
+              stakedUp={parseInt(relatedData.nom)}
+              totalStaked={parseInt(relatedData.denom)}
               direction={relatedData.dir}
-              delta={delta}
-              status={status}
             />
           </>
-          {status === EEpochDisplayStatus.NextEpoch && (
-            <ProgressBar
-              refreshOnData={relatedData.epochStartTs}
-              progress={
-                relatedData.epochStartTs -
-                (currentChainTime > 0
-                  ? currentChainTime
-                  : relatedData.currentTs) -
-                PREDICTION_FETCH_EPOCHS_DELAY
-              }
-              max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
-            />
-          )}
         </>
       ) : (
         <span>Loading...</span>

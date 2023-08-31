@@ -21,7 +21,6 @@ export type TProviderFee = {
 export type TGetAggPredvalResult = {
   nom: string
   denom: string
-  confidence: number
   dir: number
   stake: number
 }

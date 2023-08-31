@@ -13,14 +13,14 @@ export const EpochPrice: React.FC<TEpochPriceProps> = ({
   status
 }) => {
   return (
-    <div className={styles.epochDirectionContainer}>
+    <div className={styles.epochPriceContainer}>
       <span className={styles.price}>{`$${price}`}</span>{' '}
       {
         <img
           className={styles.arrow}
           src={`/assets/icons/${
             delta && delta > 0 ? 'arrowUp' : 'arrowDown'
-          }.png`}
+          }Colored.png`}
           alt="direction"
         ></img>
       }
