@@ -335,7 +335,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     provider.on('block', async (blockNumber) => {
       const block = await provider.getBlock(blockNumber)
       const currentTs = block.timestamp
-      const currentEpoch = Math.floor(currentTs / SPE)
+      const newCurrentEpoch = Math.floor(currentTs / SPE)
       const authorizationData =
         authorizationDataInstance.current?.getAuthorizationData()
       if (
@@ -344,8 +344,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         !authorizationData
       )
         return
-      lastCheckedEpoch.current = currentEpoch
-      const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
+      lastCheckedEpoch.current = newCurrentEpoch
+      const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
 
       const newEpochs = detectNewEpochs({
         subscribedPredictoors,
@@ -412,6 +412,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
             return [...prevItems, blockchainFeedData]
           })
+          setCurrentEpoch(currentEpoch + secondsPerEpoch)
         })
       })
       //await contract.getAggPredval(epoch, predictoorWallet)

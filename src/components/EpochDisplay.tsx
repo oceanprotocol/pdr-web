@@ -1,4 +1,3 @@
-import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { getAssetPairPrice } from '@/utils/marketPrices'
 import {
@@ -37,7 +36,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   subsciption
 }) => {
   const { epochData } = useSocketContext()
-  const { currentChainTime } = usePredictoorsContext()
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
@@ -110,7 +108,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   useEffect(() => {
     if (status === EEpochDisplayStatus.NextEpoch) return
     getHistoryEpochPriceDelta()
-    console.log(epochData)
   }, [relatedData])
 
   return (
