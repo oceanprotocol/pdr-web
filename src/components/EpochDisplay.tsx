@@ -25,7 +25,6 @@ export type TEpochDisplayProps = {
   market: string
   tokenName: string
   pairName: string
-  historyIndex?: number
   subsciption: SubscriptionStatus
 }
 
@@ -35,7 +34,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   market,
   tokenName,
   pairName,
-  historyIndex,
   subsciption
 }) => {
   const { epochData } = useSocketContext()
@@ -127,7 +125,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
               showLabel
             />
           ) : (
-            <EpochPrice price={finalPrice} delta={delta} status={status} />
+            <EpochPrice price={finalPrice} delta={delta} />
           )}
           <EpochPrediction
             stakedUp={parseInt(relatedData.nom)}

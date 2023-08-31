@@ -27,6 +27,7 @@ class Predictoor {
   public instanceWrite: ethers.Contract | null = null
   public FRE: FixedRateExchange | null = null
   public exchangeId: BigNumber = BigNumber.from(0)
+  public currentEpoch: number | null = null
   public token: Token | null = null
   // Constructor
   public constructor(

@@ -42,10 +42,6 @@ import {
 } from './PredictoorsContextHelper'
 import { useSocketContext } from './SocketContext'
 
-type TContractsState = Awaited<
-  ReturnType<typeof getAllInterestingPredictionContracts>
->
-
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
   epochStartTs: number
@@ -81,6 +77,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   })
   const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
+  const [currentEpoch, setCurrentEpoch] = useState<number>()
 
   const [predictoorInstances, setPredictorInstances] = useState<
     TPredictoorsContext['predictoorInstances']
@@ -441,7 +438,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           opfOwnerAddress: currentConfig.opfOwnerAddress,
           allowedPredConfig: currentConfig.allowedPredictions
         })
-
+        console.log(contracts)
         setContracts(filteredContracts)
       }
     )

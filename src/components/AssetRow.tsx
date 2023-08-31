@@ -29,6 +29,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '--',
     symbol: '--',
+    pair: '--',
     price: 0,
     market: ''
   })
@@ -68,10 +69,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       pairName,
       market
     })
+    const pair = `${baseToken}${quoteToken}`
     const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
       name,
+      pair,
       symbol: baseToken,
       market: market
     })
@@ -135,7 +138,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Price assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextEpoch}
-        historyIndex={1}
         price={tokenData.price}
         {...slotProps}
         subsciption={subscription}
