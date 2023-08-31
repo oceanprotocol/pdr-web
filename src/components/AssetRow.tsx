@@ -1,6 +1,7 @@
 import { TokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
@@ -26,6 +27,7 @@ export type TAssetRowState = {
 
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
+  const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '--',
     symbol: '--',
@@ -127,12 +129,16 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         status={EEpochDisplayStatus.PastEpoch}
         price={tokenData.price}
         {...slotProps}
+        epochStartTs={currentEpoch - secondsPerEpoch}
+        secondsPerEpoch={secondsPerEpoch}
         subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LiveEpoch}
         price={tokenData.price}
         {...slotProps}
+        epochStartTs={currentEpoch}
+        secondsPerEpoch={secondsPerEpoch}
         subsciption={subscription}
       />
       <Price assetData={tokenData} />
@@ -140,6 +146,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         status={EEpochDisplayStatus.NextEpoch}
         price={tokenData.price}
         {...slotProps}
+        epochStartTs={currentEpoch + secondsPerEpoch}
+        secondsPerEpoch={secondsPerEpoch}
         subsciption={subscription}
       />
       <span>56.20%</span>

@@ -18,7 +18,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
       style={{
         backgroundColor: `${
           direction == undefined
-            ? '#727272'
+            ? '#cbcbcb'
             : direction == 1
             ? '#BEFFC1'
             : '#FFB0B0'
@@ -29,7 +29,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
       <div className={styles.directionConainer}>
         <>
           <span className={styles.predictionText}>{`Pred${
-            direction ? '' : ' ?'
+            direction !== undefined ? '' : ' ?'
           }`}</span>
           {direction !== undefined && (
             <img

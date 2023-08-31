@@ -40,7 +40,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
       style={{
         background: `${
           direction == undefined
-            ? '#727272'
+            ? '#cbcbcb'
             : direction === 1
             ? '#BEFFC1'
             : '#FFB0B0'

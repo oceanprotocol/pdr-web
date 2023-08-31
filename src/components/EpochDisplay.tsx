@@ -24,6 +24,8 @@ export type TEpochDisplayProps = {
   market: string
   tokenName: string
   pairName: string
+  epochStartTs: number
+  secondsPerEpoch: number
   subsciption: SubscriptionStatus
 }
 
@@ -33,6 +35,8 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   market,
   tokenName,
   pairName,
+  epochStartTs,
+  secondsPerEpoch,
   subsciption
 }) => {
   const { epochData } = useSocketContext()
@@ -72,7 +76,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     if (!initialPrice) {
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs,
+        timestamp: epochStartTs,
         market: market
       }).then((p) => {
         setInitialPrice(parseFloat(p))
@@ -84,20 +88,18 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }, [price])
 
   const getHistoryEpochPriceDelta = async () => {
-    if (!relatedData) return
     const [initialPrice, finalPrice] = await Promise.all([
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs - relatedData?.secondsPerEpoch,
+        timestamp: epochStartTs - secondsPerEpoch,
         market: market
       }),
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs,
+        timestamp: epochStartTs,
         market: market
       })
     ])
-    if (status === EEpochDisplayStatus.LiveEpoch) console.log(relatedData)
     setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
@@ -106,9 +108,15 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
-    if (status === EEpochDisplayStatus.NextEpoch) return
+    if (
+      status === EEpochDisplayStatus.NextEpoch ||
+      !secondsPerEpoch ||
+      !epochStartTs
+    )
+      return
+    console.log(secondsPerEpoch, epochStartTs)
     getHistoryEpochPriceDelta()
-  }, [relatedData])
+  }, [relatedData, secondsPerEpoch, epochStartTs])
 
   return (
     <div className={styles.container}>

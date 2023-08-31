@@ -78,7 +78,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
   })
-  const { setEpochData, initialEpochData } = useSocketContext()
+  const { epochData, setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
@@ -259,6 +259,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       const contractsToWatch = eleminateFreeContracts(contracts)
       let cEpoch: number
+      let sPerEpoch: number
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
           const predictoor = new Predictoor(
@@ -269,9 +270,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
             isSapphireNetwork()
           )
           await predictoor.init()
-          if (!cEpoch) {
+          if (!sPerEpoch) {
             cEpoch = await predictoor.getCurrentEpoch()
-            const sPerEpoch = await predictoor.getSecondsPerEpoch()
+            sPerEpoch = await predictoor.getSecondsPerEpoch()
             setCurrentEpoch(cEpoch)
             setSecondsPerEpoch(sPerEpoch)
           }
@@ -369,6 +370,13 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         }
       )
 
+      if (currentTs > currentEpoch) {
+        console.log('herre')
+        if (!epochData) {
+          setCurrentEpoch(currentEpoch + secondsPerEpoch)
+        }
+      }
+
       getMultiplePredictions({
         currentTs: currentTs,
         epochs: newEpochs,
@@ -412,7 +420,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
             return [...prevItems, blockchainFeedData]
           })
-          setCurrentEpoch(currentEpoch + secondsPerEpoch)
         })
       })
       //await contract.getAggPredval(epoch, predictoorWallet)
