@@ -63,7 +63,6 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
     newSocket.on('newEpoch', (data: Maybe<TSocketFeedData>) => {
       if (!data) return
       if (!isFirstDataEnter.current) {
-        console.log('firstData', data)
         setInitialData(data)
         isFirstDataEnter.current = true
       }

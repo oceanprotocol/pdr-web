@@ -256,7 +256,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         tempSigner = randomSigner as any as ethers.providers.JsonRpcSigner
       }
 
-      const contractsToWatch = eleminateFreeContracts(contracts)
+      //const contractsToWatch = eleminateFreeContracts(contracts)
+      const contractsToWatch = Object.values(contracts)
+
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
           const predictoor = new Predictoor(
