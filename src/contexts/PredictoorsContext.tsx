@@ -292,7 +292,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       const tempData = predictedEpochs.current?.[contractAddress]
       if (tempData) {
         const sortedEpochs = tempData.sort((a, b) => a.epoch - b.epoch)
-        const lastThreeEpochs = sortedEpochs.slice(-3)
+        const lastThreeEpochs = sortedEpochs.slice(-2)
         return lastThreeEpochs
       }
       return []

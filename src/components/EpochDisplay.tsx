@@ -68,7 +68,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   useEffect(() => {
     if (
-      status !== EEpochDisplayStatus.LiveEpoch ||
+      status !== EEpochDisplayStatus.NextEpoch ||
       !relatedData ||
       relatedData.stake == 0
     )
@@ -92,15 +92,16 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     const [initialPrice, finalPrice] = await Promise.all([
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs,
+        timestamp: relatedData?.epochStartTs - relatedData?.secondsPerEpoch,
         market: market
       }),
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs + relatedData?.secondsPerEpoch,
+        timestamp: relatedData?.epochStartTs,
         market: market
       })
     ])
+    if (status === EEpochDisplayStatus.LiveEpoch) console.log(relatedData)
     setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
