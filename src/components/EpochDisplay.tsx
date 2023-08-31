@@ -115,29 +115,25 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   return (
     <div className={styles.container}>
-      {subsciption != SubscriptionStatus.INACTIVE &&
-      epochData &&
-      relatedData ? (
-        <>
-          {status === EEpochDisplayStatus.NextEpoch ? (
-            <EpochStakedTokens
-              stakedUp={parseFloat(relatedData.nom)}
-              totalStaked={parseFloat(relatedData.denom)}
-              direction={relatedData.dir}
-              showLabel
-            />
-          ) : (
-            <EpochPrice price={finalPrice} delta={delta} />
-          )}
-          <EpochPrediction
-            stakedUp={parseFloat(relatedData.nom)}
-            totalStaked={parseFloat(relatedData.denom)}
-            direction={relatedData.dir}
-          />
-        </>
+      {status === EEpochDisplayStatus.NextEpoch ? (
+        <EpochStakedTokens
+          stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
+          totalStaked={
+            relatedData?.denom ? parseFloat(relatedData?.denom) : undefined
+          }
+          direction={relatedData?.dir}
+          showLabel
+        />
       ) : (
-        <span>Loading...</span>
+        <EpochPrice price={finalPrice} delta={delta} />
       )}
+      <EpochPrediction
+        stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
+        totalStaked={
+          relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
+        }
+        direction={relatedData?.dir}
+      />
     </div>
   )
 }

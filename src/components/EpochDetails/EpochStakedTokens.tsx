@@ -1,10 +1,10 @@
 import styles from '../../styles/Epoch.module.css'
 
 export type TEpochStakedTokensProps = {
-  showLabel?: boolean
-  stakedUp?: number
-  direction?: number
-  totalStaked?: number
+  showLabel?: boolean | undefined
+  stakedUp?: number | undefined
+  direction?: number | undefined
+  totalStaked?: number | undefined
 }
 
 export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
@@ -38,7 +38,13 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
     <div
       className={styles.stake}
       style={{
-        background: `${direction && direction === 1 ? '#BEFFC1' : '#FFB0B0'}`,
+        background: `${
+          direction == undefined
+            ? '#727272'
+            : direction === 1
+            ? '#BEFFC1'
+            : '#FFB0B0'
+        }`,
         height: '25px',
         width: '100%',
         paddingTop: '5px'
@@ -50,9 +56,13 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
         alt="Coin symbol image"
       />
       <span className={styles.stakeText}>
-        {`${totalStaked ? totalStaked.toLocaleString() : 0} ${
-          showLabel ? 'STAKED' : ''
-        }`}
+        {`${
+          direction == undefined
+            ? '?'
+            : totalStaked
+            ? totalStaked.toLocaleString()
+            : 0
+        } ${showLabel ? 'STAKED' : ''}`}
       </span>
     </div>
   )
