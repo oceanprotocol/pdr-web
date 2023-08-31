@@ -35,7 +35,7 @@ export const TableRowWrapper: React.FC<TTableRowWrapperProps> = ({
           {
             ...cellProps,
             ...cellKeyIndex,
-            colSpan: index === 4 || index === 0 ? 2 : 1,
+            colSpan: index === 0 ? 2 : 1,
             id:
               child?.props?.id === 'Asset' || child?.props?.id === 'Price'
                 ? styles.alignStart

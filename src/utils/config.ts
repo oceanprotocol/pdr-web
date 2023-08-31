@@ -32,11 +32,7 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: ['0x8fffc7a9805856efa3d2c1276112eac505143857'],
-    allowedPredictions: [
-      '0x8fffc7a9805856efa3d2c1276112eac505143857',
-      '0x1456c74c421d46af30ef3c8a4f142d2f713ae325',
-      '0x5b97fea1cb765e566c66a0d5be341b202ce208f5'
-    ],
+    allowedPredictions: null,
     opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
   production: {

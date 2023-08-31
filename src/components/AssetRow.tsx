@@ -120,7 +120,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       }}
     >
       <Asset assetData={tokenData} />
-      <Price assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         price={tokenData.price}
@@ -133,22 +132,15 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
         subsciption={subscription}
       />
-      <div className={styles.historyEpochsContainer}>
-        <EpochDisplay
-          status={EEpochDisplayStatus.HistoricalPrediction}
-          historyIndex={1}
-          price={tokenData.price}
-          {...slotProps}
-          subsciption={subscription}
-        />
-        <EpochDisplay
-          status={EEpochDisplayStatus.HistoricalPrediction}
-          historyIndex={0}
-          price={tokenData.price}
-          {...slotProps}
-          subsciption={subscription}
-        />
-      </div>
+      <Price assetData={tokenData} />
+      <EpochDisplay
+        status={EEpochDisplayStatus.HistoricalPrediction}
+        historyIndex={1}
+        price={tokenData.price}
+        {...slotProps}
+        subsciption={subscription}
+      />
+      <span>56.20%</span>
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),

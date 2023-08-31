@@ -12,20 +12,24 @@ export const assetTableColumns = [
     accessor: 'asset'
   },
   {
-    Header: 'Price',
-    accessor: 'price'
+    Header: '14:00',
+    accessor: 'history2'
   },
   {
-    Header: 'Next',
-    accessor: 'next'
+    Header: '14:05',
+    accessor: 'history1'
   },
   {
-    Header: 'Live',
+    Header: '14:08',
     accessor: 'live'
   },
   {
-    Header: 'History',
-    accessor: 'history'
+    Header: '14:10',
+    accessor: 'prediction'
+  },
+  {
+    Header: 'Accuracy(24h)',
+    accessor: 'accuracy'
   },
   {
     Header: 'Subscription',
