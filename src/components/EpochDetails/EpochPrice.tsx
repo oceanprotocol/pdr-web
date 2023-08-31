@@ -1,21 +1,23 @@
 import styles from '../../styles/Epoch.module.css'
-import { EEpochDisplayStatus } from '../EpochDisplay'
 
 export type TEpochPriceProps = {
   delta: number | undefined
   price: number
-  status: EEpochDisplayStatus
 }
 
-export const EpochPrice: React.FC<TEpochPriceProps> = ({
-  delta,
-  price,
-  status
-}) => {
+export const EpochPrice: React.FC<TEpochPriceProps> = ({ delta, price }) => {
   return (
     <div className={styles.epochPriceContainer}>
       <span className={styles.price}>{`$${price}`}</span>{' '}
-      {
+      {!delta ? (
+        <img
+          className={styles.arrow}
+          src={`/assets/icons/refresh.png`}
+          alt="refresh"
+        ></img>
+      ) : delta && delta == 0 ? (
+        '-'
+      ) : (
         <img
           className={styles.arrow}
           src={`/assets/icons/${
@@ -23,7 +25,7 @@ export const EpochPrice: React.FC<TEpochPriceProps> = ({
           }Colored.png`}
           alt="direction"
         ></img>
-      }
+      )}
     </div>
   )
 }
