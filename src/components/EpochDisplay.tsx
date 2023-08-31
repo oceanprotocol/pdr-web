@@ -110,6 +110,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   useEffect(() => {
     if (status === EEpochDisplayStatus.NextEpoch) return
     getHistoryEpochPriceDelta()
+    console.log(epochData)
   }, [relatedData])
 
   return (
@@ -120,16 +121,17 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         <>
           {status === EEpochDisplayStatus.NextEpoch ? (
             <EpochStakedTokens
-              stakedUp={parseInt(relatedData.nom)}
-              totalStaked={parseInt(relatedData.denom)}
+              stakedUp={parseFloat(relatedData.nom)}
+              totalStaked={parseFloat(relatedData.denom)}
+              direction={relatedData.dir}
               showLabel
             />
           ) : (
             <EpochPrice price={finalPrice} delta={delta} />
           )}
           <EpochPrediction
-            stakedUp={parseInt(relatedData.nom)}
-            totalStaked={parseInt(relatedData.denom)}
+            stakedUp={parseFloat(relatedData.nom)}
+            totalStaked={parseFloat(relatedData.denom)}
             direction={relatedData.dir}
           />
         </>

@@ -38,7 +38,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
     <div
       className={styles.stake}
       style={{
-        background: `${direction && direction > 0 ? '#BEFFC1' : '#FFB0B0'}`,
+        background: `${direction && direction === 1 ? '#BEFFC1' : '#FFB0B0'}`,
         height: '25px',
         width: '100%',
         paddingTop: '5px'
