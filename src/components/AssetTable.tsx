@@ -111,7 +111,6 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
   useEffect(() => {
     if (!currentEpoch) return
-    console.log(currentEpoch, secondsPerEpoch)
     assetTableColumns[1].Header = formatTime(
       new Date((currentEpoch - secondsPerEpoch) * 1000)
     )

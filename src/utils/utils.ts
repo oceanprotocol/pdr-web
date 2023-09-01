@@ -48,7 +48,6 @@ export const checkForBannerMessage = (
 ) => {
   let message: string | undefined = undefined
   let type: States = States.WARNING
-  console.log(connectedNetwork, chainId)
   if (!userAddress) {
     message = 'Wallet not connected!'
   } else if (connectedNetwork != parseInt(chainId)) {

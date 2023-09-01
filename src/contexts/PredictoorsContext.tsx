@@ -330,7 +330,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !contracts || !signer) return
-    console.log(address)
     const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
     provider.on('block', async (blockNumber) => {
@@ -371,8 +370,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       )
 
       if (currentTs > currentEpoch + secondsPerEpoch) {
-        console.log('herre')
-        setCurrentEpoch(currentEpoch + secondsPerEpoch)
+        setCurrentEpoch(newCurrentEpoch * secondsPerEpoch)
       }
 
       getMultiplePredictions({
@@ -454,7 +452,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           opfOwnerAddress: currentConfig.opfOwnerAddress,
           allowedPredConfig: currentConfig.allowedPredictions
         })
-        console.log(contracts)
         setContracts(filteredContracts)
       }
     )
