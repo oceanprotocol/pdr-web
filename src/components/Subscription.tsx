@@ -15,7 +15,7 @@ import styles from '../styles/Subscription.module.css'
 export enum SubscriptionStatus {
   'INACTIVE' = 'inactive',
   'ACTIVE' = 'active',
-  'FREE' = 'free'
+  'FREE' = 'FREE'
 }
 
 export interface SubscriptionData {
