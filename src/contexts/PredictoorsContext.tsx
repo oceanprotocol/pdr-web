@@ -1,5 +1,5 @@
 import { useEthersSigner } from '@/hooks/useEthersSigner'
-import { useIsCorrectChain } from '@/hooks/useIsRightNetwork'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { AuthorizationData } from '@/utils/AuthorizationData'
 import {
   PREDICTION_FETCH_EPOCHS_DELAY,

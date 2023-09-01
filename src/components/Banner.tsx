@@ -1,5 +1,5 @@
 import Button from '@/elements/Button'
-import { useIsCorrectChain } from '@/hooks/useIsRightNetwork'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { currentConfig } from '@/utils/appconstants'
 import { checkForBannerMessage } from '@/utils/utils'
 import { useEffect, useState } from 'react'
