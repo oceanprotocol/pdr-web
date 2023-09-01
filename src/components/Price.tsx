@@ -1,4 +1,4 @@
-import { useSocketContext } from '@/contexts/SocketContext'
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { getAssetPairPrice } from '@/utils/marketPrices'
 import { useEffect, useState } from 'react'
 import { TokenData } from '../utils/asset'
@@ -10,19 +10,19 @@ export default function Asset({
   assetData: TokenData | undefined
 }) {
   const [initialPrice, setInitialPrice] = useState<number>(0)
-  const { epochData } = useSocketContext()
+  const { currentEpoch } = usePredictoorsContext()
   if (!assetData) return null
 
   useEffect(() => {
-    if (!epochData) return
+    if (!currentEpoch) return
     getAssetPairPrice({
       assetPair: assetData.pair,
-      timestamp: epochData[1].predictions[1].epochStartTs,
+      timestamp: currentEpoch,
       market: assetData.market
     }).then((price: string) => {
       setInitialPrice(parseFloat(price))
     })
-  }, [epochData])
+  }, [currentEpoch])
 
   return (
     <EpochPrice

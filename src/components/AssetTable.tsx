@@ -120,7 +120,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     assetTableColumns[4].Header = formatTime(
       new Date((currentEpoch + secondsPerEpoch) * 1000)
     )
-  }, [epochData, currentEpoch])
+  }, [currentEpoch])
 
   return (
     <table className={styles.table}>

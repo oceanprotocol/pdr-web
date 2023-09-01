@@ -370,11 +370,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         }
       )
 
-      if (currentTs > currentEpoch) {
+      if (currentTs > currentEpoch + secondsPerEpoch) {
         console.log('herre')
-        if (!epochData) {
-          setCurrentEpoch(currentEpoch + secondsPerEpoch)
-        }
+        setCurrentEpoch(currentEpoch + secondsPerEpoch)
       }
 
       getMultiplePredictions({
