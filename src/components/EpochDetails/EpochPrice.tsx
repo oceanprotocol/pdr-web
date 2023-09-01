@@ -9,7 +9,7 @@ export const EpochPrice: React.FC<TEpochPriceProps> = ({ delta, price }) => {
   return (
     <div className={styles.epochPriceContainer}>
       <span className={styles.price}>{`$${price}`}</span>{' '}
-      {!delta ? (
+      {delta == undefined ? (
         <img
           className={styles.arrow}
           src={`/assets/icons/refresh.png`}

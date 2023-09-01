@@ -17,18 +17,11 @@
 
 .stakeText {
   color: black;
-  font-weight: bold;
 }
 
 .tokenImage {
   height: 8px;
   margin-right: 2px;
-}
-
-.footerConfidence {
-  font-size: var(--font-size-mini);
-  font-weight: bold;
-  color: black;
 }
 
 .predictionContainer {
@@ -63,7 +56,6 @@
 
 .predictionText {
   color: black;
-  font-weight: bold;
   font-size: var(--font-size-small);
 }
 
@@ -82,4 +74,8 @@
 
 .stakeDirectionArrow {
   height: 6px;
+}
+
+.stakeMarginLeft {
+  margin-left: 2px;
 }

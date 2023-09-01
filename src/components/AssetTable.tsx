@@ -116,8 +116,13 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
     assetTableColumns[2].Header = formatTime(new Date(currentEpoch * 1000))
     assetTableColumns[3].Header = <LiveTime />
-    assetTableColumns[4].Header = formatTime(
-      new Date((currentEpoch + secondsPerEpoch) * 1000)
+    assetTableColumns[4].Header = (
+      <div className={styles.predictionHeader}>
+        <span>
+          {formatTime(new Date((currentEpoch + secondsPerEpoch) * 1000))}
+        </span>
+        <span className={styles.predictionText}>Predictions</span>
+      </div>
     )
   }, [currentEpoch])
 
