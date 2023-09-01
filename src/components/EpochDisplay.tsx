@@ -118,7 +118,15 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }, [relatedData, secondsPerEpoch, epochStartTs])
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{
+        boxShadow:
+          status === EEpochDisplayStatus.NextEpoch
+            ? '0px 0px 3px 1px var(--dark-grey)'
+            : ''
+      }}
+    >
       {status === EEpochDisplayStatus.NextEpoch ? (
         <EpochStakedTokens
           stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
@@ -136,6 +144,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         totalStaked={
           relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
         }
+        status={status}
         direction={relatedData?.dir}
       />
     </div>

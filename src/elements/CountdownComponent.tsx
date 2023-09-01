@@ -37,7 +37,7 @@ function CountdownTimer({
       {timeRemaining > 0 ? (
         <p
           style={{
-            color: 'rgb(102, 207, 0)',
+            color: 'rgb(0, 153, 0)',
             fontSize: 'var(--font-size-small)'
           }}
         >
