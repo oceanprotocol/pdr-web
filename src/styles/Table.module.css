@@ -57,3 +57,7 @@
   font-size: var(--font-size-small);
   font-weight: normal;
 }
+
+#fontRegular {
+  font-weight: normal;
+}
