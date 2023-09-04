@@ -1,4 +1,5 @@
 import { useEthersSigner } from '@/hooks/useEthersSigner'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { AuthorizationData } from '@/utils/AuthorizationData'
 import {
   PREDICTION_FETCH_EPOCHS_DELAY,
@@ -79,6 +80,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
   })
+  const { isCorrectNetwork } = useIsCorrectChain()
+
   const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
 
@@ -249,7 +252,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       let tempSigner = signer
 
-      if (!tempSigner) {
+      if (!tempSigner || !isCorrectNetwork) {
         const randomSigner = ethers.Wallet.createRandom().connect(
           networkProvider.getProvider()
         )
@@ -286,7 +289,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       setSubscribedPredictoors(validSubscriptions)
     },
-    [eleminateFreeContracts, checkAllContractsForSubscriptions]
+    [checkAllContractsForSubscriptions, isCorrectNetwork]
   )
 
   const getPredictedEpochsByContract = useCallback(

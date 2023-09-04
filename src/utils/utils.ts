@@ -45,14 +45,14 @@ export const omit = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
 
 export const checkForBannerMessage = (
   userAddress: `0x${string}` | undefined,
-  connectedNetwork: number | undefined
+  isCorrectNetwork: boolean
 ) => {
   let message: string | undefined = undefined
   let type: States = States.WARNING
-  console.log(connectedNetwork, chainId)
+
   if (!userAddress) {
     message = 'Wallet not connected!'
-  } else if (connectedNetwork != parseInt(chainId)) {
+  } else if (!isCorrectNetwork) {
     message = 'Connected to wrong network!'
   }
   return {

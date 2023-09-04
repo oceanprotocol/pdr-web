@@ -1,4 +1,5 @@
 import Button from '@/elements/Button'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { currentConfig } from '@/utils/appconstants'
 import { checkForBannerMessage } from '@/utils/utils'
 import { useEffect, useState } from 'react'
@@ -23,11 +24,13 @@ export default function Banner() {
   })
   const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
   const { address } = useAccount()
-  const { chain, chains } = useNetwork()
+  const { chains } = useNetwork()
+  const { chain, isCorrectNetwork } = useIsCorrectChain()
 
   useEffect(() => {
-    setState(checkForBannerMessage(address, chain?.id))
-  }, [address, chain])
+    setState(checkForBannerMessage(address, isCorrectNetwork))
+  }, [address, isCorrectNetwork])
+
   if (!state.message) return null
   return (
     <div
@@ -36,9 +39,9 @@ export default function Banner() {
       }`}
     >
       <span className={styles.text}>{state.message}</span>
-      {chain && parseInt(chainId) !== chain?.id && (
+      {chain && !isCorrectNetwork && (
         <Button
-          disabled={!switchNetwork || parseInt(chainId) === chain?.id}
+          disabled={!switchNetwork || isCorrectNetwork}
           onClick={() => switchNetwork?.(parseInt(chainId))}
           className={styles.switchNetwork}
           text={
