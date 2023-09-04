@@ -93,9 +93,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       symbol: baseToken,
       market: market
     })
-
-    // Finally, load accuracy data
-    await loadAccuracy()
   }
 
   const renewPrice = useCallback<() => Promise<void>>(async () => {
@@ -152,6 +149,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   useEffect(() => {
     loadData()
+    loadAccuracy()
   }, [])
 
   if (!tokenData || !slotProps) return null
