@@ -22,7 +22,7 @@ export type TPredictoorArgs = {
   isSapphire?: boolean
 }
 
-type PredictionResult = {
+export type PredictionResult = {
   nom: string;
   denom: string;
   confidence: number;
@@ -380,7 +380,7 @@ class Predictoor {
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
 
-        const result:any = calculatePrediction(nominator, denominator)
+        const result:PredictionResult = calculatePrediction(nominator, denominator)
         return result
       }
 

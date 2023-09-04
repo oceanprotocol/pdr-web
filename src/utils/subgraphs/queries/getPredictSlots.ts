@@ -1,11 +1,11 @@
 export const SECONDS_IN_24_HOURS = 86400
 
 export const GET_PREDICT_CONTRACTS_24H = `
-  query getContracts($assetIds: [String!]!) {
+  query getContract($assetId: String!) {
     predictContracts(
       orderBy: timestamp
       orderDirection: desc
-      where: { id_in: $assetIds }
+      where: { id: $assetId }
     ) {
       id
       slots {

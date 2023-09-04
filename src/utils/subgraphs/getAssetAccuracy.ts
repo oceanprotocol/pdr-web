@@ -1,4 +1,4 @@
-import { calculatePrediction } from '@/utils/contracts/Predictoor';
+import { PredictionResult, calculatePrediction } from '@/utils/contracts/Predictoor';
 import { graphqlClientInstance } from '../graphqlClient';
 import {
   GET_PREDICT_CONTRACTS_24H,
@@ -47,15 +47,15 @@ export const getSlots = async(
 
 export const fetchSlots24Hours = async(
   subgraphURL: string,
-  assets: string[]
-): Promise<Record<string, Array<TPredictSlots>>> => {
+  asset: string
+): Promise<Array<TPredictSlots>> => {
     const { data, errors } = await graphqlClientInstance.query<TGetPredictContracts24hQueryResult>(
       GET_PREDICT_CONTRACTS_24H,
-      { assetIds: assets },
+      { assetId: asset },
       subgraphURL
     )
 
-    const predictoorSlots: Record<string, Array<TPredictSlots>> = {}  
+    let predictoorSlots: Array<TPredictSlots> = []
     const predictContracts = data?.predictContracts
     
     if (errors || !predictContracts || predictContracts.length === 0) {
@@ -63,10 +63,11 @@ export const fetchSlots24Hours = async(
     }
 
     // Iterate through contracts and get slots from 24h ago
-    for (const predictoor of predictContracts) {
+    const predictoor = predictContracts[0]
+
+    if( predictoor ) {
       if (!predictoor.slots || predictoor.slots.length === 0) {
-        predictoorSlots[predictoor.id] = []
-        continue
+        return predictoorSlots;
       }
       
       const lastSlot = predictoor.slots[0].slot
@@ -79,7 +80,7 @@ export const fetchSlots24Hours = async(
         slot24h
       )
 
-      predictoorSlots[predictoor.id] = slots || []
+      predictoorSlots = slots || []
     }
 
     return predictoorSlots;
@@ -88,65 +89,58 @@ export const fetchSlots24Hours = async(
 // Function to process slots and calculate average accuracy per predictContract
 export const calculateAverageAccuracy = async(
   subgraphURL: string,
-  assets: string[]
-): Promise<Record<string, number>> => {
-  const slotsData = await fetchSlots24Hours(subgraphURL, assets);
-  const contractAccuracy: Record<string, number> = {};
+  asset: string
+): Promise<number> => {
+  const slotsData = await fetchSlots24Hours(subgraphURL, asset);
+  let totalSlots = 0;
+  let correctPredictions = 0;
 
-  for (const assetId in slotsData) {
-      let totalSlots = 0;
-      let correctPredictions = 0;
-
-      if (!slotsData[assetId] || slotsData[assetId].length === 0) {
-        contractAccuracy[assetId] = 0;
-        continue
-      }
-
-      // TODO - Remove when slots are available
-      for (const slot of slotsData[assetId]) {
-        console.log("calc dummy slot");
-
-        let mockRoundSumStakesUp = Math.random() * 1000000;
-        let mockRoundSumStakes = Math.random() * 1000000;
-
-        // create random boolean value
-        let trueValue = Math.random() < 0.5;
-
-        const prediction = calculatePrediction(
-          mockRoundSumStakesUp.toString(),
-          mockRoundSumStakes.toString()
-        )
-
-        // Check if prediction direction matches true value
-        if (prediction.dir === (trueValue ? 1 : 0)) {
-          correctPredictions++;
-        }
-
-        totalSlots++;
-      }
-
-      // TODO - Enable when slots are available
-      // for (const slot of slotsData[assetId]) {
-      //     const prediction = calculatePrediction(
-      //       slot.roundSumStakesUp.toString(),
-      //       slot.roundSumStakes.toString()
-      //     )
-
-      //     // Check if prediction direction matches true value
-      //     const hasAnswer = slot.trueValues ? true : false;
-      //     if (
-      //       hasAnswer === true &&
-      //       prediction.dir === (slot.trueValues?.trueValue ? 1 : 0)
-      //     ) {
-      //       correctPredictions++;
-      //     }
-
-      //     totalSlots++;
-      // }
-
-      const averageAccuracy = (correctPredictions / totalSlots) * 100;
-      contractAccuracy[assetId] = averageAccuracy;
+  if (!slotsData || slotsData.length === 0) {
+    return 0.0;
   }
 
-  return contractAccuracy;
+  // TODO - Remove when slots are available
+  for (const slot of slotsData) {
+    console.log("calc dummy slot");
+
+    let mockRoundSumStakesUp = Math.random() * 1000000;
+    let mockRoundSumStakes = Math.random() * 1000000;
+
+    // create random boolean value
+    let trueValue = Math.random() < 0.5;
+
+    const prediction: PredictionResult = calculatePrediction(
+      mockRoundSumStakesUp.toString(),
+      mockRoundSumStakes.toString()
+    )
+
+    // Check if prediction direction matches true value
+    if (prediction.dir === (trueValue ? 1 : 0)) {
+      correctPredictions++;
+    }
+
+    totalSlots++;
+  }
+
+  // TODO - Enable when slots are available
+  // for (const slot of slotsData) {
+  //     const prediction = calculatePrediction(
+  //       slot.roundSumStakesUp.toString(),
+  //       slot.roundSumStakes.toString()
+  //     )
+
+  //     // Check if prediction direction matches true value
+  //     const hasAnswer = slot.trueValues ? true : false;
+  //     if (
+  //       hasAnswer === true &&
+  //       prediction.dir === (slot.trueValues?.trueValue ? 1 : 0)
+  //     ) {
+  //       correctPredictions++;
+  //     }
+
+  //     totalSlots++;
+  // }
+
+  const averageAccuracy = (correctPredictions / totalSlots) * 100;  
+  return averageAccuracy;
 }
