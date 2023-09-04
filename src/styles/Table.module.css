@@ -27,6 +27,10 @@
   justify-content: flex-start !important;
 }
 
+#alignStart {
+  width: 220px;
+}
+
 .historyEpochsContainer {
   display: flex;
   align-items: center;
@@ -60,4 +64,9 @@
 
 #fontRegular {
   font-weight: normal;
+}
+
+.greyText {
+  font-weight: normal;
+  color: var(--dark-grey);
 }

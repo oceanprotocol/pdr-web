@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import styles from '../styles/Table.module.css'
 
 function LiveTime() {
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -16,12 +17,18 @@ function LiveTime() {
   const formatTime = (date: Date) => {
     const hours = String(date.getHours()).padStart(2, '0')
     const minutes = String(date.getMinutes()).padStart(2, '0')
-    const seconds = String(date.getSeconds()).padStart(2, '0')
 
-    return `${hours}:${minutes}:${seconds}`
+    return `${hours}:${minutes}`
   }
 
-  return <>{formatTime(currentTime)}</>
+  return (
+    <>
+      {formatTime(currentTime)}
+      <span className={styles.greyText}>{`:${String(
+        currentTime.getSeconds()
+      ).padStart(2, '0')}`}</span>
+    </>
+  )
 }
 
 export default LiveTime

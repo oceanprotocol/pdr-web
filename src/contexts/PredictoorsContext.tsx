@@ -78,7 +78,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
   })
-  const { epochData, setEpochData, initialEpochData } = useSocketContext()
+  const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)

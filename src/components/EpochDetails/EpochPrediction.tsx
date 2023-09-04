@@ -30,7 +30,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
         boxShadow:
           status === EEpochDisplayStatus.NextEpoch
             ? ''
-            : '0px 0px 3px 1px var(--dark-grey)'
+            : '0px 0px 3px 1px var(--shadow-grey)'
       }}
     >
       <div className={styles.directionConainer}>

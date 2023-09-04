@@ -124,6 +124,12 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         <span className={styles.predictionText}>Predictions</span>
       </div>
     )
+    assetTableColumns[5].Header = (
+      <div>
+        Accuracy
+        <span className={styles.greyText}>{` 24h`}</span>
+      </div>
+    )
   }, [currentEpoch])
 
   return (
