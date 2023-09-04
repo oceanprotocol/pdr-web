@@ -29,23 +29,23 @@ export const assetTableColumns: ASSET_TABLE_COLUMNS = [
     accessor: 'asset'
   },
   {
-    Header: '14:00',
+    Header: '--:--',
     accessor: 'history2'
   },
   {
-    Header: '14:05',
+    Header: '--:--',
     accessor: 'history1'
   },
   {
-    Header: '14:08',
+    Header: '--:--',
     accessor: 'live'
   },
   {
-    Header: '14:10',
+    Header: '--:--',
     accessor: 'prediction'
   },
   {
-    Header: 'Accuracy(24h)',
+    Header: 'Accuracy 24h',
     accessor: 'accuracy'
   },
   {
