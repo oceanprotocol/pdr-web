@@ -17,10 +17,6 @@ export type TPredictoorsContext = {
       Awaited<ReturnType<typeof Predictoor.prototype.getReadableContractPrice>>
     >
   >
-  contractAccuracies: Record<
-    string,
-    number
-  >
 }
 
 export type TPredictoorsContextProps = {

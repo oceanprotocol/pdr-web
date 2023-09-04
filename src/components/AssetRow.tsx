@@ -1,11 +1,12 @@
 import { TokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
+import { currentConfig } from '@/utils/appconstants'
 import { getAssetPairPrice } from '@/utils/marketPrices'
+import { calculateAverageAccuracy } from '@/utils/subgraphs/getAssetAccuracy'
 import Accuracy from './Accuracy'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
@@ -28,11 +29,11 @@ export type TAssetRowState = {
 
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
+  const [tokenAccuracy, setTokenAccuracy] = useState<number>(0.0)
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '--',
     symbol: '--',
     price: 0,
-    accuracy: 0.0,
     market: ''
   })
   const {
@@ -47,7 +48,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     interval,
     contract
   } = assetData
-  const { contractAccuracies } = usePredictoorsContext()
 
   const getAssetPairPriceForRow = useCallback<
     (args: {
@@ -66,6 +66,19 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     []
   )
 
+  const getAssetPairAccuracyForRow = useCallback<
+    (args: {
+      contract: string
+    }) => Promise<number>
+  >(
+    ({ contract }) =>
+      calculateAverageAccuracy(
+        currentConfig.subgraph,
+        contract
+      ),
+    []
+  )
+
   const loadData = async () => {
     const price = await getAssetPairPriceForRow({
       tokenName,
@@ -73,17 +86,16 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       market
     })
 
-    let accuracy = contractAccuracies[contract.address] ? contractAccuracies[contract.address] : 0.0;
-    accuracy = accuracy > 0.0 ? parseFloat(accuracy.toFixed(2)) : 0.0;
-    
     const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
-      accuracy: accuracy,
       name,
       symbol: baseToken,
       market: market
     })
+
+    // Finally, load accuracy data
+    await loadAccuracy()
   }
 
   const renewPrice = useCallback<() => Promise<void>>(async () => {
@@ -99,6 +111,31 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       clearInterval(priceInterval)
     }
   }, [epochData, renewPrice])
+
+  // Calculate accuracy and set state
+  const loadAccuracy = async () => {
+    let accuracy = await getAssetPairAccuracyForRow({
+      contract: contract.address
+    })
+    accuracy = accuracy > 0.0 ? parseFloat(accuracy.toFixed(2)) : 0.0;
+    setTokenAccuracy(accuracy)
+  }
+
+  // Accuracy update interval
+  const renewAccuracy = useCallback<() => Promise<void>>(async () => {
+    loadAccuracy()
+  }, [tokenName, pairName, getAssetPairAccuracyForRow])
+
+  const kACCURACY_INTERVAL = 1000 * 3600;
+  useEffect(() => {
+    const accuracyInterval = setInterval(() => {
+      renewAccuracy()
+    }, kACCURACY_INTERVAL)
+
+    return () => {
+      clearInterval(accuracyInterval)
+    }
+  }, [epochData, renewAccuracy])
 
   const slotProps = useMemo(
     () =>
@@ -130,7 +167,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     >
       <Asset assetData={tokenData} />
       <Price assetData={tokenData} />
-      <Accuracy assetData={tokenData} />
+      <Accuracy accuracy={tokenAccuracy} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextPrediction}
         price={tokenData.price}

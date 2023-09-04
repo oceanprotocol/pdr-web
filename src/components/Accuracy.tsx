@@ -1,18 +1,17 @@
 import styles from '../styles/Accuracy.module.css'
-import { TokenData } from '../utils/asset'
 
 export default function Accuracy({
-  assetData
+  accuracy
 }: {
-  assetData: TokenData | undefined
+  accuracy: number | undefined
 }) {
-  if (!assetData) return null
+  if (!accuracy) return 0.0
 
   return (
     <div className={styles.container}>
       <span
         className={styles.accuracy}
-      >{`${assetData.accuracy.toLocaleString()}%`}</span>
+      >{`${accuracy.toLocaleString()}%`}</span>
     </div>
   )
 }

@@ -3,5 +3,4 @@ export interface TokenData {
   name: string
   price: number
   market: string
-  accuracy: number
 }
