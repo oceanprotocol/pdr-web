@@ -114,6 +114,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       !epochStartTs
     )
       return
+    console.log(epochData)
     getHistoryEpochPriceDelta()
   }, [relatedData, secondsPerEpoch, epochStartTs])
 

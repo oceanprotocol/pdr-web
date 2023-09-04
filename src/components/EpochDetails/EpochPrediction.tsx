@@ -20,7 +20,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
       className={styles.predictionContainer}
       style={{
         backgroundColor: `${
-          direction == undefined
+          direction == undefined || totalStaked == 0
             ? '#cbcbcb'
             : direction == 1
             ? '#BEFFC1'
@@ -36,16 +36,17 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
       <div className={styles.directionConainer}>
         <>
           <span className={styles.predictionText}>{`Pred${
-            direction !== undefined ? '' : ' ?'
+            direction == undefined || totalStaked == 0 ? '?' : ''
           }`}</span>
-          {direction !== undefined && (
-            <img
-              className={styles.predictionArrow}
-              src={`/assets/icons/${
-                direction == 1 ? 'arrowUp' : 'arrowDown'
-              }Colored.png`}
-            />
-          )}
+          {direction !== undefined ||
+            (totalStaked == 0 && (
+              <img
+                className={styles.predictionArrow}
+                src={`/assets/icons/${
+                  direction == 1 ? 'arrowUp' : 'arrowDown'
+                }Colored.png`}
+              />
+            ))}
         </>
       </div>
       {direction !== undefined && (
