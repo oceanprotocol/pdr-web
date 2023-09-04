@@ -80,7 +80,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   })
   const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
-  const [currentEpoch, setCurrentEpoch] = useState<number>(0)
+  const [currentEpoch, setCurrentEpoch] = useState<number>(new Date().getTime())
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
 
   const [predictoorInstances, setPredictorInstances] = useState<
