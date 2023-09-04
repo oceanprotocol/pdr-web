@@ -4,12 +4,12 @@ import { useUserContext } from '@/contexts/UserContext'
 import Button from '@/elements/Button'
 import CountdownTimer from '@/elements/CountdownComponent'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
-import { currentConfig } from '@/utils/appconstants'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { NonError, ValueOf } from '@/utils/utils'
 import { ethers } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { NotificationManager } from 'react-notifications'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
 
 export enum SubscriptionStatus {
@@ -39,10 +39,9 @@ export default function Subscription({
   contractAddress
 }: TSubscriptionProps) {
   const { isConnected, address } = useAccount()
-  const { chain } = useNetwork()
-  const { chainId } = currentConfig
   const { refetchBalance } = useUserContext()
   const signer = useEthersSigner({})
+  const { isCorrectNetwork } = useIsCorrectChain()
 
   const { getPredictorInstanceByAddress, runCheckContracts, contractPrices } =
     usePredictoorsContext()
@@ -148,9 +147,7 @@ export default function Subscription({
             onClick={() =>
               BuyAction({ currentStatus: subscriptionData.status })
             }
-            disabled={
-              !isConnected || isBuying || chain?.id !== parseInt(chainId)
-            }
+            disabled={!isConnected || isBuying || !isCorrectNetwork}
           />
         )}
 
