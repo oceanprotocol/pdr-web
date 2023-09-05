@@ -45,15 +45,14 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
           <span className={styles.predictionText}>{`Pred${
             direction == undefined || totalStaked == 0 ? '?' : ''
           }`}</span>
-          {direction !== undefined ||
-            (totalStaked == 0 && (
-              <img
-                className={styles.predictionArrow}
-                src={`/assets/icons/${
-                  direction == 1 ? 'arrowUp' : 'arrowDown'
-                }Colored.png`}
-              />
-            ))}
+          {(direction !== undefined || totalStaked == 0) && (
+            <img
+              className={styles.predictionArrow}
+              src={`/assets/icons/${
+                direction == 1 ? 'arrowUp' : 'arrowDown'
+              }Colored.png`}
+            />
+          )}
         </>
       </div>
       {direction !== undefined && (
