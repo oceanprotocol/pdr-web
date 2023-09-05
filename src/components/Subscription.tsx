@@ -2,18 +2,20 @@ import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TPredictoorsContext } from '@/contexts/PredictoorsContext.types'
 import { useUserContext } from '@/contexts/UserContext'
 import Button from '@/elements/Button'
+import CountdownTimer from '@/elements/CountdownComponent'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
-import { currentConfig } from '@/utils/appconstants'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { NonError, ValueOf } from '@/utils/utils'
-import { useCallback, useMemo, useState } from 'react'
+import { ethers } from 'ethers'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { NotificationManager } from 'react-notifications'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
 
 export enum SubscriptionStatus {
   'INACTIVE' = 'inactive',
   'ACTIVE' = 'active',
-  'FREE' = 'free'
+  'FREE' = 'FREE'
 }
 
 export interface SubscriptionData {
@@ -37,14 +39,14 @@ export default function Subscription({
   contractAddress
 }: TSubscriptionProps) {
   const { isConnected, address } = useAccount()
-  const { chain } = useNetwork()
-  const { chainId } = currentConfig
   const { refetchBalance } = useUserContext()
   const signer = useEthersSigner({})
+  const { isCorrectNetwork } = useIsCorrectChain()
 
   const { getPredictorInstanceByAddress, runCheckContracts, contractPrices } =
     usePredictoorsContext()
   const [isBuying, setIsBuying] = useState(false)
+  const [expiryTimestamp, setExpiryTimestamp] = useState<number | undefined>()
 
   const contractPriceInfo: TContractPriceInfo = useMemo(() => {
     const loadingResult = {
@@ -62,6 +64,18 @@ export default function Subscription({
     return { price: contractPrice }
   }, [contractPrices, contractAddress])
 
+  const userSubscription = () => {
+    if (!address) return
+    const predictorInstance = getPredictorInstanceByAddress(contractAddress)
+    predictorInstance?.getSubscriptions(address).then((resp) => {
+      setExpiryTimestamp(parseInt(ethers.utils.formatUnits(resp.expires, 0)))
+    })
+  }
+
+  useEffect(() => {
+    userSubscription()
+  }, [address, contractPrices])
+
   const BuyAction = useCallback<
     (args: { currentStatus: SubscriptionStatus }) => Promise<void>
   >(
@@ -74,15 +88,14 @@ export default function Subscription({
         return
 
       try {
-        console.log('buying')
         const predictorInstance = getPredictorInstanceByAddress(contractAddress)
-        console.log('predictorinstance found', !!predictorInstance)
+
         if (!predictorInstance) return
         setIsBuying(true)
-        console.log('setIsBuying true')
+
         if (!signer) return
         const receipt = await predictorInstance.buyAndStartSubscription(signer)
-        console.log('receipt', receipt)
+
         if (!!receipt) {
           runCheckContracts()
         }
@@ -95,7 +108,6 @@ export default function Subscription({
         )
       } catch (e: any) {
         console.error(e)
-        console.log(e)
         setIsBuying(false)
         NotificationManager.error(e, 'Subscription purchase failed!', 5000)
       }
@@ -135,18 +147,21 @@ export default function Subscription({
             onClick={() =>
               BuyAction({ currentStatus: subscriptionData.status })
             }
-            disabled={
-              !isConnected || isBuying || chain?.id !== parseInt(chainId)
-            }
+            disabled={!isConnected || isBuying || !isCorrectNetwork}
           />
         )}
 
       {[SubscriptionStatus.ACTIVE, SubscriptionStatus.FREE].includes(
         subscriptionData.status
-      ) &&
-        contractPriceInfo.price > 0 && (
+      ) && contractPriceInfo.price > 0 ? (
+        expiryTimestamp ? (
+          <CountdownTimer futureTimestampInSeconds={expiryTimestamp} />
+        ) : (
           <span className={styles.status}>{subscriptionData.status}</span>
-        )}
+        )
+      ) : (
+        ''
+      )}
     </div>
   )
 }

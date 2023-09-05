@@ -1,4 +1,5 @@
 import { useEthersSigner } from '@/hooks/useEthersSigner'
+import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { AuthorizationData } from '@/utils/AuthorizationData'
 import {
   PREDICTION_FETCH_EPOCHS_DELAY,
@@ -42,10 +43,6 @@ import {
 } from './PredictoorsContextHelper'
 import { useSocketContext } from './SocketContext'
 
-type TContractsState = Awaited<
-  ReturnType<typeof getAllInterestingPredictionContracts>
->
-
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
   epochStartTs: number
@@ -60,8 +57,11 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   getPredictorInstanceByAddress: (data) => undefined,
   runCheckContracts: () => {},
   setCurrentChainTime: (data) => {},
+  setCurrentEpoch: (data) => {},
   subscribedPredictoors: [],
   contracts: undefined,
+  secondsPerEpoch: 0,
+  currentEpoch: 0,
   currentChainTime: 0,
   contractPrices: {}
 })
@@ -79,8 +79,12 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
   })
+  const { isCorrectNetwork } = useIsCorrectChain()
+
   const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
+  const [currentEpoch, setCurrentEpoch] = useState<number>(new Date().getTime())
+  const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
 
   const [predictoorInstances, setPredictorInstances] = useState<
     TPredictoorsContext['predictoorInstances']
@@ -249,14 +253,18 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       let tempSigner = signer
 
-      if (!tempSigner) {
+      if (!tempSigner || !isCorrectNetwork) {
         const randomSigner = ethers.Wallet.createRandom().connect(
           networkProvider.getProvider()
         )
         tempSigner = randomSigner as any as ethers.providers.JsonRpcSigner
       }
 
-      const contractsToWatch = eleminateFreeContracts(contracts)
+      let cEpoch: number
+      let sPerEpoch: number
+
+      const contractsToWatch = Object.values(contracts)
+
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
           const predictoor = new Predictoor(
@@ -267,6 +275,12 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
             isSapphireNetwork()
           )
           await predictoor.init()
+          if (!sPerEpoch) {
+            cEpoch = await predictoor.getCurrentEpoch()
+            sPerEpoch = await predictoor.getSecondsPerEpoch()
+            setCurrentEpoch(cEpoch)
+            setSecondsPerEpoch(sPerEpoch)
+          }
           return predictoor
         })
       )
@@ -284,7 +298,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       setSubscribedPredictoors(validSubscriptions)
     },
-    [eleminateFreeContracts, checkAllContractsForSubscriptions]
+    [checkAllContractsForSubscriptions, isCorrectNetwork]
   )
 
   const getPredictedEpochsByContract = useCallback(
@@ -292,7 +306,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       const tempData = predictedEpochs.current?.[contractAddress]
       if (tempData) {
         const sortedEpochs = tempData.sort((a, b) => a.epoch - b.epoch)
-        const lastThreeEpochs = sortedEpochs.slice(-3)
+        const lastThreeEpochs = sortedEpochs.slice(-2)
         return lastThreeEpochs
       }
       return []
@@ -326,8 +340,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     provider.on('block', async (blockNumber) => {
       const block = await provider.getBlock(blockNumber)
       const currentTs = block.timestamp
-      setCurrentChainTime(currentTs)
-      const currentEpoch = Math.floor(currentTs / SPE)
+      const newCurrentEpoch = Math.floor(currentTs / SPE)
       const authorizationData =
         authorizationDataInstance.current?.getAuthorizationData()
       if (
@@ -336,8 +349,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         !authorizationData
       )
         return
-      lastCheckedEpoch.current = currentEpoch
-      const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE)
+      lastCheckedEpoch.current = newCurrentEpoch
+      const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
 
       const newEpochs = detectNewEpochs({
         subscribedPredictoors,
@@ -360,6 +373,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           })
         }
       )
+
+      if (currentTs > currentEpoch + secondsPerEpoch) {
+        setCurrentEpoch(newCurrentEpoch * secondsPerEpoch)
+      }
 
       getMultiplePredictions({
         currentTs: currentTs,
@@ -440,7 +457,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           opfOwnerAddress: currentConfig.opfOwnerAddress,
           allowedPredConfig: currentConfig.allowedPredictions
         })
-
         setContracts(filteredContracts)
       }
     )
@@ -466,7 +482,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         checkAndAddInstance,
         getPredictorInstanceByAddress,
         setCurrentChainTime,
+        setCurrentEpoch,
         contracts,
+        currentEpoch,
+        secondsPerEpoch,
         subscribedPredictoors,
         contractPrices,
         currentChainTime

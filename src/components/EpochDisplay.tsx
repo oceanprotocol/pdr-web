@@ -1,7 +1,4 @@
-import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
-import ProgressBar from '@/elements/ProgressBar'
-import { PREDICTION_FETCH_EPOCHS_DELAY } from '@/utils/appconstants'
 import { getAssetPairPrice } from '@/utils/marketPrices'
 import {
   compareSplittedNames,
@@ -9,16 +6,15 @@ import {
 } from '@/utils/splitContractName'
 import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
-import { EpochBackground } from './EpochDetails/EpochBackground'
-import { EpochDirection } from './EpochDetails/EpochDirection'
-import { EpochFooter } from './EpochDetails/EpochFooter'
-import { SubscriptionStatus } from './Subscription'
+import { EpochPrediction } from './EpochDetails/EpochPrediction'
+import { EpochPrice } from './EpochDetails/EpochPrice'
+import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
 
 //TODO: Fix Eslint
 export enum EEpochDisplayStatus {
-  'NextPrediction' = 'next',
-  'LivePrediction' = 'live',
-  'HistoricalPrediction' = 'history'
+  'NextEpoch' = 'next',
+  'LiveEpoch' = 'live',
+  'PastEpoch' = 'history'
 }
 
 export type TEpochDisplayProps = {
@@ -27,8 +23,8 @@ export type TEpochDisplayProps = {
   market: string
   tokenName: string
   pairName: string
-  historyIndex?: number
-  subsciption: SubscriptionStatus
+  epochStartTs: number
+  secondsPerEpoch: number
 }
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
@@ -37,22 +33,22 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   market,
   tokenName,
   pairName,
-  historyIndex,
-  subsciption
+  epochStartTs,
+  secondsPerEpoch
 }) => {
   const { epochData } = useSocketContext()
-  const { currentChainTime } = usePredictoorsContext()
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
+  const [finalPrice, setFinalPrice] = useState<number>(0)
 
   const relatedPredictionIndex = useMemo(() => {
     switch (status) {
-      case EEpochDisplayStatus.NextPrediction:
-        return 3
-      case EEpochDisplayStatus.LivePrediction:
+      case EEpochDisplayStatus.NextEpoch:
         return 2
-      case EEpochDisplayStatus.HistoricalPrediction:
-        return historyIndex === 0 ? 0 : 1
+      case EEpochDisplayStatus.LiveEpoch:
+        return 1
+      case EEpochDisplayStatus.PastEpoch:
+        return 0
     }
   }, [status])
 
@@ -69,7 +65,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   useEffect(() => {
     if (
-      status !== EEpochDisplayStatus.LivePrediction ||
+      status !== EEpochDisplayStatus.NextEpoch ||
       !relatedData ||
       relatedData.stake == 0
     )
@@ -77,7 +73,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     if (!initialPrice) {
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs,
+        timestamp: epochStartTs,
         market: market
       }).then((p) => {
         setInitialPrice(parseFloat(p))
@@ -89,19 +85,19 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }, [price])
 
   const getHistoryEpochPriceDelta = async () => {
-    if (!relatedData) return
     const [initialPrice, finalPrice] = await Promise.all([
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs,
+        timestamp: epochStartTs - secondsPerEpoch,
         market: market
       }),
       getAssetPairPrice({
         assetPair: tokenName + pairName,
-        timestamp: relatedData?.epochStartTs + relatedData?.secondsPerEpoch,
+        timestamp: epochStartTs,
         market: market
       })
     ])
+    setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
       ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
@@ -109,58 +105,45 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
-    if (status !== EEpochDisplayStatus.HistoricalPrediction) return
+    if (
+      status === EEpochDisplayStatus.NextEpoch ||
+      !secondsPerEpoch ||
+      !epochStartTs
+    )
+      return
     getHistoryEpochPriceDelta()
-  }, [relatedData])
+  }, [relatedData, secondsPerEpoch, epochStartTs])
 
   return (
-    <div className={styles.container}>
-      {subsciption != SubscriptionStatus.INACTIVE &&
-      epochData &&
-      relatedData ? (
-        <>
-          <EpochBackground
-            direction={relatedData.dir}
-            stake={relatedData.stake}
-            state={status}
-            delta={delta}
-          />
-          {relatedData.stake ? (
-            <>
-              <EpochDirection
-                direction={relatedData.dir}
-                confidence={relatedData.confidence}
-                delta={delta}
-                status={status}
-              />
-              <EpochFooter
-                stake={relatedData.stake}
-                confidence={relatedData.confidence}
-                direction={relatedData.dir}
-                delta={delta}
-                status={status}
-              />
-            </>
-          ) : (
-            'NO PRED'
-          )}
-          {status === EEpochDisplayStatus.NextPrediction && (
-            <ProgressBar
-              refreshOnData={relatedData.epochStartTs}
-              progress={
-                relatedData.epochStartTs -
-                (currentChainTime > 0
-                  ? currentChainTime
-                  : relatedData.currentTs) -
-                PREDICTION_FETCH_EPOCHS_DELAY
-              }
-              max={relatedData.secondsPerEpoch - PREDICTION_FETCH_EPOCHS_DELAY}
-            />
-          )}
-        </>
+    <div
+      className={styles.container}
+      style={{
+        boxShadow:
+          status === EEpochDisplayStatus.NextEpoch
+            ? '0px 0px 3px 1px var(--dark-grey)'
+            : ''
+      }}
+    >
+      {status === EEpochDisplayStatus.NextEpoch ? (
+        <EpochStakedTokens
+          stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
+          totalStaked={
+            relatedData?.denom ? parseFloat(relatedData?.denom) : undefined
+          }
+          direction={relatedData?.dir}
+          showLabel
+        />
       ) : (
-        <span>??</span>
+        <EpochPrice price={finalPrice} delta={delta} />
       )}
+      <EpochPrediction
+        stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
+        totalStaked={
+          relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
+        }
+        status={status}
+        direction={relatedData?.dir}
+      />
     </div>
   )
 }
