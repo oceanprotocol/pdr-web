@@ -9,7 +9,6 @@ import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
 import { EpochPrice } from './EpochDetails/EpochPrice'
 import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
-import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
 export enum EEpochDisplayStatus {
@@ -26,7 +25,6 @@ export type TEpochDisplayProps = {
   pairName: string
   epochStartTs: number
   secondsPerEpoch: number
-  subsciption: SubscriptionStatus
 }
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
@@ -36,8 +34,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   tokenName,
   pairName,
   epochStartTs,
-  secondsPerEpoch,
-  subsciption
+  secondsPerEpoch
 }) => {
   const { epochData } = useSocketContext()
   const [delta, setDelta] = useState<number>()
@@ -114,7 +111,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       !epochStartTs
     )
       return
-    console.log(epochData)
     getHistoryEpochPriceDelta()
   }, [relatedData, secondsPerEpoch, epochStartTs])
 

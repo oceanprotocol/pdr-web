@@ -29,9 +29,9 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const [tokenData, setTokenData] = useState<TokenData>({
-    name: '--',
-    symbol: '--',
-    pair: '--',
+    name: '',
+    symbol: '',
+    pair: '',
     price: 0,
     market: ''
   })
@@ -131,7 +131,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
         epochStartTs={currentEpoch - secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
-        subsciption={subscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LiveEpoch}
@@ -139,7 +138,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
         epochStartTs={currentEpoch}
         secondsPerEpoch={secondsPerEpoch}
-        subsciption={subscription}
       />
       <Price assetData={tokenData} />
       <EpochDisplay
@@ -148,7 +146,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         {...slotProps}
         epochStartTs={currentEpoch + secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
-        subsciption={subscription}
       />
       <span>56.20%</span>
       <Subscription

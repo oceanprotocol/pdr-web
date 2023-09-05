@@ -14,7 +14,7 @@ export default function Asset({
   if (!assetData) return null
 
   useEffect(() => {
-    if (!currentEpoch) return
+    if (!currentEpoch || assetData.pair.length == 0) return
     getAssetPairPrice({
       assetPair: assetData.pair,
       timestamp: currentEpoch,
