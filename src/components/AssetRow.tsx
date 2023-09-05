@@ -147,7 +147,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         epochStartTs={currentEpoch + secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
       />
-      <span>56.20%</span>
+      <span>56.2%</span>
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),
