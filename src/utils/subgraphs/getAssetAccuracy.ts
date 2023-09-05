@@ -1,4 +1,5 @@
-import { PredictionResult, calculatePrediction } from '@/utils/contracts/Predictoor';
+import { PredictionResult } from '@/utils/contracts/Predictoor';
+import { calculatePrediction } from '@/utils/contracts/helpers/calculatePrediction';
 import { graphqlClientInstance } from '../graphqlClient';
 import {
   GET_PREDICT_CONTRACTS_24H,
