@@ -10,8 +10,9 @@
 }
 
 .status {
-  color: rgb(102, 207, 0);
+  color: rgb(0, 153, 0);
   line-height: 1;
+  font-size: var(--font-size-small);
 }
 
 .tokenImage {

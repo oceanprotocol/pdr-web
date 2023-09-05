@@ -1,6 +1,7 @@
 import { TokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
@@ -26,9 +27,11 @@ export type TAssetRowState = {
 
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
+  const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const [tokenData, setTokenData] = useState<TokenData>({
-    name: '--',
-    symbol: '--',
+    name: '',
+    symbol: '',
+    pair: '',
     price: 0,
     market: ''
   })
@@ -68,10 +71,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       pairName,
       market
     })
+    const pair = `${baseToken}${quoteToken}`
     const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
       name,
+      pair,
       symbol: baseToken,
       market: market
     })
@@ -120,35 +125,29 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       }}
     >
       <Asset assetData={tokenData} />
+      <EpochDisplay
+        status={EEpochDisplayStatus.PastEpoch}
+        price={tokenData.price}
+        {...slotProps}
+        epochStartTs={currentEpoch - secondsPerEpoch}
+        secondsPerEpoch={secondsPerEpoch}
+      />
+      <EpochDisplay
+        status={EEpochDisplayStatus.LiveEpoch}
+        price={tokenData.price}
+        {...slotProps}
+        epochStartTs={currentEpoch}
+        secondsPerEpoch={secondsPerEpoch}
+      />
       <Price assetData={tokenData} />
       <EpochDisplay
-        status={EEpochDisplayStatus.NextPrediction}
+        status={EEpochDisplayStatus.NextEpoch}
         price={tokenData.price}
         {...slotProps}
-        subsciption={subscription}
+        epochStartTs={currentEpoch + secondsPerEpoch}
+        secondsPerEpoch={secondsPerEpoch}
       />
-      <EpochDisplay
-        status={EEpochDisplayStatus.LivePrediction}
-        price={tokenData.price}
-        {...slotProps}
-        subsciption={subscription}
-      />
-      <div className={styles.historyEpochsContainer}>
-        <EpochDisplay
-          status={EEpochDisplayStatus.HistoricalPrediction}
-          historyIndex={1}
-          price={tokenData.price}
-          {...slotProps}
-          subsciption={subscription}
-        />
-        <EpochDisplay
-          status={EEpochDisplayStatus.HistoricalPrediction}
-          historyIndex={0}
-          price={tokenData.price}
-          {...slotProps}
-          subsciption={subscription}
-        />
-      </div>
+      <span>56.20%</span>
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),

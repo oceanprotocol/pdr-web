@@ -27,6 +27,7 @@ class Predictoor {
   public instanceWrite: ethers.Contract | null = null
   public FRE: FixedRateExchange | null = null
   public exchangeId: BigNumber = BigNumber.from(0)
+  public currentEpoch: number | null = null
   public token: Token | null = null
   // Constructor
   public constructor(
@@ -353,17 +354,10 @@ class Predictoor {
 
         let confidence: number = parseFloat(nominator) / parseFloat(denominator)
         let dir: number = confidence >= 0.5 ? 1 : 0
-        if (confidence > 0.5) {
-          confidence -= 0.5
-        } else {
-          confidence = 0.5 - confidence
-        }
-        confidence = (confidence / 0.5) * 100
 
         return {
           nom: nominator,
           denom: denominator,
-          confidence: confidence,
           dir: dir,
           stake: parseFloat(ethers.utils.formatUnits(denom, 18))
         }

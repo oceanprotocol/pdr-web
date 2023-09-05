@@ -2,10 +2,16 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
+import { useSocketContext } from '@/contexts/SocketContext'
+import LiveTime from '@/elements/LiveTime'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import Tooltip from '@/elements/Tooltip'
 import styles from '@/styles/Table.module.css'
-import { assetTableColumns, currentConfig } from '@/utils/appconstants'
+import {
+  assetTableColumns,
+  currentConfig,
+  formatTime
+} from '@/utils/appconstants'
 import { splitContractName } from '@/utils/splitContractName'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { AssetRow } from './AssetRow'
@@ -34,7 +40,9 @@ export type TAssetTableState = {
 }
 
 export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
-  const { subscribedPredictoors } = usePredictoorsContext()
+  const { subscribedPredictoors, currentEpoch, secondsPerEpoch } =
+    usePredictoorsContext()
+  const { epochData } = useSocketContext()
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
@@ -101,6 +109,29 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     prepareAssetData(contracts)
   }, [contracts, prepareAssetData])
 
+  useEffect(() => {
+    if (!currentEpoch) return
+    assetTableColumns[1].Header = formatTime(
+      new Date((currentEpoch - secondsPerEpoch) * 1000)
+    )
+    assetTableColumns[2].Header = formatTime(new Date(currentEpoch * 1000))
+    assetTableColumns[3].Header = <LiveTime />
+    assetTableColumns[4].Header = (
+      <div className={styles.predictionHeader}>
+        <span>
+          {formatTime(new Date((currentEpoch + secondsPerEpoch) * 1000))}
+        </span>
+        <span className={styles.predictionText}>Predictions</span>
+      </div>
+    )
+    assetTableColumns[5].Header = (
+      <div>
+        Accuracy
+        <span className={styles.greyText}>{` 24h`}</span>
+      </div>
+    )
+  }, [currentEpoch])
+
   return (
     <table className={styles.table}>
       <thead>
@@ -114,12 +145,12 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           {assetTableColumns.map((item) => (
             <div
               className={styles.assetHeaderContainer}
-              id={item.Header}
+              id={item.accessor}
               key={`assetHeader${item.accessor}`}
             >
               <span>{item.Header}</span>
               <Tooltip
-                selector={item.Header}
+                selector={item.accessor}
                 text={tooltipsText[item.Header as keyof typeof tooltipOptions]}
               />
             </div>
