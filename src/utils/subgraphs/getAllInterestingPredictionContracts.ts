@@ -1,4 +1,5 @@
 import { graphqlClientInstance } from '../graphqlClient'
+import { TPredictContractSlots } from '../subgraphs/queries/getPredictSlots'
 import {
   NftKeys,
   TGetPredictContractsQueryResult,
@@ -16,6 +17,7 @@ export type TPredictionContract = {
   quoteToken: string
   interval: string
   owner: string
+  init_slots: Array<TPredictContractSlots>
   secondsPerEpoch: string
   secondsPerSubscription: string
   last_submitted_epoch: number
@@ -78,6 +80,7 @@ export const getAllInterestingPredictionContracts = async (
         interval: interval,
         symbol: item.token.symbol,
         price: item.token.lastPriceValue,
+        init_slots: item.slots,
         secondsPerEpoch: item.secondsPerEpoch,
         secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,

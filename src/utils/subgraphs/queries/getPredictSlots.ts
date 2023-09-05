@@ -17,7 +17,7 @@ export const GET_PREDICT_CONTRACTS_24H = `
   }
 `
 
-type TPredictContractSlots = {
+export type TPredictContractSlots = {
   id: string
   slot: number
 }
@@ -55,7 +55,7 @@ export const GET_PREDICT_SLOTS_24H = `
 `
 
 
-type TPredictSlotsTrueValue = {
+export type TPredictSlotsTrueValue = {
   id: string
   trueValue: Boolean
 }

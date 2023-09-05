@@ -1,3 +1,5 @@
+import { TPredictContractSlots } from './getPredictSlots'
+
 export const getPredictContracts = `query GetPredictContracts($offset: Int!, $chunkSize: Int!) {
     predictContracts(skip: $offset, first: $chunkSize) {
       id
@@ -19,6 +21,10 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
               value
            }
         }
+      }
+      slots(orderBy: slot orderDirection:desc first:10){
+        id
+        slot
       }
       secondsPerEpoch
       secondsPerSubscription
@@ -65,6 +71,7 @@ type TPredictToken = {
 export type TPredictContract = {
   id: string
   token: TPredictToken
+  slots: Array<TPredictContractSlots>
   secondsPerEpoch: string
   secondsPerSubscription: string
 }
