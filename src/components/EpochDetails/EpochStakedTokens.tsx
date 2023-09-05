@@ -1,4 +1,5 @@
 import styles from '../../styles/Epoch.module.css'
+import { getPredictionBackgroundColor } from './EpochPrediction'
 
 export type TEpochStakedTokensProps = {
   showLabel?: boolean | undefined
@@ -38,13 +39,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
     <div
       className={styles.stake}
       style={{
-        background: `${
-          direction == undefined || totalStaked == 0
-            ? '#cbcbcb'
-            : direction === 1
-            ? '#BEFFC1'
-            : '#FFB0B0'
-        }`,
+        background: getPredictionBackgroundColor(direction, totalStaked),
         height: '25px',
         width: '100%',
         paddingTop: '5px'

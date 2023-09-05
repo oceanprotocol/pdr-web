@@ -9,6 +9,19 @@ export type TEpochPredictionProps = {
   status: EEpochDisplayStatus
 }
 
+export const getPredictionBackgroundColor = (
+  direction: number | undefined,
+  totalStaked: number | undefined
+) => {
+  return `${
+    direction == undefined || totalStaked == 0
+      ? 'var(--prediction-background-green)'
+      : direction === 1
+      ? 'var(--prediction-background-grey)'
+      : 'var(--prediction-background-red)'
+  }`
+}
+
 export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
   direction,
   stakedUp,
@@ -19,13 +32,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
     <div
       className={styles.predictionContainer}
       style={{
-        backgroundColor: `${
-          direction == undefined || totalStaked == 0
-            ? '#cbcbcb'
-            : direction == 1
-            ? '#BEFFC1'
-            : '#FFB0B0'
-        }`,
+        backgroundColor: getPredictionBackgroundColor(direction, totalStaked),
         justifyContent: direction == undefined ? 'center' : '',
         boxShadow:
           status === EEpochDisplayStatus.NextEpoch
