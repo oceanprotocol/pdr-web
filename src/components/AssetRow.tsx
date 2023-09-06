@@ -72,7 +72,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       market
     })
     const pair = `${baseToken}${quoteToken}`
-    const name = `${interval.toLocaleLowerCase()}-${baseToken}/${quoteToken}`
+    const name = `${baseToken}/${quoteToken}`
     setTokenData({
       price: parseFloat(price),
       name,
