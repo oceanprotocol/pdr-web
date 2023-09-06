@@ -1,10 +1,11 @@
+import { usePredictionHistoryContext } from '@/contexts/PredictionHistoryContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { getAssetPairPrice } from '@/utils/marketPrices'
 import {
   compareSplittedNames,
   splitContractName
 } from '@/utils/splitContractName'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
 import { EpochPrice } from './EpochDetails/EpochPrice'
@@ -25,6 +26,7 @@ export type TEpochDisplayProps = {
   pairName: string
   epochStartTs: number
   secondsPerEpoch: number
+  contractAddress: string
 }
 
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
@@ -34,12 +36,19 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   tokenName,
   pairName,
   epochStartTs,
-  secondsPerEpoch
+  secondsPerEpoch,
+  contractAddress
 }) => {
   const { epochData } = useSocketContext()
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
+  const { getDataFromHistoryByContractAddress, historyData } =
+    usePredictionHistoryContext()
+  const isNextEpoch = useMemo(
+    () => status === EEpochDisplayStatus.NextEpoch,
+    [status]
+  )
 
   const relatedPredictionIndex = useMemo(() => {
     switch (status) {
@@ -52,16 +61,31 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     }
   }, [status])
 
-  const relatedData = Array.isArray(epochData)
-    ? epochData
-        ?.find((data) =>
-          compareSplittedNames(splitContractName(data.contractInfo.name), [
-            tokenName,
-            pairName
-          ])
-        )
-        ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
-    : null
+  const getNextEpochData = useCallback(() => {
+    return Array.isArray(epochData)
+      ? epochData
+          ?.find((data) =>
+            compareSplittedNames(splitContractName(data.contractInfo.name), [
+              tokenName,
+              pairName
+            ])
+          )
+          ?.predictions.sort((a, b) => a.epoch - b.epoch)[
+          relatedPredictionIndex
+        ]
+      : null
+  }, [epochData, tokenName, pairName, relatedPredictionIndex])
+
+  const relatedData = useMemo(() => {
+    if (isNextEpoch) {
+      return getNextEpochData()
+    }
+    const data = getDataFromHistoryByContractAddress({
+      contractAddress
+    })
+
+    return data?.[relatedPredictionIndex]
+  }, [isNextEpoch, relatedPredictionIndex, getNextEpochData, historyData])
 
   useEffect(() => {
     if (
@@ -118,13 +142,10 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     <div
       className={styles.container}
       style={{
-        boxShadow:
-          status === EEpochDisplayStatus.NextEpoch
-            ? '0px 0px 3px 1px var(--dark-grey)'
-            : ''
+        boxShadow: isNextEpoch ? '0px 0px 3px 1px var(--dark-grey)' : ''
       }}
     >
-      {status === EEpochDisplayStatus.NextEpoch ? (
+      {isNextEpoch ? (
         <EpochStakedTokens
           stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
           totalStaked={

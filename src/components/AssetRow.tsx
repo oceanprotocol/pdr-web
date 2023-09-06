@@ -35,6 +35,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     price: 0,
     market: ''
   })
+
   const {
     tokenName,
     pairName,
@@ -103,10 +104,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
             tokenName,
             pairName,
             subscription,
-            market
+            market,
+            price: tokenData.price,
+            contractAddress: assetData.contract.address
           }
         : null,
-    [tokenName, pairName, subscription]
+    [tokenName, pairName, subscription, tokenData, market, assetData]
   )
 
   useEffect(() => {
@@ -127,14 +130,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Asset assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.PastEpoch}
-        price={tokenData.price}
         {...slotProps}
         epochStartTs={currentEpoch - secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.LiveEpoch}
-        price={tokenData.price}
         {...slotProps}
         epochStartTs={currentEpoch}
         secondsPerEpoch={secondsPerEpoch}
@@ -142,7 +143,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       <Price assetData={tokenData} />
       <EpochDisplay
         status={EEpochDisplayStatus.NextEpoch}
-        price={tokenData.price}
         {...slotProps}
         epochStartTs={currentEpoch + secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}

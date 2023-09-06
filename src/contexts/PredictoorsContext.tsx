@@ -33,6 +33,7 @@ import {
   useState
 } from 'react'
 import { useAccount } from 'wagmi'
+import { usePredictionHistoryContext } from './PredictionHistoryContext'
 import {
   TPredictoorsContext,
   TPredictoorsContextProps
@@ -75,6 +76,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   children
 }) => {
   const { address } = useAccount()
+  const { renewHistory } = usePredictionHistoryContext()
 
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
@@ -102,10 +104,18 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const contractPricesRef = useRef(contractPrices)
 
   const lastCheckedEpoch = useRef<number>(0)
+  const lastCheckedEpochForWithoutSubscriptions = useRef<number>(0)
   const predictedEpochs =
     useRef<Record<string, Array<TPredictedEpochLogItem>>>()
 
   const authorizationDataInstance = useRef<AuthorizationData<TAuthorization>>()
+
+  const renewHistoryWrapper = useCallback(() => {
+    if (!contracts) return
+    renewHistory({
+      contracts: contracts
+    })
+  }, [renewHistory, contracts])
 
   const initializeAuthorizationData = useCallback(
     async (signer: ethers.providers.JsonRpcSigner) => {
@@ -333,14 +343,52 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     predictedEpochs.current[contractAddress].push(item)
   }, [])
 
+  const getBlockEssentials = useCallback(async () => {
+    const provider = networkProvider.getProvider()
+    const blockNumber = await provider.getBlockNumber()
+    const block = await provider.getBlock(blockNumber)
+    if (!block) return
+    const currentTs = block.timestamp
+    const calculatedCurrentEpoch = Math.floor(currentTs / secondsPerEpoch)
+    return {
+      currentTs,
+      calculatedCurrentEpoch
+    }
+  }, [secondsPerEpoch])
+
+  const addChainListenerForWithoutSubscriptions = useCallback(async () => {
+    if (!contracts) return
+
+    const SPE = await predictoorInstances[0]?.getSecondsPerEpoch()
+    const provider = networkProvider.getProvider()
+
+    provider.on('block', async (blockNumber) => {
+      if (lastCheckedEpochForWithoutSubscriptions.current === blockNumber)
+        return
+
+      lastCheckedEpochForWithoutSubscriptions.current = blockNumber
+
+      const { currentTs, calculatedCurrentEpoch } = await getBlockEssentials()
+
+      if (
+        currentTs - lastCheckedEpoch.current * SPE <
+        SPE + PREDICTION_FETCH_EPOCHS_DELAY
+      )
+        return
+
+      lastCheckedEpoch.current = calculatedCurrentEpoch
+      renewHistoryWrapper()
+    })
+  }, [predictoorInstances, contracts, renewHistoryWrapper, getBlockEssentials])
+
   const addChainListener = useCallback(async () => {
     if (!setEpochData || !address || !contracts || !signer) return
     const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
     const provider = networkProvider.getProvider()
+
     provider.on('block', async (blockNumber) => {
-      const block = await provider.getBlock(blockNumber)
-      const currentTs = block.timestamp
-      const newCurrentEpoch = Math.floor(currentTs / SPE)
+      const { currentTs, calculatedCurrentEpoch } = await getBlockEssentials()
+
       const authorizationData =
         authorizationDataInstance.current?.getAuthorizationData()
       if (
@@ -349,8 +397,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         !authorizationData
       )
         return
-      lastCheckedEpoch.current = newCurrentEpoch
-      const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
+      lastCheckedEpoch.current = calculatedCurrentEpoch
+      const predictionEpochs = calculatePredictionEpochs(
+        calculatedCurrentEpoch,
+        SPE
+      )
 
       const newEpochs = detectNewEpochs({
         subscribedPredictoors,
@@ -374,9 +425,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         }
       )
 
-      if (currentTs > currentEpoch + secondsPerEpoch) {
-        setCurrentEpoch(newCurrentEpoch * secondsPerEpoch)
+      if (currentTs > currentEpoch + SPE) {
+        setCurrentEpoch(calculatedCurrentEpoch * SPE)
       }
+
+      renewHistoryWrapper()
 
       getMultiplePredictions({
         currentTs: currentTs,
@@ -432,7 +485,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     subscribedPredictoors,
     getPredictedEpochsByContract,
     addItemToPredictedEpochs,
-    signer
+    signer,
+    renewHistoryWrapper,
+    currentEpoch,
+    getBlockEssentials
   ])
 
   useEffect(() => {
@@ -448,6 +504,19 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       provider.removeAllListeners('block')
     }
   }, [subscribedPredictoors, addChainListener])
+
+  useEffect(() => {
+    if (contracts && subscribedPredictoors.length === 0) {
+      const provider = networkProvider.getProvider()
+      provider.removeAllListeners('block')
+
+      addChainListenerForWithoutSubscriptions()
+    }
+  }, [
+    contracts,
+    subscribedPredictoors,
+    addChainListenerForWithoutSubscriptions
+  ])
 
   useEffect(() => {
     getAllInterestingPredictionContracts(currentConfig.subgraph).then(

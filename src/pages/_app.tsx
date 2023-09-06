@@ -1,3 +1,4 @@
+import { PredictionHistoryProvider } from '@/contexts/PredictionHistoryContext'
 import { PredictoorsProvider } from '@/contexts/PredictoorsContext'
 import { SocketProvider } from '@/contexts/SocketContext'
 import { UserProvider } from '@/contexts/UserContext'
@@ -15,9 +16,11 @@ function App({ Component, pageProps }: AppProps) {
       <WagmiConfig config={wagmiConfig}>
         <UserProvider>
           <SocketProvider>
-            <PredictoorsProvider>
-              <Component {...pageProps} />
-            </PredictoorsProvider>
+            <PredictionHistoryProvider>
+              <PredictoorsProvider>
+                <Component {...pageProps} />
+              </PredictoorsProvider>
+            </PredictionHistoryProvider>
           </SocketProvider>
         </UserProvider>
       </WagmiConfig>
