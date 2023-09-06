@@ -27,10 +27,6 @@
   justify-content: flex-start !important;
 }
 
-#alignStart {
-  width: 225px;
-}
-
 .historyEpochsContainer {
   display: flex;
   align-items: center;
