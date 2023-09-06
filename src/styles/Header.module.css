@@ -17,3 +17,18 @@
   height: 50px;
   object-fit: contain;
 }
+
+@media screen and (max-width: 600px) {
+  .logo {
+    margin-bottom: calc(var(--spacer) / 10);
+  }
+  .container {
+    flex-direction: column;
+    padding: calc(var(--spacer) / 10) 0;
+    height: 110px;
+  }
+  .connections {
+    width: auto;
+    overflow-y: scroll;
+  }
+}

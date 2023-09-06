@@ -1,5 +1,6 @@
 .table {
   width: 100%;
+  overflow-y: scroll;
   color: var(--color-primary);
   border-spacing: 0;
   border-top: 1px solid var(--dark-grey);
@@ -69,4 +70,10 @@
 .greyText {
   font-weight: normal;
   color: var(--dark-grey);
+}
+
+@media screen and (max-width: 1000px) {
+  .table {
+    width: auto;
+  }
 }
