@@ -43,7 +43,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
       <div className={styles.directionConainer}>
         <>
           <span className={styles.predictionText}>{`Pred${
-            direction == undefined || totalStaked == 0 ? '?' : ''
+            direction == undefined || totalStaked == 0 ? ' ?' : ''
           }`}</span>
           {(direction !== undefined || totalStaked == 0) && (
             <img
