@@ -462,13 +462,17 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       currentEpoch == 0
     )
       return
-    console.log()
     const provider = networkProvider.getProvider()
     addChainListener(secondsPerEpoch, currentEpoch)
     return () => {
       provider.removeAllListeners('block')
     }
-  }, [predictoorInstances, secondsPerEpoch, currentEpoch])
+  }, [
+    predictoorInstances,
+    secondsPerEpoch,
+    currentEpoch,
+    subscribedPredictoors
+  ])
 
   useEffect(() => {
     getAllInterestingPredictionContracts(currentConfig.subgraph).then(
