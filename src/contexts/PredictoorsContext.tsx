@@ -361,7 +361,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           subscribedPredictoors.length === 0 ||
           !address ||
           !signer ||
-          !setEpochData ||
           !authorizationData
         )
           return
@@ -444,7 +443,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       setEpochData,
       address,
       contracts,
-      subscribedPredictoors,
+      subscribedPredictoors.length,
       getPredictedEpochsByContract,
       addItemToPredictedEpochs,
       signer
