@@ -71,16 +71,18 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   const getAssetPairAccuracyForRow = useCallback<
     (args: {
-      contract: string
+      contract: string;
     }) => Promise<number>
   >(
-    ({ contract }) =>
-      calculateAverageAccuracy(
+    async ({ contract }) => {
+      const accuracyRecord = await calculateAverageAccuracy(
         currentConfig.subgraph,
-        contract
-      ),
+        [contract]
+      );
+      return accuracyRecord[contract];
+    },
     []
-  )
+  );
 
   const loadData = async () => {
     const price = await getAssetPairPriceForRow({
@@ -118,6 +120,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     let accuracy = await getAssetPairAccuracyForRow({
       contract: contract.address
     })
+
     accuracy = accuracy > 0.0 ? parseFloat(accuracy.toFixed(1)) : 0.0;
     setTokenAccuracy(accuracy)
   }

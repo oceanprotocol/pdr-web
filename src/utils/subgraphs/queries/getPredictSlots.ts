@@ -1,11 +1,11 @@
 export const SECONDS_IN_24_HOURS = 86400
 
-export const GET_PREDICT_CONTRACTS_24H = `
-  query getContract($assetId: String!) {
+export const GET_PREDICT_CONTRACTS = `
+  query getContracts($assetIds: [String!]!) {
     predictContracts(
       orderBy: timestamp
       orderDirection: desc
-      where: { id: $assetId }
+      where: { id_in: $assetIds }
     ) {
       id
       slots {
@@ -28,18 +28,18 @@ export type TPredictContracts = {
   secondsPerEpoch: string
 }
 
-export type TGetPredictContracts24hQueryResult = {
+export type TGetPredictContractsQuery = {
   predictContracts: Array<TPredictContracts>
 }
 
-export const GET_PREDICT_SLOTS_24H = `
-  query	getPredictSlots($asset: String!, $initialSlot: Int!, $first: Int!, $skip: Int!) {
+export const GET_PREDICT_SLOTS = `
+  query	getPredictSlots($assetIds: [String!]!, $initialSlot: Int!, $first: Int!, $skip: Int!) {
     predictSlots (
       first: $first
       skip: $skip
       where: {
         slot_gte: $initialSlot
-        predictContract: $asset 
+        predictContract_in: $assetIds
       }
     ) {
       id
@@ -54,7 +54,6 @@ export const GET_PREDICT_SLOTS_24H = `
   }
 `
 
-
 type TPredictSlotsTrueValue = {
   id: string
   trueValue: Boolean
@@ -68,6 +67,6 @@ export type TPredictSlots = {
   roundSumStakes: string
 }
 
-export type TGetPredictSlots24hQueryResult = {
+export type TGetPredictSlotsQuery = {
   predictSlots: Array<TPredictSlots>
 }
