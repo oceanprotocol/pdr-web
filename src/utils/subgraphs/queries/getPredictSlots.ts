@@ -62,7 +62,7 @@ type TPredictSlotsTrueValue = {
 export type TPredictSlots = {
   id: string
   slot: number
-  trueValues: TPredictSlotsTrueValue
+  trueValues: Array<TPredictSlotsTrueValue>
   roundSumStakesUp: string
   roundSumStakes: string
 }

@@ -1,6 +1,7 @@
 import { PredictionResult } from '@/utils/contracts/Predictoor';
 import { calculatePrediction } from '@/utils/contracts/helpers/calculatePrediction';
 import { graphqlClientInstance } from '../graphqlClient';
+
 import {
   GET_PREDICT_CONTRACTS,
   GET_PREDICT_SLOTS,
@@ -102,46 +103,33 @@ export const calculateAverageAccuracy = async(
       continue
     }
 
-    // TODO - Remove when slots are available
     for (const slot of slotsData[assetId]) {
-      let mockRoundSumStakesUp = Math.random() * 1000000;
-      let mockRoundSumStakes = Math.random() * 1000000;
+        const prediction: PredictionResult = calculatePrediction(
+          slot.roundSumStakesUp.toString(),
+          slot.roundSumStakes.toString()
+        )
 
-      // create random boolean value
-      let trueValue = Math.random() < 0.5;
+        // Check if prediction was made, and if direction matches the trueValue
+        const hasAnswer = slot.trueValues ? true : false;
+        const trueValuesLength = hasAnswer ? slot.trueValues.length : 0;
+        const trueValue = trueValuesLength > 0 ? slot.trueValues[0].trueValue : undefined
+        
+        // If the prediction was solved for, check if the dir matches trueValue
+        if (
+          hasAnswer === true &&
+          trueValuesLength > 0 &&
+          prediction.dir === (trueValue ? 1 : 0)
+        ) {
+          correctPredictions++;
+        }
 
-      const prediction: PredictionResult = calculatePrediction(
-        mockRoundSumStakesUp.toString(),
-        mockRoundSumStakes.toString()
-      )
-
-      // Check if prediction direction matches true value
-      if (prediction.dir === (trueValue ? 1 : 0)) {
-        correctPredictions++;
-      }
-
-      totalSlots++;
+        totalSlots++;
     }
 
-    // TODO - Enable when slots are available
-    // for (const slot of slotsData[assetId]) {
-    //     const prediction = calculatePrediction(
-    //       slot.roundSumStakesUp.toString(),
-    //       slot.roundSumStakes.toString()
-    //     )
-
-    //     // Check if prediction direction matches true value
-    //     const hasAnswer = slot.trueValues ? true : false;
-    //     if (
-    //       hasAnswer === true &&
-    //       prediction.dir === (slot.trueValues?.trueValue ? 1 : 0)
-    //     ) {
-    //       correctPredictions++;
-    //     }
-
-    //     totalSlots++;
-    // }
-
+    // Calculate average accuracy
+    // console.log(`Total slots for ${assetId}: ${totalSlots}`);
+    // console.log(`Correct predictions for ${assetId}: ${correctPredictions}`);
+    // console.log(`Average accuracy for ${assetId}: ${(correctPredictions / totalSlots) * 100}%`);
     const averageAccuracy = (correctPredictions / totalSlots) * 100;
     contractAccuracy[assetId] = averageAccuracy;
   }
