@@ -77,6 +77,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 }) => {
   const { address } = useAccount()
 
+  const [connectedAddress, setConnectedAddress] = useState<string>()
+
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
   })
@@ -242,14 +244,12 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       address
     })
 
-    console.log(validSubscriptions)
-
     setSubscribedPredictoors(validSubscriptions)
   }, [address, checkAllContractsForSubscriptions, predictoorInstances])
 
   const initializeContracts = useCallback(
     async (
-      contracts: Record<string, TPredictionContract>,
+      contacts: Record<string, TPredictionContract>,
       signer: ethers.providers.JsonRpcSigner | undefined
     ) => {
       if (typeof window === 'undefined') return
@@ -266,7 +266,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       let cEpoch: number
       let sPerEpoch: number
 
-      const contractsToWatch = Object.values(contracts)
+      const contractsToWatch = Object.values(contacts)
 
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
@@ -294,25 +294,21 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       if (!address) return
 
+      console.log(address)
+
       const validSubscriptions = await checkAllContractsForSubscriptions({
         predictoorInstances: contractsResult,
         address
       })
-
-      console.log(validSubscriptions)
 
       let subscribedPredictionAddresses = validSubscriptions.map(
         (p) => p.address
       )
       currentConfig.predictionsOrder &&
         subscribedPredictionAddresses.unshift(currentConfig.predictionsOrder[0])
-      console.log(subscribedPredictionAddresses)
-
-      console.log(
-        sortObjectProperties(subscribedPredictionAddresses, contracts)
-      )
 
       setSubscribedPredictoors(validSubscriptions)
+      setConnectedAddress(address)
     },
     [checkAllContractsForSubscriptions, isCorrectNetwork]
   )
@@ -452,9 +448,16 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   ])
 
   useEffect(() => {
-    if (!contracts) return
+    console.log(connectedAddress, address)
+    if (
+      !contracts ||
+      !connectedAddress ||
+      !address ||
+      connectedAddress == address
+    )
+      return
     initializeContracts(contracts, signer)
-  }, [initializeContracts, contracts, signer])
+  }, [connectedAddress])
 
   useEffect(() => {
     if (!contracts) return
@@ -485,9 +488,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           allowedPredConfig: currentConfig.allowedPredictions
         })
         setContracts(filteredContracts)
+        initializeContracts(filteredContracts, signer)
       }
     )
-  }, [setContracts])
+  }, [])
 
   useEffect(() => {
     if (!initialEpochData) return
