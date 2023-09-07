@@ -475,7 +475,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   ])
 
   useEffect(() => {
-    getAllInterestingPredictionContracts(currentConfig.subgraph).then(
+    getAllInterestingPredictionContracts(
+      currentConfig.subgraph,
+      currentConfig.blacklistedPredictions
+    ).then(
       (contracts) => {
         const filteredContracts = filterAllowedContracts({
           contracts,
