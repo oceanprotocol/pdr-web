@@ -1,6 +1,5 @@
 .table {
   width: 100%;
-  overflow-y: scroll;
   color: var(--color-primary);
   border-spacing: 0;
   border-top: 1px solid var(--dark-grey);
