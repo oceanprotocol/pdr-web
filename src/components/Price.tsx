@@ -35,7 +35,7 @@ export default function Asset({
       pairSymbol: assetData.pair,
       timestamp: queryTimestamp
     })
-    console.log('data', data)
+
     if (data) {
       lastSuccessfullGetRef.current = queryTimestamp
       const closePriceOfPrevEpoch = parseFloat(data[data.length - 1].close)

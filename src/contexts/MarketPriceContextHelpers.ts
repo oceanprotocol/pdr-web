@@ -31,7 +31,6 @@ export const getFromTheHistoricalPairsCache = ({
   pairSymbol,
   timestamp
 }: TGetFromTheHistoricalPairsCacheArgs) => {
-  console.log('historicalPairsCache', historicalPairsCache)
   const cacheKey = `${pairSymbol}_${timestamp}`
   const cachedValue = historicalPairsCache.get(cacheKey)
 

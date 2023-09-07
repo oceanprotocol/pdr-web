@@ -3,7 +3,6 @@ import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
-import { useSocketContext } from '@/contexts/SocketContext'
 import LiveTime from '@/elements/LiveTime'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import Tooltip from '@/elements/Tooltip'
@@ -46,7 +45,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
   const { fetchAndCacheAllPairs } = useMarketPriceContext()
 
-  const { epochData } = useSocketContext()
+  const [tableColumns, setTableColumns] = useState<any>(assetTableColumns)
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
@@ -88,6 +87,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           parseInt(contract.secondsPerSubscription) / 3600
 
         // Create an object with the required data and push it to the assetsData array
+
         assetsData.push({
           tokenName,
           pairName,
@@ -100,6 +100,20 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           subscriptionDuration,
           subscription: subscriptionStatus
         })
+      })
+
+      const privilegedTokens = ['BTC', 'ETH']
+
+      assetsData.sort((a, b) => {
+        if (a.subscription === SubscriptionStatus.FREE) return -1
+        if (b.subscription === SubscriptionStatus.FREE) return 1
+        if (a.subscription === SubscriptionStatus.ACTIVE) return -1
+        if (b.subscription === SubscriptionStatus.ACTIVE) return 1
+        for (const token of privilegedTokens) {
+          if (a.tokenName === token) return -1
+          if (b.tokenName === token) return 1
+        }
+        return a.tokenName.toUpperCase().charCodeAt(0)
       })
 
       // Update the state with the assetsData array
@@ -115,12 +129,13 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
   useEffect(() => {
     if (!currentEpoch) return
-    assetTableColumns[1].Header = formatTime(
+    let newAssetTableColumns = JSON.parse(JSON.stringify(assetTableColumns))
+    newAssetTableColumns[1].Header = formatTime(
       new Date((currentEpoch - secondsPerEpoch) * 1000)
     )
-    assetTableColumns[2].Header = formatTime(new Date(currentEpoch * 1000))
-    assetTableColumns[3].Header = <LiveTime />
-    assetTableColumns[4].Header = (
+    newAssetTableColumns[2].Header = formatTime(new Date(currentEpoch * 1000))
+    newAssetTableColumns[3].Header = <LiveTime />
+    newAssetTableColumns[4].Header = (
       <div className={styles.predictionHeader}>
         <span>
           {formatTime(new Date((currentEpoch + secondsPerEpoch) * 1000))}
@@ -128,12 +143,13 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         <span className={styles.predictionText}>Predictions</span>
       </div>
     )
-    assetTableColumns[5].Header = (
+    newAssetTableColumns[5].Header = (
       <div>
         Accuracy
         <span className={styles.greyText}>{` 24h`}</span>
       </div>
     )
+    setTableColumns(newAssetTableColumns)
   }, [currentEpoch])
 
   useEffect(() => {
@@ -145,46 +161,50 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
   }, [fetchAndCacheAllPairs])
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <TableRowWrapper
-          className={styles.tableRow}
-          cellProps={{
-            className: styles.tableHeaderCell
-          }}
-          cellType="th"
-        >
-          {assetTableColumns.map((item) => (
-            <div
-              className={styles.assetHeaderContainer}
-              id={item.accessor}
-              key={`assetHeader${item.accessor}`}
-            >
-              <span>{item.Header}</span>
-              <Tooltip
-                selector={item.accessor}
-                text={tooltipsText[item.Header as keyof typeof tooltipOptions]}
+    tableColumns && (
+      <table className={styles.table}>
+        <thead>
+          <TableRowWrapper
+            className={styles.tableRow}
+            cellProps={{
+              className: styles.tableHeaderCell
+            }}
+            cellType="th"
+          >
+            {tableColumns.map((item: any) => (
+              <div
+                className={styles.assetHeaderContainer}
+                id={item.accessor}
+                key={`assetHeader${item.accessor}`}
+              >
+                <span>{item.Header}</span>
+                <Tooltip
+                  selector={item.accessor}
+                  text={
+                    tooltipsText[item.Header as keyof typeof tooltipOptions]
+                  }
+                />
+              </div>
+            ))}
+          </TableRowWrapper>
+        </thead>
+        {assetsData.length > 0 ? (
+          <tbody>
+            {assetsData.map((item) => (
+              <AssetRow
+                key={`assetRow${item.contract.address}`}
+                assetData={item}
               />
-            </div>
-          ))}
-        </TableRowWrapper>
-      </thead>
-      {assetsData.length > 0 ? (
-        <tbody>
-          {assetsData.map((item) => (
-            <AssetRow
-              key={`assetRow${item.contract.address}`}
-              assetData={item}
-            />
-          ))}
-        </tbody>
-      ) : (
-        <tbody className={styles.message}>
-          <tr>
-            <td>No contracts found</td>
-          </tr>
-        </tbody>
-      )}
-    </table>
+            ))}
+          </tbody>
+        ) : (
+          <tbody className={styles.message}>
+            <tr>
+              <td>No contracts found</td>
+            </tr>
+          </tbody>
+        )}
+      </table>
+    )
   )
 }

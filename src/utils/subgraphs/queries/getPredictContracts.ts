@@ -1,5 +1,12 @@
-export const getPredictContracts = `query GetPredictContracts($offset: Int!, $chunkSize: Int!) {
-    predictContracts(skip: $offset, first: $chunkSize) {
+export const getPredictContracts = `
+  query GetPredictContracts($offset: Int!, $chunkSize: Int!, $contractBlacklist: [String]) {
+    predictContracts(
+      skip: $offset, 
+      first: $chunkSize
+      where: {
+        id_not_in: $contractBlacklist
+      }
+    ) {
       id
       token {
         id
