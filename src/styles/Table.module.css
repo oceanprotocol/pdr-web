@@ -19,10 +19,6 @@
   border-bottom: 1px solid var(--dark-grey);
 }
 
-.inactiveRow {
-  background-color: var(--shadow-grey);
-}
-
 #alignStart div {
   justify-content: flex-start !important;
 }
