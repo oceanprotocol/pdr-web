@@ -84,27 +84,3 @@ export function handleTransactionError(error: any) {
     return 'An error occurred while processing the transaction.'
   }
 }
-
-export function sortObjectProperties(
-  names: string[],
-  originalObject: Record<string, any>
-): Record<string, any> {
-  const sortedObject: Record<string, any> = {}
-
-  // Iterate through the names array
-  names.forEach((name) => {
-    // Check if the name exists as a key in the original object
-    if (originalObject.hasOwnProperty(name)) {
-      sortedObject[name] = originalObject[name]
-    }
-  })
-
-  // Copy remaining properties from the original object (if any)
-  for (const key in originalObject) {
-    if (!sortedObject.hasOwnProperty(key)) {
-      sortedObject[key] = originalObject[key]
-    }
-  }
-
-  return sortedObject
-}

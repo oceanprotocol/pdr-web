@@ -21,8 +21,7 @@ import {
   DeepNonNullable,
   calculatePredictionEpochs,
   isSapphireNetwork,
-  omit,
-  sortObjectProperties
+  omit
 } from '@/utils/utils'
 import { ethers } from 'ethers'
 import {
@@ -76,8 +75,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   children
 }) => {
   const { address } = useAccount()
-
-  const [connectedAddress, setConnectedAddress] = useState<string>()
 
   const signer = useEthersSigner({
     chainId: parseInt(currentConfig.chainId)
@@ -249,7 +246,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const initializeContracts = useCallback(
     async (
-      contacts: Record<string, TPredictionContract>,
+      contracts: Record<string, TPredictionContract>,
       signer: ethers.providers.JsonRpcSigner | undefined
     ) => {
       if (typeof window === 'undefined') return
@@ -266,7 +263,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       let cEpoch: number
       let sPerEpoch: number
 
-      const contractsToWatch = Object.values(contacts)
+      const contractsToWatch = Object.values(contracts)
 
       const contractsResult = await Promise.all(
         contractsToWatch.map(async (contract) => {
@@ -301,14 +298,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         address
       })
 
-      let subscribedPredictionAddresses = validSubscriptions.map(
-        (p) => p.address
-      )
-      currentConfig.predictionsOrder &&
-        subscribedPredictionAddresses.unshift(currentConfig.predictionsOrder[0])
-
       setSubscribedPredictoors(validSubscriptions)
-      setConnectedAddress(address)
     },
     [checkAllContractsForSubscriptions, isCorrectNetwork]
   )
@@ -448,27 +438,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   ])
 
   useEffect(() => {
-    console.log(connectedAddress, address)
-    if (
-      !contracts ||
-      !connectedAddress ||
-      !address ||
-      connectedAddress == address
-    )
-      return
+    if (!contracts || !address) return
     initializeContracts(contracts, signer)
-  }, [connectedAddress])
-
-  useEffect(() => {
-    if (!contracts) return
-    let subscribedPredictionAddresses = subscribedPredictoors.map(
-      (p) => p.address
-    )
-    currentConfig.predictionsOrder &&
-      subscribedPredictionAddresses.unshift(currentConfig.predictionsOrder[0])
-
-    setContracts(sortObjectProperties(subscribedPredictionAddresses, contracts))
-  }, [subscribedPredictoors])
+  }, [initializeContracts, contracts, signer])
 
   useEffect(() => {
     if (subscribedPredictoors.length === 0) return
@@ -491,7 +463,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         initializeContracts(filteredContracts, signer)
       }
     )
-  }, [])
+  }, [setContracts])
 
   useEffect(() => {
     if (!initialEpochData) return

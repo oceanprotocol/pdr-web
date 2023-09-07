@@ -1,6 +1,4 @@
-import { currentConfig } from '@/utils/appconstants'
 import { graphqlClientInstance } from '../graphqlClient'
-import { sortObjectProperties } from '../utils'
 import {
   NftKeys,
   TGetPredictContractsQueryResult,
@@ -88,13 +86,6 @@ export const getAllInterestingPredictionContracts = async (
         paymentCollector: item.token.paymentCollector,
         publishMarketFeeToken: item.token.publishMarketFeeToken
       }
-    }
-
-    if (currentConfig.opfProvidedPredictions) {
-      contracts = sortObjectProperties(
-        currentConfig.opfProvidedPredictions,
-        contracts
-      )
     }
 
     offset += chunkSize

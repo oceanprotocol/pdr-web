@@ -84,6 +84,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           parseInt(contract.secondsPerSubscription) / 3600
 
         // Create an object with the required data and push it to the assetsData array
+
         assetsData.push({
           tokenName,
           pairName,
@@ -96,6 +97,20 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           subscriptionDuration,
           subscription: subscriptionStatus
         })
+      })
+
+      const privilegedTokens = ['BTC', 'ETH']
+
+      assetsData.sort((a, b) => {
+        if (a.subscription === SubscriptionStatus.FREE) return -1
+        if (b.subscription === SubscriptionStatus.FREE) return 1
+        if (a.subscription === SubscriptionStatus.ACTIVE) return -1
+        if (b.subscription === SubscriptionStatus.ACTIVE) return 1
+        for (const token of privilegedTokens) {
+          if (a.tokenName === token) return -1
+          if (b.tokenName === token) return 1
+        }
+        return a.tokenName.toUpperCase().charCodeAt(0)
       })
 
       // Update the state with the assetsData array

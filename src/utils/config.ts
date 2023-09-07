@@ -12,7 +12,6 @@ export type TRuntimeConfig = Record<
       pairName: string
       market: string
     }>
-    predictionsOrder: Maybe<Array<string>>
     opfProvidedPredictions: Array<string>
     allowedPredictions: Maybe<Array<string>>
     opfOwnerAddress: string
@@ -33,11 +32,6 @@ export const config: TRuntimeConfig = {
       }
     ],
     opfProvidedPredictions: ['0xa852af820eacc7f6eb526bc07ebb23057e26063b'],
-    predictionsOrder: [
-      '0xa852af820eacc7f6eb526bc07ebb23057e26063b',
-      '0xe680c56153a00dd28cfe68ed56537c9392f5705a',
-      '0x34c1b11639a88327fd59389748bf2e2643787508'
-    ],
     allowedPredictions: null,
     opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
@@ -54,7 +48,6 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    predictionsOrder: null,
     opfProvidedPredictions: [],
     allowedPredictions: null,
     opfOwnerAddress: ''
@@ -82,7 +75,6 @@ export const config: TRuntimeConfig = {
         market: 'kraken'
       }
     ],
-    predictionsOrder: null,
     opfProvidedPredictions: ['0x4e7eaeb4ab569e82af8c5fa9fa9191a9563ca35c'],
     allowedPredictions: null,
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
