@@ -1,3 +1,4 @@
+import { currentConfig } from '@/utils/appconstants'
 import { graphqlClientInstance } from '../graphqlClient'
 import {
   NftKeys,
@@ -50,6 +51,34 @@ export const getAllInterestingPredictionContracts = async (
     if (errors || !predictContracts || predictContracts.length === 0) {
       break
     }
+
+    //If given a specific order in config, sort the contracts to follow that
+    currentConfig.predictionsOrder &&
+      predictContracts.sort((a, b) => {
+        const indexA = currentConfig.predictionsOrder
+          ? currentConfig.predictionsOrder?.indexOf(a.id)
+          : -1
+        const indexB = currentConfig.predictionsOrder
+          ? currentConfig.predictionsOrder?.indexOf(b.id)
+          : -1
+
+        // If both ids are in the predefined list, compare their positions
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB
+        }
+
+        // If one id is in the predefined list, it comes first
+        if (indexA !== -1) {
+          return -1
+        }
+
+        if (indexB !== -1) {
+          return 1
+        }
+
+        // If neither id is in the predefined list, maintain original order
+        return 0
+      })
 
     for (const item of predictContracts) {
       let market: string = ''
