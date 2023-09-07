@@ -45,7 +45,7 @@ export const getAllInterestingPredictionContracts = async (
         subgraphURL
       )
 
-    const predictContracts = data?.predictContracts
+    var predictContracts = data?.predictContracts
 
     if (errors || !predictContracts || predictContracts.length === 0) {
       break

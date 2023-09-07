@@ -291,8 +291,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       if (!address) return
 
-      console.log(address)
-
       const validSubscriptions = await checkAllContractsForSubscriptions({
         predictoorInstances: contractsResult,
         address
@@ -438,7 +436,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   ])
 
   useEffect(() => {
-    if (!contracts || !address) return
+    if (!contracts) return
     initializeContracts(contracts, signer)
   }, [initializeContracts, contracts, signer])
 
@@ -460,7 +458,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           allowedPredConfig: currentConfig.allowedPredictions
         })
         setContracts(filteredContracts)
-        initializeContracts(filteredContracts, signer)
       }
     )
   }, [setContracts])
