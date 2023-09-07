@@ -450,13 +450,15 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   }, [subscribedPredictoors, addChainListener])
 
   useEffect(() => {
-    getAllInterestingPredictionContracts(currentConfig.subgraph).then(
+    getAllInterestingPredictionContracts(
+      currentConfig.subgraph,
+      currentConfig.blacklistedPredictions
+    ).then(
       (contracts) => {
         const filteredContracts = filterAllowedContracts({
           contracts,
           opfOwnerAddress: currentConfig.opfOwnerAddress,
-          allowedPredConfig: currentConfig.allowedPredictions,
-          blacklistPredConfig: currentConfig.blacklistedPredictions
+          allowedPredConfig: currentConfig.allowedPredictions
         })
         setContracts(filteredContracts)
       }

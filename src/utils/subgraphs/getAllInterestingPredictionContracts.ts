@@ -1,4 +1,5 @@
 import { graphqlClientInstance } from '../graphqlClient'
+import { Maybe } from '../utils'
 import {
   NftKeys,
   TGetPredictContractsQueryResult,
@@ -26,7 +27,8 @@ export type TPredictionContract = {
 }
 
 export const getAllInterestingPredictionContracts = async (
-  subgraphURL: string
+  subgraphURL: string,
+  contractBlacklist: Maybe<Array<string>> = []
 ): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000
   let offset = 0
@@ -35,7 +37,8 @@ export const getAllInterestingPredictionContracts = async (
   while (whileValue) {
     const variables = {
       offset,
-      chunkSize
+      chunkSize,
+      contractBlacklist
     }
 
     const { data, errors } =

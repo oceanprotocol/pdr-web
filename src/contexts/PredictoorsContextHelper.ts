@@ -7,26 +7,20 @@ export type TFilterAllowedContractsArgs = {
   contracts: Record<string, TPredictionContract>
   opfOwnerAddress: string
   allowedPredConfig: Maybe<Array<string>>
-  blacklistPredConfig: Maybe<Array<string>>
 }
 
 export const filterAllowedContracts = ({
   contracts,
   opfOwnerAddress,
-  allowedPredConfig,
-  blacklistPredConfig
+  allowedPredConfig
 }: TFilterAllowedContractsArgs) => {
   const filteredContracts: Record<string, TPredictionContract> = {}
   const filterMethod = allowedPredConfig
     ? (contractKey: string) => allowedPredConfig.includes(contractKey)
     : (contractKey: string) => contracts[contractKey].owner === opfOwnerAddress
-  
-  const blacklistMethod = blacklistPredConfig
-    ? (contractKey: string) => blacklistPredConfig.includes(contractKey)
-    : (contractKey: string) => contracts[contractKey].owner === opfOwnerAddress
 
   Object.keys(contracts).forEach((contractKey) => {
-    if (filterMethod(contractKey) && !blacklistMethod(contractKey)) {
+    if (filterMethod(contractKey)) {
       filteredContracts[contractKey] = contracts[contractKey]
     }
   })
