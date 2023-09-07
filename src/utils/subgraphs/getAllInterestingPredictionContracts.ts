@@ -30,7 +30,7 @@ export const getAllInterestingPredictionContracts = async (
 ): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000
   let offset = 0
-  var contracts: Record<string, TPredictionContract> = {}
+  const contracts: Record<string, TPredictionContract> = {}
   const whileValue = true
   while (whileValue) {
     const variables = {
@@ -45,7 +45,7 @@ export const getAllInterestingPredictionContracts = async (
         subgraphURL
       )
 
-    var predictContracts = data?.predictContracts
+    const predictContracts = data?.predictContracts
 
     if (errors || !predictContracts || predictContracts.length === 0) {
       break
