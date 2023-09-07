@@ -66,7 +66,6 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
         setInitialData(data)
         isFirstDataEnter.current = true
       }
-      console.log(data)
       setCurrentChainTime(data[0].predictions[0].currentTs)
       setEpochData(data)
     })
