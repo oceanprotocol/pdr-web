@@ -1,11 +1,13 @@
 import { TokenData } from '@/utils/asset'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
+import { Pair } from '@/contexts/MarketPriceContext.types'
+import { getSpecificPairFromContextData } from '@/contexts/MarketPriceContextHelpers'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { getAssetPairPrice } from '@/utils/marketPrices'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
@@ -35,6 +37,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     price: 0,
     market: ''
   })
+  const { allPairsData } = useMarketPriceContext()
+
   const {
     tokenName,
     pairName,
@@ -48,43 +52,31 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     contract
   } = assetData
 
-  const getAssetPairPriceForRow = useCallback<
-    (args: {
-      tokenName: string
-      pairName: string
-      timestamp?: number
-      market: string
-    }) => Promise<string>
-  >(
-    ({ tokenName, pairName, timestamp }) =>
-      getAssetPairPrice({
-        assetPair: `${tokenName}${pairName}`,
-        timestamp: timestamp,
+  const loadData = useCallback<(pairsData: Array<Pair>) => void>(
+    (pairsData) => {
+      const pairSymbol = `${baseToken}${quoteToken}`
+
+      const price = getSpecificPairFromContextData({
+        allPairsData: pairsData,
+        pairSymbol: pairSymbol
+      })
+
+      const name = `${baseToken}-${quoteToken}`
+      setTokenData({
+        price: parseFloat(price),
+        name,
+        pair: pairSymbol,
+        symbol: baseToken,
         market: market
-      }),
-    []
+      })
+    },
+    [baseToken, market, quoteToken]
   )
 
-  const loadData = async () => {
-    const price = await getAssetPairPriceForRow({
-      tokenName,
-      pairName,
-      market
-    })
-    const pair = `${baseToken}${quoteToken}`
-    const name = `${baseToken}-${quoteToken}`
-    setTokenData({
-      price: parseFloat(price),
-      name,
-      pair,
-      symbol: baseToken,
-      market: market
-    })
-  }
-
   const renewPrice = useCallback<() => Promise<void>>(async () => {
-    loadData()
-  }, [tokenName, pairName, getAssetPairPriceForRow])
+    if (!allPairsData) return
+    loadData(allPairsData)
+  }, [allPairsData, loadData])
 
   useEffect(() => {
     const priceInterval = setInterval(() => {
@@ -110,8 +102,9 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   )
 
   useEffect(() => {
-    loadData()
-  }, [])
+    if (!allPairsData) return
+    loadData(allPairsData)
+  }, [allPairsData, loadData])
 
   if (!tokenData || !slotProps) return null
 

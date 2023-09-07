@@ -2,6 +2,7 @@ import {
   binancePriceEndpoint,
   krakenPriceEndpoint
 } from './endpoints/thirdPartyEndpoints'
+import { getSpecificPair } from './pairPrices'
 
 export async function getBinancePrice(
   symbol: string,
@@ -79,8 +80,8 @@ export const getAssetPairPrice = async ({
   switch (market) {
     case 'binance':
       return timestamp
-        ? getBinancePrice(assetPair, timestamp)
-        : getBinanceCurrentPrice(assetPair)
+        ? await getSpecificPair(assetPair, timestamp)
+        : await getSpecificPair(assetPair)
     case 'kraken':
       return timestamp
         ? getKrakenPrice(assetPair, timestamp)

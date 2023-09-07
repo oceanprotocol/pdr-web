@@ -1,5 +1,5 @@
+import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { useSocketContext } from '@/contexts/SocketContext'
-import { getAssetPairPrice } from '@/utils/marketPrices'
 import {
   compareSplittedNames,
   splitContractName
@@ -40,6 +40,13 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
+  const { fetchHistoricalPair } = useMarketPriceContext()
+  const [isFetching, setIsFetching] = useState<boolean>(false)
+
+  const isNextEpoch = useMemo<boolean>(
+    () => status === EEpochDisplayStatus.NextEpoch,
+    [status]
+  )
 
   const relatedPredictionIndex = useMemo(() => {
     switch (status) {
@@ -64,39 +71,40 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     : null
 
   useEffect(() => {
-    if (
-      status !== EEpochDisplayStatus.NextEpoch ||
-      !relatedData ||
-      relatedData.stake == 0
-    )
-      return
+    if (!isNextEpoch || !relatedData || relatedData.stake == 0) return
+
     if (!initialPrice) {
-      getAssetPairPrice({
-        assetPair: tokenName + pairName,
-        timestamp: epochStartTs,
-        market: market
-      }).then((p) => {
-        setInitialPrice(parseFloat(p))
-        setDelta(parseFloat(p) - price)
+      if (isFetching) return
+      setIsFetching(true)
+      fetchHistoricalPair(
+        tokenName + pairName,
+        epochStartTs - secondsPerEpoch
+      ).then((historicalPair) => {
+        if (!historicalPair) {
+          setIsFetching(false)
+          return
+        }
+        const startPrice = historicalPair[0].open
+        setInitialPrice(parseFloat(startPrice))
+        setDelta(parseFloat(startPrice) - price)
+        setIsFetching(false)
       })
     } else {
       setDelta((100 * (price - initialPrice)) / ((price + initialPrice) / 2))
     }
-  }, [price])
+  }, [price, isNextEpoch])
 
   const getHistoryEpochPriceDelta = async () => {
-    const [initialPrice, finalPrice] = await Promise.all([
-      getAssetPairPrice({
-        assetPair: tokenName + pairName,
-        timestamp: epochStartTs - secondsPerEpoch,
-        market: market
-      }),
-      getAssetPairPrice({
-        assetPair: tokenName + pairName,
-        timestamp: epochStartTs,
-        market: market
-      })
-    ])
+    const result = await fetchHistoricalPair(
+      tokenName + pairName,
+      epochStartTs - secondsPerEpoch
+    )
+
+    if (!result) return
+
+    const { open: initialPrice } = result[0]
+    const { close: finalPrice } = result[result.length - 1]
+
     setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
@@ -105,26 +113,18 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
-    if (
-      status === EEpochDisplayStatus.NextEpoch ||
-      !secondsPerEpoch ||
-      !epochStartTs
-    )
-      return
+    if (isNextEpoch || !secondsPerEpoch || !epochStartTs) return
     getHistoryEpochPriceDelta()
-  }, [relatedData, secondsPerEpoch, epochStartTs])
+  }, [relatedData, secondsPerEpoch, epochStartTs, isNextEpoch])
 
   return (
     <div
       className={styles.container}
       style={{
-        boxShadow:
-          status === EEpochDisplayStatus.NextEpoch
-            ? '0px 0px 3px 1px var(--dark-grey)'
-            : ''
+        boxShadow: isNextEpoch ? '0px 0px 3px 1px var(--dark-grey)' : ''
       }}
     >
-      {status === EEpochDisplayStatus.NextEpoch ? (
+      {isNextEpoch ? (
         <EpochStakedTokens
           stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
           totalStaked={
