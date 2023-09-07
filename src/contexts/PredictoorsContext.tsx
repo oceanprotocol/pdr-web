@@ -21,7 +21,8 @@ import {
   DeepNonNullable,
   calculatePredictionEpochs,
   isSapphireNetwork,
-  omit
+  omit,
+  sortObjectProperties
 } from '@/utils/utils'
 import { ethers } from 'ethers'
 import {
@@ -241,6 +242,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       address
     })
 
+    console.log(validSubscriptions)
+
     setSubscribedPredictoors(validSubscriptions)
   }, [address, checkAllContractsForSubscriptions, predictoorInstances])
 
@@ -295,6 +298,19 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         predictoorInstances: contractsResult,
         address
       })
+
+      console.log(validSubscriptions)
+
+      let subscribedPredictionAddresses = validSubscriptions.map(
+        (p) => p.address
+      )
+      currentConfig.predictionsOrder &&
+        subscribedPredictionAddresses.unshift(currentConfig.predictionsOrder[0])
+      console.log(subscribedPredictionAddresses)
+
+      console.log(
+        sortObjectProperties(subscribedPredictionAddresses, contracts)
+      )
 
       setSubscribedPredictoors(validSubscriptions)
     },
@@ -439,6 +455,17 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     if (!contracts) return
     initializeContracts(contracts, signer)
   }, [initializeContracts, contracts, signer])
+
+  useEffect(() => {
+    if (!contracts) return
+    let subscribedPredictionAddresses = subscribedPredictoors.map(
+      (p) => p.address
+    )
+    currentConfig.predictionsOrder &&
+      subscribedPredictionAddresses.unshift(currentConfig.predictionsOrder[0])
+
+    setContracts(sortObjectProperties(subscribedPredictionAddresses, contracts))
+  }, [subscribedPredictoors])
 
   useEffect(() => {
     if (subscribedPredictoors.length === 0) return

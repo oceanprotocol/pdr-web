@@ -1,5 +1,6 @@
 import { currentConfig } from '@/utils/appconstants'
 import { graphqlClientInstance } from '../graphqlClient'
+import { sortObjectProperties } from '../utils'
 import {
   NftKeys,
   TGetPredictContractsQueryResult,
@@ -31,7 +32,7 @@ export const getAllInterestingPredictionContracts = async (
 ): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000
   let offset = 0
-  const contracts: Record<string, TPredictionContract> = {}
+  var contracts: Record<string, TPredictionContract> = {}
   const whileValue = true
   while (whileValue) {
     const variables = {
@@ -51,34 +52,6 @@ export const getAllInterestingPredictionContracts = async (
     if (errors || !predictContracts || predictContracts.length === 0) {
       break
     }
-
-    //If given a specific order in config, sort the contracts to follow that
-    currentConfig.predictionsOrder &&
-      predictContracts.sort((a, b) => {
-        const indexA = currentConfig.predictionsOrder
-          ? currentConfig.predictionsOrder?.indexOf(a.id)
-          : -1
-        const indexB = currentConfig.predictionsOrder
-          ? currentConfig.predictionsOrder?.indexOf(b.id)
-          : -1
-
-        // If both ids are in the predefined list, compare their positions
-        if (indexA !== -1 && indexB !== -1) {
-          return indexA - indexB
-        }
-
-        // If one id is in the predefined list, it comes first
-        if (indexA !== -1) {
-          return -1
-        }
-
-        if (indexB !== -1) {
-          return 1
-        }
-
-        // If neither id is in the predefined list, maintain original order
-        return 0
-      })
 
     for (const item of predictContracts) {
       let market: string = ''
@@ -115,6 +88,13 @@ export const getAllInterestingPredictionContracts = async (
         paymentCollector: item.token.paymentCollector,
         publishMarketFeeToken: item.token.publishMarketFeeToken
       }
+    }
+
+    if (currentConfig.opfProvidedPredictions) {
+      contracts = sortObjectProperties(
+        currentConfig.opfProvidedPredictions,
+        contracts
+      )
     }
 
     offset += chunkSize
