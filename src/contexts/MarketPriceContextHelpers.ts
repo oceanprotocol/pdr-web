@@ -1,12 +1,44 @@
 import { ElementOf, ValueOfMap } from '@/utils/utils'
 import { TMarketPriceContext } from './MarketPriceContext.types'
 
-export const getSpecificPairFromContextData = (args: {
+export type TGetSpecificPairFromContextDataArgs = {
   allPairsData: TMarketPriceContext['allPairsData']
   pairSymbol: string
-}): string => {
-  const { allPairsData, pairSymbol } = args
-  return allPairsData?.find((pair) => pair.symbol === pairSymbol)?.price || '0'
+}
+
+/**
+ * @description
+ * Get the price of a specific pair from the context data
+ */
+export const getSpecificPairFromContextData = ({
+  allPairsData,
+  pairSymbol
+}: TGetSpecificPairFromContextDataArgs): string =>
+  allPairsData?.find((pair) => pair.symbol === pairSymbol)?.price || '0'
+
+export type TGetFromTheHistoricalPairsCacheArgs = {
+  historicalPairsCache: TMarketPriceContext['historicalPairsCache']
+  pairSymbol: string
+  timestamp: number
+}
+
+/**
+ * @description
+ * Get the cached value from the historicalPairsCache
+ */
+export const getFromTheHistoricalPairsCache = ({
+  historicalPairsCache,
+  pairSymbol,
+  timestamp
+}: TGetFromTheHistoricalPairsCacheArgs) => {
+  console.log('historicalPairsCache', historicalPairsCache)
+  const cacheKey = `${pairSymbol}_${timestamp}`
+  const cachedValue = historicalPairsCache.get(cacheKey)
+
+  if (cachedValue) {
+    return cachedValue
+  }
+  return null
 }
 
 export const convertArrayToHistoricalPair = (

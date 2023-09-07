@@ -29,9 +29,8 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
   const [historicalPairsCache, setHistoricalPairsCache] = useState<
     Map<string, Array<HistoricalPair>>
   >(new Map())
-  const [historicalTimestamps, setHistoricalTimestamps] = useState<number[]>([])
   const lastFetchTimestampRef = useRef<number | null>(null)
-
+  const historicalTimestampsRef = useRef<number[]>([])
   /**
    * Fetches all pairs from Binance API and stores them in the state.
    * @function
@@ -51,13 +50,13 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
    * @function
    * @returns {boolean}
    */
-  const shouldFetchAgain = (): boolean => {
+  const shouldFetchAgain = useCallback((): boolean => {
     if (!lastFetchTimestampRef.current) return true
 
     const differenceInSeconds =
       (Date.now() - lastFetchTimestampRef.current) / 1000
-    return differenceInSeconds > 60
-  }
+    return differenceInSeconds > 50
+  }, [])
 
   /**
    * Deletes cached historical pairs that are older than 15 minutes.
@@ -66,12 +65,13 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
   const clearOldCache = useCallback((): void => {
     const fifteenMinutesInMilliseconds = 15 * 60 * 1000
     const thresholdTime = Date.now() - fifteenMinutesInMilliseconds
-    const tempHistoricalTimestamps = [...historicalTimestamps]
+    const tempHistoricalTimestamps = [...historicalTimestampsRef.current].sort()
     const tempHistoricalPairsCache = new Map(historicalPairsCache)
+    const now = Date.now()
 
     while (
       tempHistoricalTimestamps.length &&
-      tempHistoricalTimestamps[0] * 1000 < thresholdTime
+      tempHistoricalTimestamps[0] * 1000 < now - thresholdTime
     ) {
       const oldTimestamp = tempHistoricalTimestamps.shift()
       if (oldTimestamp) {
@@ -84,9 +84,11 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
         }
       }
     }
+
+    if (tempHistoricalPairsCache.size === historicalPairsCache.size) return
     setHistoricalPairsCache(tempHistoricalPairsCache)
-    setHistoricalTimestamps(tempHistoricalTimestamps)
-  }, [historicalTimestamps, historicalPairsCache])
+    historicalTimestampsRef.current = tempHistoricalTimestamps
+  }, [historicalPairsCache])
 
   /**
    * Fetches historical pair from Binance API and stores it in the state.
@@ -122,19 +124,15 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
       setHistoricalPairsCache((prev) =>
         new Map(prev).set(cacheKey, retrievedData)
       )
-      setHistoricalTimestamps((prev) =>
-        [...prev, timestamp].sort((a, b) => a - b)
-      )
 
-      clearOldCache()
+      historicalTimestampsRef.current.push(timestamp)
+
+      setTimeout(() => {
+        clearOldCache()
+      }, 1000)
       return retrievedData
     },
-    [
-      historicalPairsCache,
-      clearOldCache,
-      setHistoricalPairsCache,
-      setHistoricalTimestamps
-    ]
+    [historicalPairsCache, clearOldCache, setHistoricalPairsCache]
   )
 
   /**
