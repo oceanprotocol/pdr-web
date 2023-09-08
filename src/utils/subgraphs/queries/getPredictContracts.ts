@@ -32,6 +32,10 @@ export const getPredictContracts = `
     }
   }`
 
+// MARKET = Binance, Kraken
+// INTERVAL = 5m?? string? in seconds - 300?
+// BASE = XRP
+// QUOTE = USDT
 export enum NftKeys {
   MARKET = '0xf7e3126f87228afb82c9b18537eed25aaeb8171a78814781c26ed2cfeff27e69',
   INTERVAL = '0x49435d2ff85f9f3594e40e887943d562765d026d50b7383e76891f8190bff4c9',

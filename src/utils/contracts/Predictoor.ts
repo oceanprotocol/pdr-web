@@ -13,6 +13,7 @@ import {
 } from './ContractReturnTypes'
 import FixedRateExchange from './FixedRateExchange'
 import Token from './Token'
+import { calculatePrediction } from './helpers/calculatePrediction'
 
 export type TPredictoorArgs = {
   address: string
@@ -21,6 +22,15 @@ export type TPredictoorArgs = {
   signer: ethers.providers.JsonRpcSigner
   isSapphire?: boolean
 }
+
+export type PredictionResult = {
+  nom: string;
+  denom: string;
+  confidence: number;
+  dir: number;
+  stake: number;
+};
+
 // Predictoor class
 class Predictoor {
   public instance: ethers.Contract | null = null
@@ -41,8 +51,8 @@ class Predictoor {
   // Initialize method
   async init() {
     if (!this.signer) return
-    //x1 Create contract instance
 
+    // Create contract instance
     this.instance = new ethers.Contract(
       this.address,
       ERC20Template3ABI,
@@ -352,15 +362,8 @@ class Predictoor {
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
 
-        let confidence: number = parseFloat(nominator) / parseFloat(denominator)
-        let dir: number = confidence >= 0.5 ? 1 : 0
-
-        return {
-          nom: nominator,
-          denom: denominator,
-          dir: dir,
-          stake: parseFloat(ethers.utils.formatUnits(denom, 18))
-        }
+        const result:PredictionResult = calculatePrediction(nominator, denominator)
+        return result
       }
 
       return null

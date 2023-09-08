@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { TokenData } from '../utils/asset'
 import { EpochPrice } from './EpochDetails/EpochPrice'
 
-export default function Asset({
+export default function Price({
   assetData
 }: {
   assetData: TokenData | undefined
