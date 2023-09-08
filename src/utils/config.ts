@@ -14,6 +14,7 @@ export type TRuntimeConfig = Record<
     }>
     opfProvidedPredictions: Array<string>
     allowedPredictions: Maybe<Array<string>>
+    blacklistedPredictions: Maybe<Array<string>>
     opfOwnerAddress: string
   }
 >
@@ -33,6 +34,9 @@ export const config: TRuntimeConfig = {
     ],
     opfProvidedPredictions: ['0xa852af820eacc7f6eb526bc07ebb23057e26063b'],
     allowedPredictions: null,
+    blacklistedPredictions: [
+      '0x8de84c5801a6bfac1c70b966836b8e41630912e6'
+    ],
     opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
   production: {
@@ -50,6 +54,7 @@ export const config: TRuntimeConfig = {
     ],
     opfProvidedPredictions: [],
     allowedPredictions: null,
+    blacklistedPredictions: [],
     opfOwnerAddress: ''
   },
   barge: {
@@ -77,6 +82,7 @@ export const config: TRuntimeConfig = {
     ],
     opfProvidedPredictions: ['0x4e7eaeb4ab569e82af8c5fa9fa9191a9563ca35c'],
     allowedPredictions: null,
+    blacklistedPredictions: [],
     opfOwnerAddress: '0xe2dd09d719da89e5a3d0f2549c7e24566e947260'
   }
 }

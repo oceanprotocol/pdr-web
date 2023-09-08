@@ -24,22 +24,24 @@ export const TableRowWrapper: React.FC<TTableRowWrapperProps> = ({
   ...rest
 }) => {
   return (
-    <tr {...rest}>
-      {React.Children.map(children, (child: any, index) => {
-        const isHeader = cellType === 'th'
-        const cellKeyIndex = {
-          key: `${isHeader ? 'header' : 'cell'}${index}`
-        }
-        return React.createElement(
-          cellType,
-          {
-            ...cellProps,
-            ...cellKeyIndex,
-            id: child?.props?.id === 'asset' ? styles.alignStart : ''
-          },
-          child
-        )
-      })}
-    </tr>
+    children && (
+      <tr {...rest}>
+        {React.Children.map(children, (child: any, index) => {
+          const isHeader = cellType === 'th'
+          const cellKeyIndex = {
+            key: `${isHeader ? 'header' : 'cell'}${index}`
+          }
+          return React.createElement(
+            cellType,
+            {
+              ...cellProps,
+              ...cellKeyIndex,
+              id: child?.props?.id === 'asset' ? styles.alignStart : ''
+            },
+            child
+          )
+        })}
+      </tr>
+    )
   )
 }

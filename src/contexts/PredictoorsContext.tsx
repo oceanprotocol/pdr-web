@@ -83,7 +83,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
-  const [currentEpoch, setCurrentEpoch] = useState<number>(new Date().getTime())
+  const [currentEpoch, setCurrentEpoch] = useState<number>(0)
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
 
   const [predictoorInstances, setPredictorInstances] = useState<
@@ -260,13 +260,13 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         tempSigner = randomSigner as any as ethers.providers.JsonRpcSigner
       }
 
-      let cEpoch: number
-      let sPerEpoch: number
+      var cEpoch: number
+      var sPerEpoch: number
 
       const contractsToWatch = Object.values(contracts)
 
       const contractsResult = await Promise.all(
-        contractsToWatch.map(async (contract) => {
+        contractsToWatch.map(async (contract, key) => {
           const predictoor = new Predictoor(
             contract.address,
             networkProvider.getProvider(),
@@ -275,7 +275,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
             isSapphireNetwork()
           )
           await predictoor.init()
-          if (!sPerEpoch) {
+          if (key == 0) {
             cEpoch = await predictoor.getCurrentEpoch()
             sPerEpoch = await predictoor.getSecondsPerEpoch()
             setCurrentEpoch(cEpoch)
@@ -333,107 +333,122 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     predictedEpochs.current[contractAddress].push(item)
   }, [])
 
-  const addChainListener = useCallback(async () => {
-    if (!setEpochData || !address || !contracts || !signer) return
-    const SPE = await subscribedPredictoors[0]?.getSecondsPerEpoch()
-    const provider = networkProvider.getProvider()
-    provider.on('block', async (blockNumber) => {
-      const block = await provider.getBlock(blockNumber)
-      const currentTs = block.timestamp
-      const newCurrentEpoch = Math.floor(currentTs / SPE)
-      const authorizationData =
-        authorizationDataInstance.current?.getAuthorizationData()
-      if (
-        currentTs - lastCheckedEpoch.current * SPE <
-          SPE + PREDICTION_FETCH_EPOCHS_DELAY ||
-        !authorizationData
-      )
-        return
-      lastCheckedEpoch.current = newCurrentEpoch
-      const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
+  const addChainListener = useCallback(
+    async (secondsPerEpoch: number, currentEpoch: number) => {
+      if (!predictoorInstances || currentEpoch == 0) return
+      const SPE = secondsPerEpoch
+      const provider = networkProvider.getProvider()
+      let cEpoch = currentEpoch
+      provider.on('block', async (blockNumber) => {
+        const block = await provider.getBlock(blockNumber)
+        const currentTs = block.timestamp
+        const newCurrentEpoch = Math.floor(currentTs / SPE)
+        if (
+          currentTs - lastCheckedEpoch.current * SPE <
+          SPE + PREDICTION_FETCH_EPOCHS_DELAY
+        )
+          return
 
-      const newEpochs = detectNewEpochs({
-        subscribedPredictoors,
-        predictionEpochs,
-        predictedEpochs: predictedEpochs.current
-      })
-
-      const subscribedContractAddresses = subscribedPredictoors.map(
-        (contract) => contract.address
-      )
-
-      const cachedValues = subscribedContractAddresses.flatMap(
-        (contractAddress) => {
-          const cachedValue = getPredictedEpochsByContract(contractAddress)
-          return cachedValue.map((item) => {
-            return {
-              ...item,
-              contractAddress
-            }
-          })
+        if (currentTs > cEpoch + SPE) {
+          cEpoch = newCurrentEpoch * SPE
+          setCurrentEpoch(cEpoch)
         }
-      )
 
-      if (currentTs > currentEpoch + secondsPerEpoch) {
-        setCurrentEpoch(newCurrentEpoch * secondsPerEpoch)
-      }
+        const authorizationData =
+          authorizationDataInstance.current?.getAuthorizationData()
 
-      getMultiplePredictions({
-        currentTs: currentTs,
-        epochs: newEpochs,
-        contracts: subscribedPredictoors,
-        userWallet: signer,
-        registerPrediction: addItemToPredictedEpochs,
-        authorizationData
-      }).then((result) => {
-        subscribedPredictoors.forEach((contract) => {
-          const pickedResults = result.filter(
-            (item) => item !== null && item.contractAddress === contract.address
-          ) as DeepNonNullable<Awaited<TGetMultiplePredictionsResult>>
+        if (
+          subscribedPredictoors.length === 0 ||
+          !address ||
+          !signer ||
+          !authorizationData
+        )
+          return
 
-          //get the epoch numbers from pickedResults
-          const pickedResultsEpochs = pickedResults.map((item) => item?.epoch)
+        lastCheckedEpoch.current = newCurrentEpoch
+        const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
 
-          //clear the same epoch data from pickedCache
-          const pickedCaches = cachedValues.filter(
-            (cachedValue) =>
-              cachedValue.contractAddress === contract.address &&
-              !pickedResultsEpochs.includes(cachedValue.epoch)
-          )
+        const newEpochs = detectNewEpochs({
+          subscribedPredictoors,
+          predictionEpochs,
+          predictedEpochs: predictedEpochs.current
+        })
 
-          const items = [...pickedCaches, ...pickedResults]
+        const subscribedContractAddresses = subscribedPredictoors.map(
+          (contract) => contract.address
+        )
 
-          const dataPredictions = items.map((item) =>
-            omit(item, ['contractAddress'])
-          )
-
-          const blockchainFeedData: any = {
-            contractInfo: contracts[contract.address],
-            predictions: dataPredictions
+        const cachedValues = subscribedContractAddresses.flatMap(
+          (contractAddress) => {
+            const cachedValue = getPredictedEpochsByContract(contractAddress)
+            return cachedValue.map((item) => {
+              return {
+                ...item,
+                contractAddress
+              }
+            })
           }
+        )
 
-          setEpochData((prev) => {
-            if (!prev) return [blockchainFeedData]
+        getMultiplePredictions({
+          currentTs: currentTs,
+          epochs: newEpochs,
+          contracts: subscribedPredictoors,
+          userWallet: signer,
+          registerPrediction: addItemToPredictedEpochs,
+          authorizationData
+        }).then((result) => {
+          subscribedPredictoors.forEach((contract) => {
+            const pickedResults = result.filter(
+              (item) =>
+                item !== null && item.contractAddress === contract.address
+            ) as DeepNonNullable<Awaited<TGetMultiplePredictionsResult>>
 
-            const prevItems = prev.filter(
-              (item) => item.contractInfo.address !== contract.address
+            //get the epoch numbers from pickedResults
+            const pickedResultsEpochs = pickedResults.map((item) => item?.epoch)
+
+            //clear the same epoch data from pickedCache
+            const pickedCaches = cachedValues.filter(
+              (cachedValue) =>
+                cachedValue.contractAddress === contract.address &&
+                !pickedResultsEpochs.includes(cachedValue.epoch)
             )
 
-            return [...prevItems, blockchainFeedData]
+            const items = [...pickedCaches, ...pickedResults]
+
+            const dataPredictions = items.map((item) =>
+              omit(item, ['contractAddress'])
+            )
+
+            const blockchainFeedData: any = {
+              contractInfo: contracts ? contracts[contract.address] : null,
+              predictions: dataPredictions
+            }
+
+            setEpochData((prev) => {
+              if (!prev) return [blockchainFeedData]
+
+              const prevItems = prev.filter(
+                (item) => item.contractInfo.address !== contract.address
+              )
+
+              return [...prevItems, blockchainFeedData]
+            })
           })
         })
+        //await contract.getAggPredval(epoch, predictoorWallet)
       })
-      //await contract.getAggPredval(epoch, predictoorWallet)
-    })
-  }, [
-    setEpochData,
-    address,
-    contracts,
-    subscribedPredictoors,
-    getPredictedEpochsByContract,
-    addItemToPredictedEpochs,
-    signer
-  ])
+    },
+    [
+      setEpochData,
+      address,
+      contracts,
+      subscribedPredictoors.length,
+      getPredictedEpochsByContract,
+      addItemToPredictedEpochs,
+      signer
+    ]
+  )
 
   useEffect(() => {
     if (!contracts) return
@@ -441,16 +456,29 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   }, [initializeContracts, contracts, signer])
 
   useEffect(() => {
-    if (subscribedPredictoors.length === 0) return
+    if (
+      predictoorInstances.length == 0 ||
+      secondsPerEpoch == 0 ||
+      currentEpoch == 0
+    )
+      return
     const provider = networkProvider.getProvider()
-    addChainListener()
+    addChainListener(secondsPerEpoch, currentEpoch)
     return () => {
       provider.removeAllListeners('block')
     }
-  }, [subscribedPredictoors, addChainListener])
+  }, [
+    predictoorInstances,
+    secondsPerEpoch,
+    currentEpoch,
+    subscribedPredictoors
+  ])
 
   useEffect(() => {
-    getAllInterestingPredictionContracts(currentConfig.subgraph).then(
+    getAllInterestingPredictionContracts(
+      currentConfig.subgraph,
+      currentConfig.blacklistedPredictions
+    ).then(
       (contracts) => {
         const filteredContracts = filterAllowedContracts({
           contracts,
