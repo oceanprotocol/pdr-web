@@ -162,7 +162,6 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
             {tableColumns.map((item: any) => (
               <div
                 className={styles.assetHeaderContainer}
-                id={item.accessor}
                 key={`assetHeader${item.accessor}`}
               >
                 <span>{item.Header}</span>
