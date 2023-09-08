@@ -1,13 +1,14 @@
 import { ethers } from 'ethers'
 import networksData from '../metadata/networks.json'
 
-type NetworkNames = 'barge' | 'staging' | 'mainnet'
+type NetworkNames = 'barge' | 'development' | 'staging' | 'mainnet'
 
 type NetworkConfig = Record<NetworkNames, string>
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
   barge: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://localhost:8545',
+  development: 'https://development.oceandao.org',
   staging: 'https://testnet.sapphire.oasis.dev',
   mainnet: ''
 }
