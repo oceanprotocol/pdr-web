@@ -65,7 +65,6 @@
 .oneliner {
   width: 100%;
   font-size: var(--font-size-large);
-  font-weight: bold;
 }
 
 @media screen and (max-width: 600px) {
