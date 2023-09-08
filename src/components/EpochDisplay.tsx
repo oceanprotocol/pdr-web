@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
 import { EpochPrice } from './EpochDetails/EpochPrice'
+import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
 import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
@@ -118,8 +119,27 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   return (
     <div className={styles.container}>
-      <EpochPrice price={finalPrice} delta={delta} />
-
+      {status !== EEpochDisplayStatus.NextEpoch && (
+        <EpochPrice price={finalPrice} delta={delta} />
+      )}
+      {status === EEpochDisplayStatus.NextEpoch ? (
+        subscription !== SubscriptionStatus.INACTIVE ? (
+          <EpochStakedTokens
+            stakedUp={
+              relatedData?.nom ? parseFloat(relatedData?.nom) : undefined
+            }
+            totalStaked={
+              relatedData?.denom ? parseFloat(relatedData?.denom) : undefined
+            }
+            direction={relatedData?.dir}
+            showLabel
+          />
+        ) : (
+          '-'
+        )
+      ) : (
+        ''
+      )}
       {subscription !== SubscriptionStatus.INACTIVE && (
         <EpochPrediction
           stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}

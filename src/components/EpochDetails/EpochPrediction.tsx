@@ -44,7 +44,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
             <img
               className={styles.predictionArrow}
               src={`/assets/icons/${
-                direction == 1 ? 'arrowUp' : 'arrowDown'
+                direction == 1 ? `arrowUp` : 'arrowDown'
               }Colored.png`}
             />
           )}
