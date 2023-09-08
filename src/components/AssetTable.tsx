@@ -168,7 +168,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
                 <Tooltip
                   selector={item.accessor}
                   text={
-                    tooltipsText[item.Header as keyof typeof tooltipOptions]
+                    tooltipsText[item.accessor as keyof typeof tooltipOptions]
                   }
                 />
               </div>
