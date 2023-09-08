@@ -19,3 +19,11 @@
 .text {
   margin: 0 calc(var(--spacer) / 4);
 }
+
+@media screen and (max-width: 600px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    padding: calc(var(--spacer) / 10) 0;
+  }
+}
