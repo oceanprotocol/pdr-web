@@ -7,16 +7,15 @@ export const tooltipsText = {
 
   -**market**: source from where the price it's fetched.
   `,
-  next: `Consult the predicted price direction, confidence and staked amount, then open your position right when the timer runs out.`,
-  live: `Live price and direction compared to last column price.
+  live: `Live price and direction compared to previous prediction time price.
   
   Price is refreshed every 10 seconds.
   `,
-  history: `Price at the specified time inside the column header with direction compared to last column price.
+  history: `Price at the specified time with direction compared to previous prediction time price.
 
-  If subscription, the prediction data it's going to be displayed.
+  If subscribed, the prediction data it's going to be displayed.
   `,
-  prediction: `Predicted price direction for the time specified in the column header.
+  prediction: `Predicted price direction for the time specified time.
   
   Check OCEAN staked and stake directions for a higher confidence.
   `,
