@@ -121,7 +121,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       contract: contract.address
     })
 
-    accuracy = accuracy > 0.0 ? parseFloat(accuracy.toFixed(1)) : 0.0;
     setTokenAccuracy(accuracy)
   }
 

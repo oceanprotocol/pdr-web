@@ -9,7 +9,7 @@ export default function Accuracy({
     <div className={styles.container}>
       <span
         className={styles.accuracy}
-      >{`${accuracy.toLocaleString()}%`}</span>
+      >{`${accuracy > 0.0 ? parseFloat(accuracy.toFixed(1)) : 0.0}%`}</span>
     </div>
   )
 }
