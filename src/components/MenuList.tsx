@@ -4,7 +4,7 @@ export const MenuList: React.FC = () => (
   <ul className={styles.list}>
     <li>
       <a target="_blank" href="https://github.com/oceanprotocol/pdr-backend/">
-        py SDK
+        Run bots
       </a>
     </li>
     <li>
