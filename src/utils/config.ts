@@ -32,10 +32,11 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    opfProvidedPredictions: ['0xa852af820eacc7f6eb526bc07ebb23057e26063b'],
+    opfProvidedPredictions: ['0xe680c56153a00dd28cfe68ed56537c9392f5705a'],
     allowedPredictions: null,
     blacklistedPredictions: [
-      '0x8de84c5801a6bfac1c70b966836b8e41630912e6'
+      '0x8de84c5801a6bfac1c70b966836b8e41630912e6',
+      '0xa852af820eacc7f6eb526bc07ebb23057e26063b'
     ],
     opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
