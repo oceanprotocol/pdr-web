@@ -1,4 +1,4 @@
-export const SECONDS_IN_24_HOURS = 86400
+export const SECONDS_IN_24_HOURS = 7200
 
 export const GET_PREDICT_CONTRACTS = `
   query getContracts($assetIds: [String!]!) {
