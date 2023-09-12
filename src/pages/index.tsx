@@ -1,6 +1,7 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
 import Balance from '@/components/Balance'
 import Banner from '@/components/Banner'
+import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
@@ -28,6 +29,7 @@ export default function Home() {
           <Balance />
         </div>
         <AssetsContainer />
+        <Footer />
       </main>
     </>
   )
