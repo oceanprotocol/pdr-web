@@ -21,7 +21,12 @@ export default function Home() {
       <Banner />
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
-        <Balance />
+        <div className={styles.description}>
+          <p className={styles.oneliner}>
+            Accurate price predictions for your favorite crypto assets
+          </p>
+          <Balance />
+        </div>
         <AssetsContainer />
       </main>
     </>
