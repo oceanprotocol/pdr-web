@@ -21,7 +21,7 @@ if (typeof window !== 'undefined') {
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug()
     },
-    capture_pageview: false // Disable automatic pageview capture, as we capture manually
+    capture_pageview: true // Disable automatic pageview capture, as we capture manually
   })
 }
 
@@ -30,8 +30,6 @@ function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     // Track page views
-    console.log("posthog:", posthog)
-
     const handleRouteChange = () => posthog?.capture('$pageview')
     router.events.on('routeChangeComplete', handleRouteChange)
 
