@@ -9,6 +9,7 @@ import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
 import { EpochPrice } from './EpochDetails/EpochPrice'
 import { EpochStakedTokens } from './EpochDetails/EpochStakedTokens'
+import { SubscriptionStatus } from './Subscription'
 
 //TODO: Fix Eslint
 export enum EEpochDisplayStatus {
@@ -23,6 +24,7 @@ export type TEpochDisplayProps = {
   market: string
   tokenName: string
   pairName: string
+  subscription: SubscriptionStatus
   epochStartTs: number
   secondsPerEpoch: number
 }
@@ -33,6 +35,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   market,
   tokenName,
   pairName,
+  subscription,
   epochStartTs,
   secondsPerEpoch
 }) => {
@@ -115,35 +118,38 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }, [relatedData, secondsPerEpoch, epochStartTs])
 
   return (
-    <div
-      className={styles.container}
-      style={{
-        boxShadow:
-          status === EEpochDisplayStatus.NextEpoch
-            ? '0px 0px 3px 1px var(--dark-grey)'
-            : ''
-      }}
-    >
-      {status === EEpochDisplayStatus.NextEpoch ? (
-        <EpochStakedTokens
-          stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
-          totalStaked={
-            relatedData?.denom ? parseFloat(relatedData?.denom) : undefined
-          }
-          direction={relatedData?.dir}
-          showLabel
-        />
-      ) : (
+    <div className={styles.container}>
+      {status !== EEpochDisplayStatus.NextEpoch && (
         <EpochPrice price={finalPrice} delta={delta} />
       )}
-      <EpochPrediction
-        stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
-        totalStaked={
-          relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
-        }
-        status={status}
-        direction={relatedData?.dir}
-      />
+      {status === EEpochDisplayStatus.NextEpoch ? (
+        subscription !== SubscriptionStatus.INACTIVE ? (
+          <EpochStakedTokens
+            stakedUp={
+              relatedData?.nom ? parseFloat(relatedData?.nom) : undefined
+            }
+            totalStaked={
+              relatedData?.denom ? parseFloat(relatedData?.denom) : undefined
+            }
+            direction={relatedData?.dir}
+            showLabel
+          />
+        ) : (
+          '-'
+        )
+      ) : (
+        ''
+      )}
+      {subscription !== SubscriptionStatus.INACTIVE && (
+        <EpochPrediction
+          stakedUp={relatedData?.nom ? parseFloat(relatedData?.nom) : undefined}
+          totalStaked={
+            relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
+          }
+          status={status}
+          direction={relatedData?.dir}
+        />
+      )}
     </div>
   )
 }
