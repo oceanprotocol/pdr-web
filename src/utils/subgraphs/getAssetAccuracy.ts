@@ -124,9 +124,9 @@ export const calculateAverageAccuracy = async(
     }
 
     // Calculate average accuracy
-    console.log(`Total slots for ${assetId}: ${totalSlots}`);
-    console.log(`Correct predictions for ${assetId}: ${correctPredictions}`);
-    console.log(`Average accuracy for ${assetId}: ${(correctPredictions / totalSlots) * 100}%`);
+    // console.log(`Total slots for ${assetId}: ${totalSlots}`);
+    // console.log(`Correct predictions for ${assetId}: ${correctPredictions}`);
+    // console.log(`Average accuracy for ${assetId}: ${(correctPredictions / totalSlots) * 100}%`);
     const averageAccuracy = (correctPredictions / totalSlots) * 100;
     contractAccuracy[assetId] = averageAccuracy;
   }
