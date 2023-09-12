@@ -1,30 +1,33 @@
 export const tooltipsText = {
-  Asset: `### Predicted asset details containing:
+  asset: `### Predicted asset details containing:
 
-  -**market**: source from where the price it's fetched
+  -**timeframe**: time between predictions(5m, 1h).
 
-  -**timeframe**: time between predictions(5m, 1h etc)
+  -**token pair**: composed of main token and base token(BTC, TUSD).
 
-  -**token pair**: composed of main token and base token(BTC/USDT)
+  -**market**: source from where the price it's fetched.
   `,
-  Price: `**Live price** of the token represented in base token, refreshing every 10s`,
-  Next: `Consult the predicted price direction, confidence and staked amount, then open your position right when the timer runs out.`,
-  Live: `Do not enter the prediction that's live because valu it's not accurate anymore.
-
-  Check the live price fluctuation between predicted and actual value.
+  live: `Live price and direction compared to previous prediction time price.
+  
+  Price is refreshed every 10 seconds.
   `,
-  History: `Result of the last predictions in order to have some accuracy data.
+  history: `Price at the specified time with direction compared to previous prediction time price.
 
-  If footer color it's the same as prediction color, prediction was accurate.
+  If subscribed, the prediction data it's going to be displayed.
   `,
-  Subscription: `Purchase a subscription in order to have access to the predictions`
+  prediction: `Predicted price direction for the time specified time.
+  
+  Check OCEAN staked and stake directions for a higher confidence.
+  `,
+  accuracy: `Percentage of accurate predicitons over the last 24 hours.`,
+  subscription: `Purchase a subscription in order to have access to price direction predictions.`
 }
 
 export const tooltipOptions = {
-  Asset: 'Asset',
-  Price: 'Price',
-  Next: 'Next',
-  Live: 'Live',
-  History: 'History',
-  Subscription: 'Subscription'
+  asset: 'Asset',
+  prediction: 'prediction',
+  live: 'Live',
+  history: 'History',
+  accuracy: 'Accuracy',
+  subscription: 'Subscription'
 }

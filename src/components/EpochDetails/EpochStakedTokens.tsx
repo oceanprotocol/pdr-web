@@ -1,4 +1,3 @@
-import { useMediaQuery } from '@react-hook/media-query'
 import styles from '../../styles/Epoch.module.css'
 import { SubscriptionStatus } from '../Subscription'
 
@@ -16,7 +15,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
   direction,
   showLabel
 }) => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const prefersDarkMode = false //useMediaQuery('(prefers-color-scheme: dark)')
   return !showLabel ? (
     <div className={styles.stekesContainer}>
       <div className={styles.stake}>
