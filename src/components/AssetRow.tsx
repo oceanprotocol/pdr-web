@@ -13,7 +13,7 @@ import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 import Price from './Price'
-import Subscription, { SubscriptionStatus } from './Subscription'
+import Subscription from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -163,9 +163,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   return (
     <TableRowWrapper
-      className={`${styles.tableRow} ${
-        subscription == SubscriptionStatus.INACTIVE && styles.inactiveRow
-      }`}
+      className={styles.tableRow}
       cellProps={{
         className: styles.tableRowCell
       }}
@@ -175,6 +173,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         status={EEpochDisplayStatus.PastEpoch}
         price={tokenData.price}
         {...slotProps}
+        subscription={subscription}
         epochStartTs={currentEpoch - secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
       />
@@ -183,6 +182,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         price={tokenData.price}
         {...slotProps}
         epochStartTs={currentEpoch}
+        subscription={subscription}
         secondsPerEpoch={secondsPerEpoch}
       />
       <Price assetData={tokenData} />
@@ -190,6 +190,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         status={EEpochDisplayStatus.NextEpoch}
         price={tokenData.price}
         {...slotProps}
+        subscription={subscription}
         epochStartTs={currentEpoch + secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
       />

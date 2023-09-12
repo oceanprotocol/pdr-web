@@ -15,10 +15,6 @@
   font-size: var(--font-size-mini);
 }
 
-.stakeText {
-  color: black;
-}
-
 .tokenImage {
   height: 8px;
   margin-right: 2px;
@@ -55,7 +51,6 @@
 }
 
 .predictionText {
-  color: black;
   font-size: var(--font-size-small);
 }
 
@@ -68,7 +63,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: black;
   font-size: var(--font-size-mini);
 }
 
