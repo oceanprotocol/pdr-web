@@ -1,9 +1,9 @@
-import { ganache, oasis } from '@/metadata/networksConfig'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { configureChains, createConfig } from 'wagmi'
+import { networkProvider } from './networkProvider'
 
 const w3mProjectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
-const chains = [ganache, oasis]
+const chains = [networkProvider.getChainInfo()]
 
 const { publicClient } = configureChains(chains, [
   w3mProvider({ projectId: w3mProjectId })
