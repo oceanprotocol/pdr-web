@@ -14,15 +14,23 @@ import { PostHogProvider } from 'posthog-js/react'
 import { useEffect } from 'react'
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY ? process.env.NEXT_PUBLIC_POSTHOG_KEY : "", {
-    api_host: 'https://eu.posthog.com',
-    // Enable debug mode in development
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug()
-    },
-    capture_pageview: true // Disable automatic pageview capture, as we capture manually
-  })
+if (
+  typeof window !== 'undefined' &&
+  process.env.NEXT_PUBLIC_ENV === 'staging'
+) {
+  posthog.init(
+    process.env.NEXT_PUBLIC_POSTHOG_KEY
+      ? process.env.NEXT_PUBLIC_POSTHOG_KEY
+      : '',
+    {
+      api_host: 'https://eu.posthog.com',
+      // Enable debug mode in development
+      loaded: (posthog) => {
+        if (process.env.NODE_ENV === 'development') posthog.debug()
+      },
+      capture_pageview: true // Disable automatic pageview capture, as we capture manually
+    }
+  )
 }
 
 function App({ Component, pageProps }: AppProps) {
@@ -52,7 +60,7 @@ function App({ Component, pageProps }: AppProps) {
           </UserProvider>
         </WagmiConfig>
         <Web3Modal projectId={w3mProjectId} ethereumClient={ethereumClient} />
-      </PostHogProvider>        
+      </PostHogProvider>
     </>
   )
 }

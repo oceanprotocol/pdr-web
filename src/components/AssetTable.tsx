@@ -156,7 +156,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     fetchAndCacheAllPairs()
     const interval = setInterval(() => {
       fetchAndCacheAllPairs()
-    }, 10000)
+    }, 1000)
     return () => clearInterval(interval)
   }, [fetchAndCacheAllPairs])
 

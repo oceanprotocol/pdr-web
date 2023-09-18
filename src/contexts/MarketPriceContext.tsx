@@ -55,7 +55,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
 
     const differenceInSeconds =
       (Date.now() - lastFetchTimestampRef.current) / 1000
-    return differenceInSeconds > 50
+    return differenceInSeconds > 10
   }, [])
 
   /**
