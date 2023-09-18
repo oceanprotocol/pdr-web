@@ -32,12 +32,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
     <div
       className={styles.predictionContainer}
       style={{
-        backgroundColor: getPredictionBackgroundColor(direction, totalStaked),
-        justifyContent: direction == undefined ? 'center' : '',
-        boxShadow:
-          status === EEpochDisplayStatus.NextEpoch
-            ? ''
-            : '0px 0px 3px 1px var(--dark-grey)'
+        justifyContent: direction == undefined ? 'center' : ''
       }}
     >
       <div className={styles.directionConainer}>
@@ -49,7 +44,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
             <img
               className={styles.predictionArrow}
               src={`/assets/icons/${
-                direction == 1 ? 'arrowUp' : 'arrowDown'
+                direction == 1 ? `arrowUp` : 'arrowDown'
               }Colored.png`}
             />
           )}

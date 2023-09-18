@@ -1,11 +1,12 @@
 import styles from '../../styles/Epoch.module.css'
-import { getPredictionBackgroundColor } from './EpochPrediction'
+import { SubscriptionStatus } from '../Subscription'
 
 export type TEpochStakedTokensProps = {
   showLabel?: boolean | undefined
   stakedUp?: number | undefined
   direction?: number | undefined
   totalStaked?: number | undefined
+  subscription?: SubscriptionStatus
 }
 
 export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
@@ -14,24 +15,29 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
   direction,
   showLabel
 }) => {
+  const prefersDarkMode = false //useMediaQuery('(prefers-color-scheme: dark)')
   return !showLabel ? (
     <div className={styles.stekesContainer}>
       <div className={styles.stake}>
-        <span className={styles.stakeAmount}>{stakedUp ? stakedUp : 0}</span>
-        <img
-          className={styles.stakeDirectionArrow}
-          alt="stakedArrow"
-          src="/assets/icons/arrowUp.png"
-        ></img>
-      </div>
-      <div className={`${styles.stake} ${styles.stakeMarginLeft}`}>
         <span className={styles.stakeAmount}>
-          {totalStaked && stakedUp !== undefined ? totalStaked - stakedUp : 0}
+          {stakedUp ? parseFloat(stakedUp.toString()).toFixed(1) : 0}
         </span>
         <img
           className={styles.stakeDirectionArrow}
           alt="stakedArrow"
-          src="/assets/icons/arrowDown.png"
+          src={`/assets/icons/arrowUp${prefersDarkMode ? 'White' : ''}.png`}
+        ></img>
+      </div>
+      <div className={`${styles.stake} ${styles.stakeMarginLeft}`}>
+        <span className={styles.stakeAmount}>
+          {totalStaked && stakedUp !== undefined
+            ? parseFloat((totalStaked - stakedUp).toString()).toFixed(1)
+            : 0}
+        </span>
+        <img
+          className={styles.stakeDirectionArrow}
+          alt="stakedArrow"
+          src={`/assets/icons/arrowDown${prefersDarkMode ? 'White' : ''}.png`}
         ></img>
       </div>
     </div>
@@ -39,7 +45,6 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
     <div
       className={styles.stake}
       style={{
-        background: getPredictionBackgroundColor(direction, totalStaked),
         height: '25px',
         width: '100%',
         paddingTop: '5px'

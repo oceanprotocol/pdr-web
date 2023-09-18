@@ -104,26 +104,23 @@ export const calculateAverageAccuracy = async(
     }
 
     for (const slot of slotsData[assetId]) {
-        const prediction: PredictionResult = calculatePrediction(
-          slot.roundSumStakesUp.toString(),
-          slot.roundSumStakes.toString()
-        )
+      const prediction: PredictionResult = calculatePrediction(
+        slot.roundSumStakesUp.toString(),
+        slot.roundSumStakes.toString()
+      )
 
-        // Check if prediction was made, and if direction matches the trueValue
-        const hasAnswer = slot.trueValues ? true : false;
-        const trueValuesLength = hasAnswer ? slot.trueValues.length : 0;
-        const trueValue = trueValuesLength > 0 ? slot.trueValues[0].trueValue : undefined
-        
-        // If the prediction was solved for, check if the dir matches trueValue
-        if (
-          hasAnswer === true &&
-          trueValuesLength > 0 &&
-          prediction.dir === (trueValue ? 1 : 0)
-        ) {
+      // Check if prediction was made, and if direction matches the trueValue
+      const hasAnswer = slot.trueValues ? true : false;
+      const trueValuesLength = hasAnswer ? slot.trueValues.length : 0;
+      const trueValue = trueValuesLength > 0 ? slot.trueValues[0].trueValue : undefined
+      
+      // If the prediction was solved for, check if the dir matches trueValue
+      if ( hasAnswer === true && trueValuesLength > 0 ) {
+        if( prediction.dir === (trueValue ? 1 : 0)) {
           correctPredictions++;
         }
-
         totalSlots++;
+      }
     }
 
     // Calculate average accuracy

@@ -30,11 +30,11 @@ export const assetTableColumns: ASSET_TABLE_COLUMNS = [
   },
   {
     Header: '--:--',
-    accessor: 'history2'
+    accessor: 'history'
   },
   {
     Header: '--:--',
-    accessor: 'history1'
+    accessor: 'history'
   },
   {
     Header: '--:--',
