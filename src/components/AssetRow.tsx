@@ -34,6 +34,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
   const [tokenAccuracy, setTokenAccuracy] = useState<number>(0.0)
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
+  console.log(currentEpoch)
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
     symbol: '',

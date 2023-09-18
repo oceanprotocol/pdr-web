@@ -74,14 +74,16 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     : null
 
   useEffect(() => {
-    if (!isNextEpoch || !relatedData || relatedData.stake == 0) return
+    if (!isNextEpoch || !relatedData || relatedData.stake == 0 || !epochStartTs)
+      return
 
     if (!initialPrice) {
       if (isFetching) return
+      console.log(epochStartTs, epochStartTs - secondsPerEpoch)
       setIsFetching(true)
       fetchHistoricalPair(
         tokenName + pairName,
-        epochStartTs - secondsPerEpoch
+        epochStartTs - (secondsPerEpoch + 2)
       ).then((historicalPair) => {
         if (!historicalPair) {
           setIsFetching(false)
@@ -95,7 +97,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     } else {
       setDelta((100 * (price - initialPrice)) / ((price + initialPrice) / 2))
     }
-  }, [price, isNextEpoch])
+  }, [price, isNextEpoch, epochStartTs])
 
   const getHistoryEpochPriceDelta = async () => {
     const result = await fetchHistoricalPair(
