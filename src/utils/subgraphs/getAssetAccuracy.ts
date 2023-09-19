@@ -78,7 +78,6 @@ export const calculateAverageAccuracy = async (
   lastSlotTS: number = Date.now()
 ): Promise<Record<string, number>> => {
   const slotsData = await fetchSlots24Hours(subgraphURL, assets, lastSlotTS)
-  console.log(slotsData)
   const contractAccuracy: Record<string, number> = {}
 
   for (const assetId in slotsData) {
