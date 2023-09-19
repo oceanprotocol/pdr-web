@@ -1,6 +1,10 @@
 import { Maybe } from './utils'
 
-export type TRunEnvironments = 'barge' | 'development' | 'staging' | 'production'
+export type TRunEnvironments =
+  | 'barge'
+  | 'development'
+  | 'staging'
+  | 'production'
 export type TRuntimeConfig = Record<
   TRunEnvironments,
   {
@@ -25,7 +29,8 @@ export const config: TRuntimeConfig = {
     chainId: '23295',
     oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
     websocketURL: 'https://websocket.predictoor.ai',
-    subgraph: 'https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
+    subgraph:
+      'https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
       {
         tokenName: 'ETH',
@@ -60,7 +65,8 @@ export const config: TRuntimeConfig = {
   development: {
     chainId: '8996',
     websocketURL: 'http://development.oceandao.org',
-    subgraph: 'https://development.oceandao.org/subgraphs/name/oceanprotocol/ocean-subgraph',
+    subgraph:
+      'https://development.oceandao.org/subgraphs/name/oceanprotocol/ocean-subgraph',
     oceanTokenAddress: '0x2473f4f7bf40ed9310838edfca6262c17a59df64',
     tokenPredictions: [
       {
