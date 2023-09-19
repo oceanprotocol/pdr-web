@@ -1,5 +1,5 @@
 import { TokenData } from '@/utils/asset'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
@@ -31,7 +31,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
   const [tokenAccuracy, setTokenAccuracy] = useState<number>(0.0)
-  const {currentEpoch, secondsPerEpoch} = usePredictoorsContext()
+  const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
     symbol: '',
@@ -52,6 +52,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     contract
   } = assetData
 
+  const lastEpochTimestamp = useRef<number>(currentEpoch)
+
   const getAssetPairPriceForRow = useCallback<
     (args: {
       tokenName: string
@@ -70,19 +72,17 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   )
 
   const getAssetPairAccuracyForRow = useCallback<
-    (args: {
-      contract: string;
-    }) => Promise<number>
-  >(
-    async ({ contract }) => {
-      const accuracyRecord = await calculateAverageAccuracy(
-        currentConfig.subgraph,
-        [contract]
-      );
-      return accuracyRecord[contract];
-    },
-    []
-  );
+    (args: { contract: string; lastSlotTS: number }) => Promise<number>
+  >(async ({ contract, lastSlotTS }) => {
+    if (!lastSlotTS) return 0
+
+    const accuracyRecord = await calculateAverageAccuracy(
+      currentConfig.subgraph,
+      [contract],
+      lastSlotTS
+    )
+    return accuracyRecord[contract]
+  }, [])
 
   const loadData = async () => {
     const price = await getAssetPairPriceForRow({
@@ -116,29 +116,18 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   }, [epochData, renewPrice])
 
   // Calculate accuracy and set state
-  const loadAccuracy = async () => {
+  const loadAccuracy = useCallback(async () => {
     let accuracy = await getAssetPairAccuracyForRow({
-      contract: contract.address
+      contract: contract.address,
+      lastSlotTS: currentEpoch
     })
 
     setTokenAccuracy(accuracy)
-  }
+  }, [getAssetPairAccuracyForRow, currentEpoch, contract.address])
 
-  // Accuracy update interval
-  const renewAccuracy = useCallback<() => Promise<void>>(async () => {
-    loadAccuracy()
-  }, [tokenName, pairName, getAssetPairAccuracyForRow])
-
-  const kACCURACY_INTERVAL = 1000 * 3600;
   useEffect(() => {
-    const accuracyInterval = setInterval(() => {
-      renewAccuracy()
-    }, kACCURACY_INTERVAL)
-
-    return () => {
-      clearInterval(accuracyInterval)
-    }
-  }, [epochData, renewAccuracy])
+    loadAccuracy()
+  }, [loadAccuracy])
 
   const slotProps = useMemo(
     () =>
