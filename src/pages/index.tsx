@@ -1,6 +1,7 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
 import Balance from '@/components/Balance'
 import Banner from '@/components/Banner'
+import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
@@ -21,8 +22,14 @@ export default function Home() {
       <Banner />
       <main className={`${styles.main} ${inter.className}`}>
         <Header />
-        <Balance />
+        <div className={styles.description}>
+          <p className={styles.oneliner}>
+            Accurate price predictions for your favorite crypto assets
+          </p>
+          <Balance />
+        </div>
         <AssetsContainer />
+        <Footer />
       </main>
     </>
   )

@@ -17,8 +17,8 @@
   --font-size-mini: 0.5rem;
   --font-size-small: 0.7rem;
   --font-size-base: 1rem;
-  --font-size-large: 1.5rem;
-  --font-size-extra-large: 2rem;
+  --font-size-large: 1.3rem;
+  --font-size-extra-large: 1.5rem;
 
   --big-border-radius: 12px;
   --small-border-radius: 2px;
@@ -29,7 +29,7 @@
   --warning: #f6ae38;
 }
 
-@media (prefers-color-scheme: dark) {
+/*@media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #fff;
     --background-color: #000;
@@ -41,7 +41,7 @@
     --big-border-radius: 12px;
     --regular-font-size: 14px;
   }
-}
+}*/
 
 * {
   box-sizing: border-box;
