@@ -105,7 +105,7 @@ export default function Subscription({
     <div className={`${styles.price} ${styles.container}`}>
       {contractPriceInfo.price > 0 ? (
         <>
-          <div>
+          <div className={styles.priceContent}>
             <img
               className={styles.tokenImage}
               src={'oceanToken.png'}
