@@ -17,7 +17,7 @@ function useEthereumClient() {
     async function initializeEthereumClient() {
       await networkProvider.init()
       const chainInfo = networkProvider.getChainInfo()
-      const chains = [chainInfo]
+      const chains = chainInfo ? [chainInfo] : []
 
       const { publicClient } = configureChains(chains, [
         w3mProvider({ projectId: w3mProjectId })
