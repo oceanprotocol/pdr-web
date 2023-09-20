@@ -2,12 +2,10 @@ import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TPredictoorsContext } from '@/contexts/PredictoorsContext.types'
 import { useUserContext } from '@/contexts/UserContext'
 import Button, { ButtonType } from '@/elements/Button'
-import CountdownTimer from '@/elements/CountdownComponent'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { NonError, ValueOf } from '@/utils/utils'
-import { ethers } from 'ethers'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { NotificationManager } from 'react-notifications'
 import { useAccount } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
@@ -46,12 +44,10 @@ export default function Subscription({
   const { getPredictorInstanceByAddress, runCheckContracts, contractPrices } =
     usePredictoorsContext()
   const [isBuying, setIsBuying] = useState(false)
-  const [expiryTimestamp, setExpiryTimestamp] = useState<number | undefined>()
 
   const contractPriceInfo: TContractPriceInfo = useMemo(() => {
     const loadingResult = {
       price: 0,
-      // duration: 0,
       alternativeText: 'Loading...'
     }
 
@@ -63,18 +59,6 @@ export default function Subscription({
 
     return { price: contractPrice }
   }, [contractPrices, contractAddress])
-
-  const userSubscription = () => {
-    if (!address) return
-    const predictorInstance = getPredictorInstanceByAddress(contractAddress)
-    predictorInstance?.getSubscriptions(address).then((resp) => {
-      setExpiryTimestamp(parseInt(ethers.utils.formatUnits(resp.expires, 0)))
-    })
-  }
-
-  useEffect(() => {
-    userSubscription()
-  }, [address, contractPrices])
 
   const BuyAction = useCallback<
     (args: { currentStatus: SubscriptionStatus }) => Promise<void>
@@ -118,9 +102,9 @@ export default function Subscription({
   if (!subscriptionData) return null
 
   return (
-    <div className={styles.container}>
-      <span className={styles.price}>
-        {contractPriceInfo.price > 0 ? (
+    <div className={`${styles.price} ${styles.container}`}>
+      {contractPriceInfo.price > 0 ? (
+        <>
           <div>
             <img
               className={styles.tokenImage}
@@ -129,19 +113,6 @@ export default function Subscription({
             />
             <b>{contractPriceInfo.price}</b> / {subscriptionData.duration}h
           </div>
-        ) : (
-          `${
-            contractPriceInfo.price
-              ? contractPriceInfo.alternativeText
-                ? contractPriceInfo.alternativeText
-                : 'FREE'
-              : contractPriceInfo.alternativeText
-          }`
-        )}
-      </span>
-
-      {subscriptionData.status === SubscriptionStatus.INACTIVE &&
-        !!contractPriceInfo.price && (
           <Button
             text={`${isBuying ? 'Buying...' : 'Buy'}`}
             type={ButtonType.SECONDARY}
@@ -150,18 +121,9 @@ export default function Subscription({
             }
             disabled={!isConnected || isBuying || !isCorrectNetwork}
           />
-        )}
-
-      {[SubscriptionStatus.ACTIVE, SubscriptionStatus.FREE].includes(
-        subscriptionData.status
-      ) && contractPriceInfo.price > 0 ? (
-        expiryTimestamp ? (
-          <CountdownTimer futureTimestampInSeconds={expiryTimestamp} />
-        ) : (
-          <span className={styles.status}>{subscriptionData.status}</span>
-        )
+        </>
       ) : (
-        ''
+        `${contractPriceInfo.alternativeText}`
       )}
     </div>
   )

@@ -156,7 +156,11 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         className: styles.tableRowCell
       }}
     >
-      <Asset assetData={tokenData} />
+      <Asset
+        assetData={tokenData}
+        contractAddress={contract.address}
+        subscription={subscription}
+      />
       <EpochDisplay
         status={EEpochDisplayStatus.PastEpoch}
         price={tokenData.price}
