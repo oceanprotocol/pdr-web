@@ -61,7 +61,7 @@ export default function SubscriptionDot({
 
   useEffect(() => {
     userSubscription()
-  }, [address, contractPrices])
+  }, [address, contractPrices, status])
 
   return status !== SubscriptionStatus.INACTIVE ? (
     <div className={styles.container} id={assetName}>
