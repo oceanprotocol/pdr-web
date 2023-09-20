@@ -7,8 +7,8 @@ const { chainId } = currentConfig
 
 // enum for predictoorContractInterval
 export enum predictoorContractInterval {
-  e_5M = '300',
-  e_1H = '3600'
+  e_5M = '5m',
+  e_1H = '1h'
 }
 
 export const findContractMarketInConfig = (
