@@ -111,7 +111,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
       }
 
       const response = await fetch(
-        `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&limit=4&startTime=${
+        `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&limit=5&startTime=${
           timestamp * 1000
         }`
       )

@@ -1,5 +1,5 @@
 import { ElementOf, ValueOfMap } from '@/utils/utils'
-import { TMarketPriceContext } from './MarketPriceContext.types'
+import { HistoricalPair, TMarketPriceContext } from './MarketPriceContext.types'
 
 export type TGetSpecificPairFromContextDataArgs = {
   allPairsData: TMarketPriceContext['allPairsData']
@@ -38,6 +38,39 @@ export const getFromTheHistoricalPairsCache = ({
     return cachedValue
   }
   return null
+}
+
+export type TGetClosestHistoricalPairsCacheArgs = {
+  historicalPair: HistoricalPair[]
+  timestamp: number
+  print?: boolean
+}
+
+export const getClosestHistoricalPairsCache = ({
+  historicalPair,
+  timestamp,
+  print = false
+}: TGetClosestHistoricalPairsCacheArgs) => {
+  if (print) {
+    console.log('timestamp', timestamp)
+  }
+  const closestHistoricalPair = historicalPair.reduce((prev, curr) => {
+    /*if (print) {
+      console.log('prev', prev)
+      console.log('curr', curr)
+      console.log('timestamp', timestamp)
+      console.log(
+        'Math.abs(prev.openTime - timestamp)',
+        prev.openTime - timestamp
+      )
+      console.log('----------...----------...----------')
+    }*/
+    return Math.abs(curr.openTime - timestamp) <
+      Math.abs(prev.openTime - timestamp)
+      ? curr
+      : prev
+  })
+  return closestHistoricalPair
 }
 
 export const convertArrayToHistoricalPair = (

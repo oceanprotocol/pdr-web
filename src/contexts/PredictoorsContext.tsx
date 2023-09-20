@@ -275,6 +275,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
             isSapphireNetwork()
           )
           await predictoor.init()
+
           if (key == 0) {
             cEpoch = await predictoor.getCurrentEpoch()
             sPerEpoch = await predictoor.getSecondsPerEpoch()
@@ -478,16 +479,14 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     getAllInterestingPredictionContracts(
       currentConfig.subgraph,
       currentConfig.blacklistedPredictions
-    ).then(
-      (contracts) => {
-        const filteredContracts = filterAllowedContracts({
-          contracts,
-          opfOwnerAddress: currentConfig.opfOwnerAddress,
-          allowedPredConfig: currentConfig.allowedPredictions
-        })
-        setContracts(filteredContracts)
-      }
-    )
+    ).then((contracts) => {
+      const filteredContracts = filterAllowedContracts({
+        contracts,
+        opfOwnerAddress: currentConfig.opfOwnerAddress,
+        allowedPredConfig: currentConfig.allowedPredictions
+      })
+      setContracts(filteredContracts)
+    })
   }, [setContracts])
 
   useEffect(() => {
