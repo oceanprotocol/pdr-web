@@ -76,6 +76,6 @@ export default function SubscriptionDot({
       {message && <Tooltip selector={assetName} text={message} hideIcon />}
     </div>
   ) : (
-    ''
+    <></>
   )
 }
