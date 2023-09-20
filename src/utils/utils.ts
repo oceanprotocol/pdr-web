@@ -5,6 +5,12 @@ const { chainId } = currentConfig
 /* eslint-env mocha */
 /* global */
 
+// enum for predictoorContractInterval
+export enum predictoorContractInterval {
+  e_5M = '300',
+  e_1H = '3600'
+}
+
 export const findContractMarketInConfig = (
   tokenName: string,
   pairName: string
