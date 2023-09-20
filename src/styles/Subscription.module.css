@@ -7,6 +7,7 @@
 
 .price {
   margin-bottom: calc(var(--spacer) / 12);
+  font-size: var(--font-size-small);
 }
 
 .status {
@@ -16,6 +17,6 @@
 }
 
 .tokenImage {
-  height: 13px;
+  height: 8px;
   margin-right: 3px;
 }

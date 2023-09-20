@@ -13,7 +13,7 @@ import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 import Price from './Price'
-import Subscription from './Subscription'
+import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -174,23 +174,26 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         secondsPerEpoch={secondsPerEpoch}
       />
       <Price assetData={tokenData} />
-      <EpochDisplay
-        status={EEpochDisplayStatus.NextEpoch}
-        price={tokenData.price}
-        {...slotProps}
-        subscription={subscription}
-        epochStartTs={currentEpoch + secondsPerEpoch}
-        secondsPerEpoch={secondsPerEpoch}
-      />
+      {subscription !== SubscriptionStatus.INACTIVE ? (
+        <EpochDisplay
+          status={EEpochDisplayStatus.NextEpoch}
+          price={tokenData.price}
+          {...slotProps}
+          subscription={subscription}
+          epochStartTs={currentEpoch + secondsPerEpoch}
+          secondsPerEpoch={secondsPerEpoch}
+        />
+      ) : (
+        <Subscription
+          subscriptionData={{
+            price: parseInt(subscriptionPrice),
+            status: subscription,
+            duration: subscriptionDuration
+          }}
+          contractAddress={contract.address}
+        />
+      )}
       <Accuracy accuracy={tokenAccuracy} />
-      <Subscription
-        subscriptionData={{
-          price: parseInt(subscriptionPrice),
-          status: subscription,
-          duration: subscriptionDuration
-        }}
-        contractAddress={contract.address}
-      />
     </TableRowWrapper>
   )
 }

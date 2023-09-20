@@ -1,7 +1,7 @@
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { TPredictoorsContext } from '@/contexts/PredictoorsContext.types'
 import { useUserContext } from '@/contexts/UserContext'
-import Button from '@/elements/Button'
+import Button, { ButtonType } from '@/elements/Button'
 import CountdownTimer from '@/elements/CountdownComponent'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
@@ -144,6 +144,7 @@ export default function Subscription({
         !!contractPriceInfo.price && (
           <Button
             text={`${isBuying ? 'Buying...' : 'Buy'}`}
+            type={ButtonType.SECONDARY}
             onClick={() =>
               BuyAction({ currentStatus: subscriptionData.status })
             }
