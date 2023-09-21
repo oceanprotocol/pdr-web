@@ -47,7 +47,7 @@ export async function authorize(
 export async function authorizeWithWallet(
   rpcSigner: ethers.providers.JsonRpcSigner,
   validity = 86400
-): Promise<TAuthorization> {
+): Promise<Maybe<TAuthorization>> {
   const lsSignedMessage = await getValidSignedMessageFromLS(rpcSigner)
   if (lsSignedMessage) return lsSignedMessage
 
@@ -58,13 +58,14 @@ export async function authorizeWithWallet(
     [userAddress, validUntil]
   )
 
-  const signedMessage = await signHashWithUser(rpcSigner, message)
+  const result = await signHashWithUser(rpcSigner, message)
+  if (!result) return null
 
   const authResult = {
     userAddress: userAddress,
-    v: signedMessage.v,
-    r: signedMessage.r,
-    s: signedMessage.s,
+    v: result.v,
+    r: result.r,
+    s: result.s,
     validUntil: validUntil
   }
 
