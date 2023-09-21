@@ -7,12 +7,13 @@ import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { currentConfig } from '@/utils/appconstants'
 import { getAssetPairPrice } from '@/utils/marketPrices'
-import { calculateAverageAccuracy } from '@/utils/subgraphs/getAssetAccuracy'
+import { calculateSlotStats } from '@/utils/subgraphs/getAssetAccuracy'
 import Accuracy from './Accuracy'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 import Price from './Price'
+import Stake from './Stake'
 import Subscription from './Subscription'
 
 export type TAssetFetchedInfo = {
@@ -31,6 +32,7 @@ export type TAssetRowState = {
 export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
   const [tokenAccuracy, setTokenAccuracy] = useState<number>(0.0)
+  const [tokenTotalStake, setTokenTotalStake] = useState<number>(0.0)
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
@@ -71,17 +73,17 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     []
   )
 
-  const getAssetPairAccuracyForRow = useCallback<
-    (args: { contract: string; lastSlotTS: number }) => Promise<number>
+  const getAssetPairStatsForRow = useCallback<
+    (args: { contract: string; lastSlotTS: number }) => Promise<[]>
   >(async ({ contract, lastSlotTS }) => {
     if (!lastSlotTS) return 0
 
-    const accuracyRecord = await calculateAverageAccuracy(
+    const [accuracyRecord, totalStakeRecord] = await calculateSlotStats(
       currentConfig.subgraph,
       [contract],
       lastSlotTS
     )
-    return accuracyRecord[contract]
+    return [accuracyRecord[contract], totalStakeRecord[contract]]
   }, [])
 
   const loadData = async () => {
@@ -117,13 +119,14 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   // Calculate accuracy and set state
   const loadAccuracy = useCallback(async () => {
-    let accuracy = await getAssetPairAccuracyForRow({
+    let [accuracy, totalStake] = await getAssetPairStatsForRow({
       contract: contract.address,
       lastSlotTS: currentEpoch
     })
 
     setTokenAccuracy(accuracy)
-  }, [getAssetPairAccuracyForRow, currentEpoch, contract.address])
+    setTokenTotalStake(totalStake)
+  }, [getAssetPairStatsForRow, currentEpoch, contract.address])
 
   useEffect(() => {
     loadAccuracy()
@@ -183,6 +186,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         secondsPerEpoch={secondsPerEpoch}
       />
       <Accuracy accuracy={tokenAccuracy} />
+      <Stake totalStake={tokenTotalStake} />
       <Subscription
         subscriptionData={{
           price: parseInt(subscriptionPrice),

@@ -72,13 +72,15 @@ export const fetchSlots24Hours = async (
 }
 
 // Function to process slots and calculate average accuracy per predictContract
-export const calculateAverageAccuracy = async (
+export const calculateSlotStats = async (
   subgraphURL: string,
   assets: string[],
   lastSlotTS: number = Date.now()
-): Promise<Record<string, number>> => {
+): Promise<[Record<string, number>, Record<string, number>]> => {
   const slotsData = await fetchSlots24Hours(subgraphURL, assets, lastSlotTS)
   const contractAccuracy: Record<string, number> = {}
+  const contractTotalStake: Record<string, number> = {}
+  let totalStake: number = 0
 
   for (const assetId in slotsData) {
     let totalSlots = 0
@@ -90,6 +92,7 @@ export const calculateAverageAccuracy = async (
     }
 
     for (const slot of slotsData[assetId]) {
+      totalStake += parseFloat(slot.roundSumStakes)
       const prediction: PredictionResult = calculatePrediction(
         slot.roundSumStakesUp.toString(),
         slot.roundSumStakes.toString()
@@ -116,7 +119,8 @@ export const calculateAverageAccuracy = async (
     // console.log(`Average accuracy for ${assetId}: ${(correctPredictions / totalSlots) * 100}%`);
     const averageAccuracy = (correctPredictions / totalSlots) * 100
     contractAccuracy[assetId] = averageAccuracy
+    contractTotalStake[assetId] = totalStake
   }
 
-  return contractAccuracy
+  return [contractAccuracy, contractTotalStake]
 }
