@@ -18,7 +18,7 @@ export enum SubscriptionStatus {
 
 export interface SubscriptionData {
   status: SubscriptionStatus
-  duration: number
+  secondsPerSubscription: number
   price: number
 }
 
@@ -111,7 +111,7 @@ export default function Subscription({
               src={'oceanToken.png'}
               alt="Coin symbol image"
             />
-            <b>{contractPriceInfo.price}</b> / {subscriptionData.duration}h
+            <b>{contractPriceInfo.price}</b> / {subscriptionData.secondsPerSubscription/3600}h
           </div>
           <Button
             text={`${isBuying ? 'Buying...' : 'Buy'}`}

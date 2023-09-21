@@ -36,24 +36,24 @@ export default function SubscriptionDot({
     })
   }
 
+  // This function is not really a getter, and a lot of this runs when the sub is not active
   const getTooltipText = () => {
     const timeRemaining = expiryTimestamp
       ? calculateTimeRemaining(expiryTimestamp)
       : 0
+    const seconds = Math.floor((timeRemaining / 1000))
     const minutes = Math.floor((timeRemaining / 1000 / 60) % 60)
     const hours = Math.floor((timeRemaining / 1000 / 3600) % 24)
 
-    //time remaining smaller than 144 which is 10% of 1440(24h)
-    const newCloseToExpiry =
-      timeRemaining / 1000 / 60 < 0.1 * secondsPerSubscription
-    setCloseToExpiry(newCloseToExpiry)
+    const isExpiring = seconds < secondsPerSubscription * 0.1
+    setCloseToExpiry(isExpiring)
     switch (status) {
       case SubscriptionStatus.FREE:
         return setMessage('Free \n\nSubscription')
       case SubscriptionStatus.ACTIVE:
         return setMessage(
           `Subscribed \n\n ${hours}h ${minutes}min left ${
-            newCloseToExpiry ? '(<10%)' : ''
+            isExpiring ? '(<10%)' : ''
           }`
         )
     }

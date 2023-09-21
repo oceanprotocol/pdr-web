@@ -44,7 +44,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     pairName,
     subscription,
     subscriptionPrice,
-    subscriptionDuration,
+    secondsPerSubscription,
     market,
     baseToken,
     quoteToken,
@@ -160,7 +160,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         assetData={tokenData}
         contractAddress={contract.address}
         subscription={subscription}
-        secondsPerSubscription={assetData.subscriptionDuration}
+        secondsPerSubscription={assetData.secondsPerSubscription}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.PastEpoch}
@@ -193,7 +193,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
           subscriptionData={{
             price: parseInt(subscriptionPrice),
             status: subscription,
-            duration: subscriptionDuration
+            secondsPerSubscription: secondsPerSubscription
           }}
           contractAddress={contract.address}
         />
