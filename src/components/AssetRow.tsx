@@ -74,9 +74,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   )
 
   const getAssetPairStatsForRow = useCallback<
-    (args: { contract: string; lastSlotTS: number }) => Promise<[]>
+    (args: {
+      contract: string
+      lastSlotTS: number
+    }) => Promise<[number, number]>
   >(async ({ contract, lastSlotTS }) => {
-    if (!lastSlotTS) return 0
+    if (!lastSlotTS) return Promise.resolve([0, 0])
 
     const [accuracyRecord, totalStakeRecord] = await calculateSlotStats(
       currentConfig.subgraph,
