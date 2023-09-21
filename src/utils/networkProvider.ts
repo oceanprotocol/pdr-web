@@ -63,7 +63,7 @@ class NetworkProvider {
     if (this.provider.network.name !== 'unknown')
       return this.provider.network.name
 
-    if (this.provider.network.chainId === 23295) return 'Oasis Network'
+    if (this.provider.network.chainId === 23295) return 'Oasis Sapphire Testnet'
 
     return `Chain ${this.provider.network.chainId}`
   }
