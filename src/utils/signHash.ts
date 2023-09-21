@@ -1,4 +1,3 @@
-// @ts-ignore
 import { ethers, providers } from 'ethers'
 import { NotificationManager } from 'react-notifications'
 import { networkProvider } from './networkProvider'
