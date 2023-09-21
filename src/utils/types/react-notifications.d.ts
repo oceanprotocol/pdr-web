@@ -1,5 +1,3 @@
-import { ComponentType, ReactNode } from 'react'
-
 declare module 'react-notifications' {
   export interface NotificationProps {
     message: string

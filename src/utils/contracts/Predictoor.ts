@@ -5,7 +5,7 @@ import { TAuthorization } from '../authorize'
 import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
 import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
-import { handleTransactionError } from '../utils'
+import { Maybe, handleTransactionError } from '../utils'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -100,7 +100,7 @@ class Predictoor {
   // Calculate provider fee
   async getCalculatedProviderFee(
     user: ethers.providers.JsonRpcSigner
-  ): Promise<TProviderFee> {
+  ): Promise<Maybe<TProviderFee>> {
     const address = user._address
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
@@ -120,6 +120,7 @@ class Predictoor {
     // Sign the message
     const result = await signHashWithUser(user, message)
 
+    if (!result) return null
     const { v, r, s } = result
 
     return {
@@ -138,7 +139,7 @@ class Predictoor {
   // Get order parameters
   async getOrderParams(address: string, user: ethers.providers.JsonRpcSigner) {
     const providerFee = await this.getCalculatedProviderFee(user)
-
+    if (!providerFee) return null
     return {
       consumer: address,
       serviceIndex: 0,
