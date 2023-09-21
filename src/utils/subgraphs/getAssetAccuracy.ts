@@ -4,7 +4,6 @@ import { graphqlClientInstance } from '../graphqlClient'
 
 import {
   GET_PREDICT_SLOTS,
-  SECONDS_IN_24_HOURS,
   TGetPredictSlotsQuery,
   TPredictSlots
 } from './queries/getPredictSlots'
@@ -12,7 +11,8 @@ import {
 export const getSlots = async (
   subgraphURL: string,
   address: string,
-  slot24h: number,
+  firstSlotTS: number,
+  lastSlotTS: number,
   skip: number = 0,
   slots: Array<TPredictSlots> = []
 ): Promise<Array<TPredictSlots>> => {
@@ -22,8 +22,9 @@ export const getSlots = async (
       GET_PREDICT_SLOTS,
       {
         assetIds: [address],
-        initialSlot: slot24h,
+        initialSlot: firstSlotTS,
         first: records_per_page,
+        lastSlot: lastSlotTS,
         skip: skip
       },
       subgraphURL
@@ -42,8 +43,9 @@ export const getSlots = async (
     return getSlots(
       subgraphURL,
       address,
-      slot24h,
+      firstSlotTS,
       skip + records_per_page,
+      lastSlotTS,
       slots
     )
   } else {
@@ -52,17 +54,15 @@ export const getSlots = async (
   }
 }
 
-export const fetchSlots24Hours = async (
+export const fetchSlots = async (
   subgraphURL: string,
   assets: string[],
-  lastSlotTS: number = Date.now()
+  lastSlotTS: number,
+  firstSlot: number
 ): Promise<Record<string, Array<TPredictSlots>>> => {
-  const slot24h = lastSlotTS - SECONDS_IN_24_HOURS
-
   return Promise.all(
     assets.map(async (assetId) => {
-      // Fetch slots for the given asset ID and 24-hour slot
-      const slots = await getSlots(subgraphURL, assetId, slot24h)
+      const slots = await getSlots(subgraphURL, assetId, firstSlot, lastSlotTS)
 
       return { [assetId]: slots || [] }
     })
@@ -75,9 +75,15 @@ export const fetchSlots24Hours = async (
 export const calculateSlotStats = async (
   subgraphURL: string,
   assets: string[],
-  lastSlotTS: number = Date.now()
+  lastSlotTS: number,
+  firstSlotTS: number
 ): Promise<[Record<string, number>, Record<string, number>]> => {
-  const slotsData = await fetchSlots24Hours(subgraphURL, assets, lastSlotTS)
+  const slotsData = await fetchSlots(
+    subgraphURL,
+    assets,
+    lastSlotTS,
+    firstSlotTS
+  )
   const contractAccuracy: Record<string, number> = {}
   const contractTotalStake: Record<string, number> = {}
   let totalStake: number = 0
