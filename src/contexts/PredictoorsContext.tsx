@@ -21,7 +21,8 @@ import {
   DeepNonNullable,
   calculatePredictionEpochs,
   isSapphireNetwork,
-  omit
+  omit,
+  predictoorContractInterval
 } from '@/utils/utils'
 import { ethers } from 'ethers'
 import {
@@ -39,7 +40,8 @@ import {
 } from './PredictoorsContext.types'
 import {
   detectNewEpochs,
-  filterAllowedContracts
+  filterAllowedContracts,
+  filterIntervalContracts
 } from './PredictoorsContextHelper'
 import { useSocketContext } from './SocketContext'
 
@@ -481,12 +483,17 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       currentConfig.subgraph,
       currentConfig.blacklistedPredictions
     ).then((contracts) => {
-      const filteredContracts = filterAllowedContracts({
+      const allowedContracts : Record<string, TPredictionContract> = filterAllowedContracts({
         contracts,
         opfOwnerAddress: currentConfig.opfOwnerAddress,
         allowedPredConfig: currentConfig.allowedPredictions
       })
-      setContracts(filteredContracts)
+
+      const interval5mContracts = filterIntervalContracts({
+        contracts: allowedContracts,
+        interval: predictoorContractInterval.e_5M
+      })
+      setContracts(interval5mContracts)
     })
   }, [setContracts])
 
