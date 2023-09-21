@@ -12,11 +12,13 @@ export enum Markets {
 export default function Asset({
   assetData,
   contractAddress,
-  subscription
+  subscription,
+  secondsPerSubscription
 }: {
   assetData: TokenData | undefined
   contractAddress: string
   subscription: SubscriptionStatus
+  secondsPerSubscription: number
 }) {
   if (!assetData) return null
 
@@ -26,6 +28,7 @@ export default function Asset({
         status={subscription}
         assetName={assetData.name}
         contractAddress={contractAddress}
+        secondsPerSubscription={secondsPerSubscription}
       />
       <img
         className={styles.image}

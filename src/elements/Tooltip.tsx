@@ -6,9 +6,15 @@ interface TooltipProps {
   text: string
   selector: string
   hideIcon?: boolean
+  textAlignCenter?: boolean
 }
 
-export default function Tooltip({ text, selector, hideIcon }: TooltipProps) {
+export default function Tooltip({
+  text,
+  selector,
+  hideIcon,
+  textAlignCenter
+}: TooltipProps) {
   return (
     <div id={hideIcon ? '' : selector}>
       {hideIcon || (
@@ -25,7 +31,9 @@ export default function Tooltip({ text, selector, hideIcon }: TooltipProps) {
       )}
       <TooltipLibrary
         anchorSelect={`#${selector}`}
-        className={styles.tooltipText}
+        className={`${styles.tooltipText} ${
+          textAlignCenter ? styles.textAlignCenter : ''
+        }`}
       >
         <ReactMarkdown>{text}</ReactMarkdown>
       </TooltipLibrary>

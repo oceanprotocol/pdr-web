@@ -160,6 +160,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         assetData={tokenData}
         contractAddress={contract.address}
         subscription={subscription}
+        secondsPerSubscription={assetData.subscriptionDuration}
       />
       <EpochDisplay
         status={EEpochDisplayStatus.PastEpoch}

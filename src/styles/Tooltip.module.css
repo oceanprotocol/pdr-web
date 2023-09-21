@@ -13,3 +13,7 @@
   text-align: start;
   font-weight: normal;
 }
+
+.textAlignCenter {
+  text-align: center;
+}

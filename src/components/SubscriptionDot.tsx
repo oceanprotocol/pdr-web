@@ -11,12 +11,14 @@ export interface SubscriptionData {
   status: SubscriptionStatus
   assetName: string
   contractAddress: string
+  secondsPerSubscription: number
 }
 
 export default function SubscriptionDot({
   status,
   assetName,
-  contractAddress
+  contractAddress,
+  secondsPerSubscription
 }: SubscriptionData) {
   const { address } = useAccount()
 
@@ -24,6 +26,7 @@ export default function SubscriptionDot({
     usePredictoorsContext()
   const [expiryTimestamp, setExpiryTimestamp] = useState<number | undefined>()
   const [message, setMessage] = useState<string>('')
+  const [closeToExpiry, setCloseToExpiry] = useState<boolean>(false)
 
   const userSubscription = () => {
     if (!address || !contractPrices) return
@@ -41,14 +44,16 @@ export default function SubscriptionDot({
     const hours = Math.floor((timeRemaining / 1000 / 3600) % 24)
 
     //time remaining smaller than 144 which is 10% of 1440(24h)
-    const closeToExpiry = timeRemaining / 1000 / 60 < 144
+    const newCloseToExpiry =
+      timeRemaining / 1000 / 60 < 0.1 * secondsPerSubscription
+    setCloseToExpiry(newCloseToExpiry)
     switch (status) {
       case SubscriptionStatus.FREE:
-        return setMessage('Free Subscription')
+        return setMessage('Free \n\nSubscription')
       case SubscriptionStatus.ACTIVE:
         return setMessage(
-          `Subscribed, ${hours}h ${minutes}min left ${
-            closeToExpiry ? '(<10%)' : ''
+          `Subscribed \n\n ${hours}h ${minutes}min left ${
+            newCloseToExpiry ? '(<10%)' : ''
           }`
         )
     }
@@ -68,12 +73,17 @@ export default function SubscriptionDot({
       <div
         className={styles.image}
         style={{
-          backgroundColor: message.includes('(') ? 'orange' : 'green'
+          backgroundColor:
+            status === SubscriptionStatus.ACTIVE && closeToExpiry
+              ? 'orange'
+              : 'green'
         }}
       >
         {' '}
       </div>
-      {message && <Tooltip selector={assetName} text={message} hideIcon />}
+      {message && (
+        <Tooltip selector={assetName} text={message} hideIcon textAlignCenter />
+      )}
     </div>
   ) : (
     <></>
