@@ -43,28 +43,13 @@ export const getFromTheHistoricalPairsCache = ({
 export type TGetClosestHistoricalPairsCacheArgs = {
   historicalPair: HistoricalPair[]
   timestamp: number
-  print?: boolean
 }
 
 export const getClosestHistoricalPairsCache = ({
   historicalPair,
-  timestamp,
-  print = false
+  timestamp
 }: TGetClosestHistoricalPairsCacheArgs) => {
-  if (print) {
-    console.log('timestamp', timestamp)
-  }
   const closestHistoricalPair = historicalPair.reduce((prev, curr) => {
-    /*if (print) {
-      console.log('prev', prev)
-      console.log('curr', curr)
-      console.log('timestamp', timestamp)
-      console.log(
-        'Math.abs(prev.openTime - timestamp)',
-        prev.openTime - timestamp
-      )
-      console.log('----------...----------...----------')
-    }*/
     return Math.abs(curr.openTime - timestamp) <
       Math.abs(prev.openTime - timestamp)
       ? curr
