@@ -34,7 +34,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   const { epochData } = useSocketContext()
   const [tokenAccuracy, setTokenAccuracy] = useState<number>(0.0)
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
-
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
     symbol: '',
@@ -53,7 +52,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     market,
     baseToken,
     quoteToken,
-    interval,
+    //interval,
     contract
   } = assetData
 
@@ -79,11 +78,14 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   )
 
   const getAssetPairAccuracyForRow = useCallback<
-    (args: { contract: string }) => Promise<number>
-  >(async ({ contract }) => {
+    (args: { contract: string; lastSlotTS: number }) => Promise<number>
+  >(async ({ contract, lastSlotTS }) => {
+    if (!lastSlotTS) return 0
+
     const accuracyRecord = await calculateAverageAccuracy(
       currentConfig.subgraph,
-      [contract]
+      [contract],
+      lastSlotTS
     )
     return accuracyRecord[contract]
   }, [])
@@ -104,28 +106,17 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   }, [epochData, renewPrice])
 
   // Calculate accuracy and set state
-  const loadAccuracy = async () => {
+  const loadAccuracy = useCallback(async () => {
     let accuracy = await getAssetPairAccuracyForRow({
-      contract: contract.address
+      contract: contract.address,
+      lastSlotTS: currentEpoch
     })
     setTokenAccuracy(accuracy)
-  }
+  }, [getAssetPairAccuracyForRow, currentEpoch, contract.address])
 
-  // Accuracy update interval
-  const renewAccuracy = useCallback<() => Promise<void>>(async () => {
-    loadAccuracy()
-  }, [tokenName, pairName, getAssetPairAccuracyForRow])
-
-  const kACCURACY_INTERVAL = 1000 * 3600
   useEffect(() => {
-    const accuracyInterval = setInterval(() => {
-      renewAccuracy()
-    }, kACCURACY_INTERVAL)
-
-    return () => {
-      clearInterval(accuracyInterval)
-    }
-  }, [epochData, renewAccuracy])
+    loadAccuracy()
+  }, [loadAccuracy])
 
   const slotProps = useMemo(
     () =>
@@ -144,7 +135,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     if (!allPairsData) return
     loadAccuracy()
     loadData(allPairsData)
-  }, [allPairsData, loadData])
+  }, [allPairsData, loadData, loadAccuracy])
 
   if (!tokenData || !slotProps) return null
 

@@ -1,13 +1,16 @@
 import { ethers } from 'ethers'
+import { Chain } from 'wagmi'
 import networksData from '../metadata/networks.json'
+import { Maybe } from './utils'
 
-type NetworkNames = 'barge' | 'staging' | 'mainnet'
+type NetworkNames = 'barge' | 'development' | 'staging' | 'mainnet'
 
 type NetworkConfig = Record<NetworkNames, string>
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
   barge: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://localhost:8545',
+  development: 'https://development.oceandao.org',
   staging: 'https://testnet.sapphire.oasis.dev',
   mainnet: ''
 }
@@ -30,6 +33,54 @@ class NetworkProvider {
 
   getProvider() {
     return this.provider
+  }
+
+  getNativeCurrencyInfo(): Chain['nativeCurrency'] {
+    const defaultDecimals = 18
+    switch (this.provider.network.chainId) {
+      case 8996:
+        return {
+          name: 'Ganache Token',
+          symbol: 'GNTK',
+          decimals: defaultDecimals
+        }
+      case 23295:
+        return {
+          name: 'Oasis Network',
+          symbol: 'ROSE',
+          decimals: defaultDecimals
+        }
+      default:
+        return {
+          name: 'Ether',
+          symbol: 'ETH',
+          decimals: defaultDecimals
+        }
+    }
+  }
+
+  getChainName(): string {
+    if (this.provider.network.name !== 'unknown')
+      return this.provider.network.name
+
+    if (this.provider.network.chainId === 23295) return 'Oasis Sapphire Testnet'
+
+    return `Chain ${this.provider.network.chainId}`
+  }
+
+  getChainInfo(): Maybe<Chain> {
+    if (!this.provider.network) return null
+
+    return {
+      id: this.provider.network.chainId,
+      name: this.getChainName(),
+      network: this.getChainName(),
+      nativeCurrency: this.getNativeCurrencyInfo(),
+      rpcUrls: {
+        public: { http: [this.provider.connection.url] },
+        default: { http: [this.provider.connection.url] }
+      }
+    }
   }
 
   getNetworkName(chainId: number): string | undefined {

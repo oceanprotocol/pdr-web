@@ -28,6 +28,35 @@ export const filterAllowedContracts = ({
   return filteredContracts
 }
 
+// filterIntervalContracts({ contracts, interval })
+export type TFilterIntervalContractsArgs = {
+  contracts: Record<string, TPredictionContract>
+  interval: string
+}
+
+// export const filterIntervalContracts
+// finds all contracts by the same interval
+export const filterIntervalContracts = ({
+  contracts,
+  interval
+}: TFilterIntervalContractsArgs) => {
+  const filteredContracts: Record<string, TPredictionContract> = {}
+
+  // create filterMethod that checks if the contract interval matches the interval passed in
+  const filterMethod = (contractKey: string) => {
+    return contracts[contractKey].interval === interval
+  }
+
+  // loop through all contracts and add the ones that match the interval to the filteredContracts object
+  Object.keys(contracts).forEach((contractKey) => {
+    if (filterMethod(contractKey)) {
+      filteredContracts[contractKey] = contracts[contractKey]
+    }
+  })
+
+  return filteredContracts
+}
+
 export type TDetectNewEpochsArgs = {
   subscribedPredictoors: Array<Predictoor>
   predictionEpochs: Array<number>

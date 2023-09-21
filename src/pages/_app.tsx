@@ -2,12 +2,12 @@ import { PredictoorsProvider } from '@/contexts/PredictoorsContext'
 import { SocketProvider } from '@/contexts/SocketContext'
 import { UserProvider } from '@/contexts/UserContext'
 import '@/styles/globals.css'
-import { ethereumClient, w3mProjectId, wagmiConfig } from '@/utils/web3Clients'
 import { Web3Modal } from '@web3modal/react'
 import type { AppProps } from 'next/app'
 import { NotificationContainer } from 'react-notifications'
 import { WagmiConfig } from 'wagmi'
 
+import { useEthereumClient } from '@/hooks/useEthereumClient'
 import { useRouter } from 'next/router'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
@@ -36,6 +36,8 @@ if (
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
+  const { wagmiConfig, ethereumClient, w3mProjectId } = useEthereumClient()
+
   useEffect(() => {
     // Track page views
     const handleRouteChange = () => posthog?.capture('$pageview')
@@ -50,16 +52,23 @@ function App({ Component, pageProps }: AppProps) {
     <>
       <PostHogProvider client={posthog}>
         <NotificationContainer />
-        <WagmiConfig config={wagmiConfig}>
-          <UserProvider>
-            <SocketProvider>
-              <PredictoorsProvider>
-                <Component {...pageProps} />
-              </PredictoorsProvider>
-            </SocketProvider>
-          </UserProvider>
-        </WagmiConfig>
-        <Web3Modal projectId={w3mProjectId} ethereumClient={ethereumClient} />
+        {wagmiConfig && ethereumClient && w3mProjectId && (
+          <>
+            <WagmiConfig config={wagmiConfig}>
+              <UserProvider>
+                <SocketProvider>
+                  <PredictoorsProvider>
+                    <Component {...pageProps} />
+                  </PredictoorsProvider>
+                </SocketProvider>
+              </UserProvider>
+            </WagmiConfig>
+            <Web3Modal
+              projectId={w3mProjectId}
+              ethereumClient={ethereumClient}
+            />
+          </>
+        )}
       </PostHogProvider>
     </>
   )
