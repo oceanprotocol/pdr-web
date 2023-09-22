@@ -1,5 +1,5 @@
-// @ts-ignore
 import { ethers, providers } from 'ethers'
+import { NotificationManager } from 'react-notifications'
 import { networkProvider } from './networkProvider'
 
 export async function signHash(signerAddress: string, message: string) {
@@ -28,18 +28,34 @@ export async function signHash(signerAddress: string, message: string) {
   return { v, r, s }
 }
 
-export async function signHashWithUser(user: ethers.Signer, message: string) {
+export type TSignatureValues = {
+  v: number
+  r: string
+  s: string
+}
+
+export async function signHashWithUser(
+  user: ethers.Signer,
+  message: string
+): Promise<TSignatureValues | undefined> {
   // Since ganache has no support yet for personal_sign, we must use the legacy implementation
   // const signedMessage = await user2.signMessage(message)
+  try {
+    const messageHashBytes = ethers.utils.arrayify(message) // hashing the message
+    const signature = await user.signMessage(messageHashBytes)
 
-  const messageHashBytes = ethers.utils.arrayify(message) // hashing the message
-  const signature = await user.signMessage(messageHashBytes)
+    const { v, r, s } = ethers.utils.splitSignature(signature)
 
-  const { v, r, s } = ethers.utils.splitSignature(signature)
-
-  return {
-    v: v,
-    r: r,
-    s: s
+    return {
+      v: v,
+      r: r,
+      s: s
+    }
+  } catch (e: any) {
+    NotificationManager.error(
+      'Failed to sign message. Please try again later.',
+      'Error',
+      5000
+    )
   }
 }

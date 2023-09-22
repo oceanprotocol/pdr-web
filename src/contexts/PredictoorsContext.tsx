@@ -113,9 +113,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     async (signer: ethers.providers.JsonRpcSigner) => {
       const initialData = await authorizeWithWallet(signer, 86400)
 
+      if (!initialData) return
       const authorizationData = new AuthorizationData<TAuthorization>({
         initialData,
-        createCallback: () => authorizeWithWallet(signer, 86400)
+        createCallback: async () => authorizeWithWallet(signer, 86400)
       })
       authorizationDataInstance.current = authorizationData
     },

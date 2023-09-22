@@ -133,11 +133,10 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     })
 
     if (!historicalPair) return
-    console.log('historicalPair', historicalPair)
+
     const result = getClosestHistoricalPairsCache({
       historicalPair,
-      timestamp: epochStartTs * 1000,
-      print: tokenName === 'ETH'
+      timestamp: epochStartTs * 1000
     })
 
     const { open: initialPrice, close: finalPrice } = result

@@ -1,16 +1,18 @@
+import { Maybe } from './utils'
+
 export interface BaseAuthData {
   validUntil: number
 }
 
 export type TAuthorizationData<T> = {
   initialData: T
-  createCallback: () => Promise<T>
+  createCallback: () => Promise<Maybe<T>>
 }
 
 export class AuthorizationData<T extends BaseAuthData> {
   private validUntil: number
   private authorizationData: T
-  private createCallback: () => Promise<T>
+  private createCallback: () => Promise<Maybe<T>>
   constructor({ initialData, createCallback }: TAuthorizationData<T>) {
     this.authorizationData = initialData
     this.validUntil = initialData.validUntil
@@ -40,6 +42,7 @@ export class AuthorizationData<T extends BaseAuthData> {
    */
   public createNew(): void {
     this.createCallback().then((data) => {
+      if (!data) return
       this.authorizationData = data
       this.validUntil = data.validUntil
     })
