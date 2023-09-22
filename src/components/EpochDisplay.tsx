@@ -104,7 +104,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
 
   const getHistoryEpochPriceDelta = async () => {
     if (status !== EEpochDisplayStatus.PastEpoch) return
-    console.log('status', status)
+
     await fetchHistoricalPair(
       tokenName + pairName,
       epochStartTs - secondsPerEpoch
