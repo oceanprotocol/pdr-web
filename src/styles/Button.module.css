@@ -28,3 +28,7 @@
   color: black;
   font-size: var(--font-size-mini);
 }
+
+.secondary:disabled {
+  color: black;
+}
