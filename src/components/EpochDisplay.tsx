@@ -1,8 +1,5 @@
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
-import {
-  getClosestHistoricalPairsCache,
-  getFromTheHistoricalPairsCache
-} from '@/contexts/MarketPriceContextHelpers'
+import { getRelatedPair } from '@/contexts/MarketPriceContextHelpers'
 import { useSocketContext } from '@/contexts/SocketContext'
 import {
   compareSplittedNames,
@@ -76,11 +73,12 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         )
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
-  /*
+
   useEffect(() => {
     if (!isNextEpoch || !relatedData || relatedData.stake == 0 || !epochStartTs)
       return
 
+    console.log('isNextEpoch', isNextEpoch)
     if (!initialPrice) {
       if (isFetching) return
 
@@ -101,43 +99,26 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     } else {
       setDelta((100 * (price - initialPrice)) / ((price + initialPrice) / 2))
     }
-  }, [price, isNextEpoch, epochStartTs])*/
+  }, [price, isNextEpoch, epochStartTs])
 
   const getHistoryEpochPriceDelta = async () => {
     if (status !== EEpochDisplayStatus.PastEpoch) return
-
-    const result = await fetchHistoricalPair(
+    console.log('status', status)
+    await fetchHistoricalPair(
       tokenName + pairName,
       epochStartTs - secondsPerEpoch
     )
-
-    /*if (!result) return
-
-    const { open: initialPrice } = result[0]
-    const { close: finalPrice } = result[result.length - 1]
-
-    setFinalPrice(parseFloat(finalPrice))
-    const delta =
-      (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
-      ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
-    setDelta(delta)*/
   }
 
   useEffect(() => {
-    const cacheTimestamp =
-      epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch
-    const historicalPair = getFromTheHistoricalPairsCache({
-      historicalPairsCache,
+    const result = getRelatedPair({
       pairSymbol: tokenName + pairName,
-      timestamp: cacheTimestamp
+      cacheTimestamp:
+        epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch,
+      historicalPairsCache,
+      epochStartTs
     })
-
-    if (!historicalPair) return
-
-    const result = getClosestHistoricalPairsCache({
-      historicalPair,
-      timestamp: epochStartTs * 1000
-    })
+    if (!result) return
 
     const { open: initialPrice, close: finalPrice } = result
     setFinalPrice(parseFloat(finalPrice))
@@ -150,6 +131,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     tokenName,
     pairName,
     epochStartTs,
+    price,
     relatedPredictionIndex
   ])
 

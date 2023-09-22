@@ -1,5 +1,5 @@
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
-import { getFromTheHistoricalPairsCache } from '@/contexts/MarketPriceContextHelpers'
+import { getRelatedPair } from '@/contexts/MarketPriceContextHelpers'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useEffect, useRef, useState } from 'react'
 import { TokenData } from '../utils/asset'
@@ -30,15 +30,22 @@ export default function Price({
     if (queryTimestamp === lastSuccessfullGetRef.current) return
 
     // we are getting the close price of the previous epoch
-    const data = getFromTheHistoricalPairsCache({
-      historicalPairsCache,
+    // const data = getFromTheHistoricalPairsCache({
+    //   historicalPairsCache,
+    //   pairSymbol: assetData.pair,
+    //   timestamp: queryTimestamp
+    // })
+
+    const data = getRelatedPair({
       pairSymbol: assetData.pair,
-      timestamp: queryTimestamp
+      cacheTimestamp: currentEpoch - 2 * secondsPerEpoch,
+      historicalPairsCache,
+      epochStartTs: currentEpoch + secondsPerEpoch
     })
 
     if (data) {
       lastSuccessfullGetRef.current = queryTimestamp
-      const closePriceOfPrevEpoch = parseFloat(data[data.length - 1].close)
+      const closePriceOfPrevEpoch = parseFloat(data.close)
       setInitialPrice(closePriceOfPrevEpoch)
       setDelta(assetData.price - closePriceOfPrevEpoch)
     }
