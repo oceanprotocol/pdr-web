@@ -16,11 +16,12 @@ export default function Tooltip({
   textAlignCenter
 }: TooltipProps) {
   return (
-    <div id={hideIcon ? '' : selector}>
+    <div>
       {hideIcon || (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={styles.tooltipIcon}
+          id={hideIcon ? '' : selector}
           viewBox="0 0 24 24"
           width="24px"
           height="24px"
