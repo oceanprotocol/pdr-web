@@ -74,6 +74,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
 
+  /*
   useEffect(() => {
     if (!isNextEpoch || !relatedData || relatedData.stake == 0 || !epochStartTs)
       return
@@ -99,7 +100,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     } else {
       setDelta((100 * (price - initialPrice)) / ((price + initialPrice) / 2))
     }
-  }, [price, isNextEpoch, epochStartTs])
+  }, [price, isNextEpoch, epochStartTs])*/
 
   const getHistoryEpochPriceDelta = async () => {
     if (status !== EEpochDisplayStatus.PastEpoch) return
