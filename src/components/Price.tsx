@@ -1,6 +1,7 @@
+import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
+import { getFromTheHistoricalPairsCache } from '@/contexts/MarketPriceContextHelpers'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
-import { getAssetPairPrice } from '@/utils/marketPrices'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TokenData } from '../utils/asset'
 import { EpochPrice } from './EpochDetails/EpochPrice'
 
@@ -9,25 +10,46 @@ export default function Price({
 }: {
   assetData: TokenData | undefined
 }) {
-  const [initialPrice, setInitialPrice] = useState<number>(0)
-  const { currentEpoch } = usePredictoorsContext()
-  if (!assetData) return null
+  const [initialPrice, setInitialPrice] = useState<number>()
+  const [delta, setDelta] = useState<number>()
+  const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
+  const { historicalPairsCache } = useMarketPriceContext()
+  const lastSuccessfullGetRef = useRef<number>(0)
 
   useEffect(() => {
-    if (!currentEpoch || assetData.pair.length == 0) return
-    getAssetPairPrice({
-      assetPair: assetData.pair,
-      timestamp: currentEpoch,
-      market: assetData.market
-    }).then((price: string) => {
-      setInitialPrice(parseFloat(price))
-    })
-  }, [currentEpoch])
+    if (
+      !currentEpoch ||
+      !secondsPerEpoch ||
+      !assetData ||
+      assetData.pair.length == 0
+    )
+      return
 
-  return (
-    <EpochPrice
-      price={assetData.price}
-      delta={initialPrice ? assetData.price - initialPrice : undefined}
-    />
-  )
+    const queryTimestamp = currentEpoch - secondsPerEpoch
+
+    if (queryTimestamp === lastSuccessfullGetRef.current) return
+
+    // we are getting the close price of the previous epoch
+    const data = getFromTheHistoricalPairsCache({
+      historicalPairsCache,
+      pairSymbol: assetData.pair,
+      timestamp: queryTimestamp
+    })
+
+    if (data) {
+      lastSuccessfullGetRef.current = queryTimestamp
+      const closePriceOfPrevEpoch = parseFloat(data[data.length - 1].close)
+      setInitialPrice(closePriceOfPrevEpoch)
+      setDelta(assetData.price - closePriceOfPrevEpoch)
+    }
+  }, [currentEpoch, historicalPairsCache, assetData, secondsPerEpoch])
+
+  useEffect(() => {
+    if (!assetData || !assetData.price || !initialPrice) return
+    setDelta(assetData.price - initialPrice)
+  }, [assetData, assetData?.price, initialPrice])
+
+  if (!assetData) return null
+
+  return <EpochPrice price={assetData.price} delta={delta} />
 }

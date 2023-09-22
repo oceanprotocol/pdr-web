@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import styles from '../styles/Asset.module.css'
 import { TokenData } from '../utils/asset'
+import { SubscriptionStatus } from './Subscription'
+import SubscriptionDot from './SubscriptionDot'
 
 export enum Markets {
   'BINANCE' = 'binance',
@@ -8,14 +10,26 @@ export enum Markets {
 }
 
 export default function Asset({
-  assetData
+  assetData,
+  contractAddress,
+  subscription,
+  secondsPerSubscription
 }: {
   assetData: TokenData | undefined
+  contractAddress: string
+  subscription: SubscriptionStatus
+  secondsPerSubscription: number
 }) {
   if (!assetData) return null
 
   return (
     <div className={styles.container}>
+      <SubscriptionDot
+        status={subscription}
+        assetName={assetData.name}
+        contractAddress={contractAddress}
+        secondsPerSubscription={secondsPerSubscription}
+      />
       <img
         className={styles.image}
         src={`/assets/icons/${assetData.symbol}.svg`}

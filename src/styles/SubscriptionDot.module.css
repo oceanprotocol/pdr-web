@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  left: -15px;
+}
+
+.image {
+  width: 8px;
+  height: 8px;
+  background-color: green;
+  border-radius: 50%;
+}
+
+.image:hover {
+  cursor: pointer;
+}

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
+import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import LiveTime from '@/elements/LiveTime'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
@@ -26,7 +27,7 @@ export type TAssetData = {
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
-  subscriptionDuration: number
+  secondsPerSubscription: number
 }
 
 export type TAssetTableProps = {
@@ -41,6 +42,9 @@ export type TAssetTableState = {
 export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
   const { subscribedPredictoors, currentEpoch, secondsPerEpoch } =
     usePredictoorsContext()
+
+  const { fetchAndCacheAllPairs } = useMarketPriceContext()
+
   const [tableColumns, setTableColumns] = useState<any>(assetTableColumns)
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
@@ -77,13 +81,10 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         // Split contract name into token name and pair name
         const [tokenName, pairName] = splitContractName(contract.name)
 
-        // Get subscription status and duration
+        // Get subscription status
         const subscriptionStatus = getSubscriptionStatus(contract)
-        const subscriptionDuration =
-          parseInt(contract.secondsPerSubscription) / 3600
 
         // Create an object with the required data and push it to the assetsData array
-
         assetsData.push({
           tokenName,
           pairName,
@@ -93,7 +94,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           quoteToken: contract.quoteToken,
           subscriptionPrice: contract.price,
           interval: contract.interval,
-          subscriptionDuration,
+          secondsPerSubscription: parseInt(contract.secondsPerSubscription),
           subscription: subscriptionStatus
         })
       })
@@ -148,6 +149,14 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     setTableColumns(newAssetTableColumns)
   }, [currentEpoch])
 
+  useEffect(() => {
+    fetchAndCacheAllPairs()
+    const interval = setInterval(() => {
+      fetchAndCacheAllPairs()
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [fetchAndCacheAllPairs])
+
   return (
     tableColumns && (
       <table className={styles.table}>
@@ -163,10 +172,11 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
               <div
                 className={styles.assetHeaderContainer}
                 key={`assetHeader${item.accessor}`}
+                id={item.accessor}
               >
                 <span>{item.Header}</span>
                 <Tooltip
-                  selector={item.accessor}
+                  selector={`${item.accessor}Tooltip`}
                   text={
                     tooltipsText[item.accessor as keyof typeof tooltipOptions]
                   }

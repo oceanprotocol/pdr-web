@@ -1,12 +1,14 @@
 import { TokenData } from '@/utils/asset'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
+import { Pair } from '@/contexts/MarketPriceContext.types'
+import { getSpecificPairFromContextData } from '@/contexts/MarketPriceContextHelpers'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
 import { currentConfig } from '@/utils/appconstants'
-import { getAssetPairPrice } from '@/utils/marketPrices'
 import { calculateSlotStats } from '@/utils/subgraphs/getAssetAccuracy'
 import { SECONDS_IN_24_HOURS } from '@/utils/subgraphs/queries/getPredictSlots'
 import Accuracy from './Accuracy'
@@ -15,7 +17,7 @@ import { TAssetData } from './AssetTable'
 import { EEpochDisplayStatus, EpochDisplay } from './EpochDisplay'
 import Price from './Price'
 import Stake from './Stake'
-import Subscription from './Subscription'
+import Subscription, { SubscriptionStatus } from './Subscription'
 
 export type TAssetFetchedInfo = {
   tokenData: TokenData | undefined
@@ -44,36 +46,40 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     price: 0,
     market: ''
   })
+  const { allPairsData } = useMarketPriceContext()
+
   const {
     tokenName,
     pairName,
     subscription,
     subscriptionPrice,
-    subscriptionDuration,
+    secondsPerSubscription,
     market,
     baseToken,
     quoteToken,
-    interval,
+    //interval,
     contract
   } = assetData
 
-  const lastEpochTimestamp = useRef<number>(currentEpoch)
+  const loadData = useCallback<(pairsData: Array<Pair>) => void>(
+    (pairsData) => {
+      const pairSymbol = `${baseToken}${quoteToken}`
 
-  const getAssetPairPriceForRow = useCallback<
-    (args: {
-      tokenName: string
-      pairName: string
-      timestamp?: number
-      market: string
-    }) => Promise<string>
-  >(
-    ({ tokenName, pairName, timestamp }) =>
-      getAssetPairPrice({
-        assetPair: `${tokenName}${pairName}`,
-        timestamp: timestamp,
+      const price = getSpecificPairFromContextData({
+        allPairsData: pairsData,
+        pairSymbol: pairSymbol
+      })
+
+      const name = `${baseToken}-${quoteToken}`
+      setTokenData({
+        price: parseFloat(price),
+        name,
+        pair: pairSymbol,
+        symbol: baseToken,
         market: market
-      }),
-    []
+      })
+    },
+    [baseToken, market, quoteToken]
   )
 
   const getAssetPairStatsForRow = useCallback<
@@ -98,26 +104,10 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     ]
   }, [])
 
-  const loadData = async () => {
-    const price = await getAssetPairPriceForRow({
-      tokenName,
-      pairName,
-      market
-    })
-    const pair = `${baseToken}${quoteToken}`
-    const name = `${baseToken}-${quoteToken}`
-    setTokenData({
-      price: parseFloat(price),
-      name,
-      pair,
-      symbol: baseToken,
-      market: market
-    })
-  }
-
   const renewPrice = useCallback<() => Promise<void>>(async () => {
-    loadData()
-  }, [tokenName, pairName, getAssetPairPriceForRow])
+    if (!allPairsData) return
+    loadData(allPairsData)
+  }, [allPairsData, loadData])
 
   useEffect(() => {
     const priceInterval = setInterval(() => {
@@ -171,8 +161,10 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   )
 
   useEffect(() => {
-    loadData()
-  }, [])
+    if (!allPairsData) return
+    loadAccuracy()
+    loadData(allPairsData)
+  }, [allPairsData, loadData, loadAccuracy])
 
   if (!tokenData || !slotProps) return null
 
@@ -183,7 +175,12 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         className: styles.tableRowCell
       }}
     >
-      <Asset assetData={tokenData} />
+      <Asset
+        assetData={tokenData}
+        contractAddress={contract.address}
+        subscription={subscription}
+        secondsPerSubscription={assetData.secondsPerSubscription}
+      />
       <EpochDisplay
         status={EEpochDisplayStatus.PastEpoch}
         price={tokenData.price}
@@ -201,26 +198,29 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         secondsPerEpoch={secondsPerEpoch}
       />
       <Price assetData={tokenData} />
-      <EpochDisplay
-        status={EEpochDisplayStatus.NextEpoch}
-        price={tokenData.price}
-        {...slotProps}
-        subscription={subscription}
-        epochStartTs={currentEpoch + secondsPerEpoch}
-        secondsPerEpoch={secondsPerEpoch}
-      />
+      {subscription !== SubscriptionStatus.INACTIVE ? (
+        <EpochDisplay
+          status={EEpochDisplayStatus.NextEpoch}
+          price={tokenData.price}
+          {...slotProps}
+          subscription={subscription}
+          epochStartTs={currentEpoch + secondsPerEpoch}
+          secondsPerEpoch={secondsPerEpoch}
+        />
+      ) : (
+        <Subscription
+          subscriptionData={{
+            price: parseInt(subscriptionPrice),
+            status: subscription,
+            secondsPerSubscription: secondsPerSubscription
+          }}
+          contractAddress={contract.address}
+        />
+      )}
       <Accuracy accuracy={tokenAccuracy} />
       <Stake
         totalStake={tokenTotalStake}
         totalStakePreviousDay={tokenTotalStakePreviousDay}
-      />
-      <Subscription
-        subscriptionData={{
-          price: parseInt(subscriptionPrice),
-          status: subscription,
-          duration: subscriptionDuration
-        }}
-        contractAddress={contract.address}
       />
     </TableRowWrapper>
   )

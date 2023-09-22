@@ -1,4 +1,7 @@
 .tooltipIcon {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
   height: calc(var(--spacer) / 4);
   width: calc(var(--spacer) / 4);
   fill: var(--primary-color);
@@ -12,4 +15,9 @@
 .tooltipText {
   text-align: start;
   font-weight: normal;
+  z-index: 2;
+}
+
+.textAlignCenter {
+  text-align: center;
 }

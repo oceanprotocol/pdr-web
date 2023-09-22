@@ -51,9 +51,5 @@ export const assetTableColumns: ASSET_TABLE_COLUMNS = [
   {
     Header: 'Stake 24h',
     accessor: 'stake'
-  },
-  {
-    Header: 'Subscription',
-    accessor: 'subscription'
   }
 ]

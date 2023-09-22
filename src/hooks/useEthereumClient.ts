@@ -2,7 +2,7 @@ import { networkProvider } from '@/utils/networkProvider'
 import { Maybe } from '@/utils/utils'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { useEffect, useState } from 'react'
-import { configureChains, createConfig } from 'wagmi'
+import { Chain, configureChains, createConfig } from 'wagmi'
 
 const w3mProjectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
 
@@ -17,7 +17,10 @@ function useEthereumClient() {
     async function initializeEthereumClient() {
       await networkProvider.init()
       const chainInfo = networkProvider.getChainInfo()
-      const chains = chainInfo ? [chainInfo] : []
+
+      if (!chainInfo) return
+
+      const chains: Array<Chain> = [chainInfo]
 
       const { publicClient } = configureChains(chains, [
         w3mProvider({ projectId: w3mProjectId })

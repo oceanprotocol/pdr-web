@@ -17,7 +17,18 @@
 }
 
 .button:disabled {
-  opacity: 0.6;
+  opacity: 0.3;
   cursor: default;
+  color: white;
+}
+
+.secondary {
+  background-color: transparent;
+  border: 1px solid var(--primary-pink);
+  color: black;
+  font-size: var(--font-size-mini);
+}
+
+.secondary:disabled {
   color: black;
 }

@@ -14,7 +14,10 @@ import { PostHogProvider } from 'posthog-js/react'
 import { useEffect } from 'react'
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
-if (typeof window !== 'undefined') {
+if (
+  typeof window !== 'undefined' &&
+  process.env.NEXT_PUBLIC_POSTHOG == 'enabled'
+) {
   posthog.init(
     process.env.NEXT_PUBLIC_POSTHOG_KEY
       ? process.env.NEXT_PUBLIC_POSTHOG_KEY

@@ -1,8 +1,14 @@
 import styles from '../styles/Button.module.css'
 
+export const enum ButtonType {
+  'TEXT_ONLY' = 'textOnly',
+  'SECONDARY' = 'secondary',
+  'PRIMARY' = 'primary'
+}
+
 interface ButtonProps {
   text: string
-  textOnly?: boolean
+  type?: ButtonType
   disabled?: boolean
   className?: string
   onClick: () => void
@@ -10,7 +16,7 @@ interface ButtonProps {
 
 export default function Button({
   text,
-  textOnly,
+  type,
   disabled,
   onClick,
   className
@@ -19,7 +25,11 @@ export default function Button({
     <button
       onClick={() => onClick()}
       className={`${className ? className : styles.button} ${
-        textOnly && styles.textOnly
+        type === ButtonType.TEXT_ONLY
+          ? styles.textOnly
+          : type === ButtonType.SECONDARY
+          ? styles.secondary
+          : ''
       }`}
       disabled={disabled}
     >

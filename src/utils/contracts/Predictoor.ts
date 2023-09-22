@@ -5,7 +5,7 @@ import { TAuthorization } from '../authorize'
 import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
 import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
-import { handleTransactionError } from '../utils'
+import { Maybe, handleTransactionError } from '../utils'
 import {
   TGetAggPredvalResult,
   TGetSubscriptions,
@@ -24,12 +24,12 @@ export type TPredictoorArgs = {
 }
 
 export type PredictionResult = {
-  nom: string;
-  denom: string;
-  confidence: number;
-  dir: number;
-  stake: number;
-};
+  nom: string
+  denom: string
+  confidence: number
+  dir: number
+  stake: number
+}
 
 // Predictoor class
 class Predictoor {
@@ -100,7 +100,7 @@ class Predictoor {
   // Calculate provider fee
   async getCalculatedProviderFee(
     user: ethers.providers.JsonRpcSigner
-  ): Promise<TProviderFee> {
+  ): Promise<Maybe<TProviderFee>> {
     const address = user._address
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
@@ -118,7 +118,10 @@ class Predictoor {
       ]
     )
     // Sign the message
-    const { v, r, s } = await signHashWithUser(user, message)
+    const result = await signHashWithUser(user, message)
+
+    if (!result) return null
+    const { v, r, s } = result
 
     return {
       providerFeeAddress: address,
@@ -135,20 +138,17 @@ class Predictoor {
   }
   // Get order parameters
   async getOrderParams(address: string, user: ethers.providers.JsonRpcSigner) {
-    try {
-      const providerFee = await this.getCalculatedProviderFee(user)
-      return {
-        consumer: address,
-        serviceIndex: 0,
-        _providerFee: providerFee,
-        _consumeMarketFee: {
-          consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
-          consumeMarketFeeToken: this.details.publishMarketFeeToken,
-          consumeMarketFeeAmount: this.details.publishMarketFeeAmount
-        }
+    const providerFee = await this.getCalculatedProviderFee(user)
+    if (!providerFee) return null
+    return {
+      consumer: address,
+      serviceIndex: 0,
+      _providerFee: providerFee,
+      _consumeMarketFee: {
+        consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
+        consumeMarketFeeToken: this.details.publishMarketFeeToken,
+        consumeMarketFeeAmount: this.details.publishMarketFeeAmount
       }
-    } catch (error) {
-      throw error
     }
   }
   // Buy from Fixed Rate Exchange (FRE) and order
@@ -164,6 +164,7 @@ class Predictoor {
       }
       const address = user._address
       const orderParams = await this.getOrderParams(address, user)
+      if (!orderParams) return Error('Assert order parameters.')
       const freParams = {
         exchangeContract: this.FRE.address,
         exchangeId,
@@ -204,10 +205,11 @@ class Predictoor {
     }
   }
 
+  // Looks like this isn't being used anywhere
   async getContractSubscriptionInfo(): Promise<
     | {
         price: number
-        duration: string
+        secondsPerSubscription: string
       }
     | Error
   > {
@@ -215,20 +217,18 @@ class Predictoor {
       return await Promise.all([
         this.getContractPrice(),
         this.instance?.secondsPerSubscription()
-      ]).then(([contractPrice, duration]) => {
+      ]).then(([contractPrice, secondsPerSubscription]) => {
         if (contractPrice instanceof Error) {
           return contractPrice
         }
-        if (!duration) {
+        if (!secondsPerSubscription) {
           return Error('Assert contract requirements.')
         }
         const price = parseFloat(contractPrice.formattedBaseTokenAmount)
 
-        const durationInHours = duration.div(60 * 60).toString()
-
         return {
           price,
-          duration: durationInHours
+          secondsPerSubscription: secondsPerSubscription
         }
       })
     } catch (e: any) {
@@ -362,7 +362,10 @@ class Predictoor {
         const nominator = ethers.utils.formatUnits(nom, 18)
         const denominator = ethers.utils.formatUnits(denom, 18)
 
-        const result:PredictionResult = calculatePrediction(nominator, denominator)
+        const result: PredictionResult = calculatePrediction(
+          nominator,
+          denominator
+        )
         return result
       }
 
