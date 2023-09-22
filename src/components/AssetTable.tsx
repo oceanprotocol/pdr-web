@@ -27,7 +27,7 @@ export type TAssetData = {
   contract: TPredictionContract
   subscription: SubscriptionStatus
   subscriptionPrice: string
-  subscriptionDuration: number
+  secondsPerSubscription: number
 }
 
 export type TAssetTableProps = {
@@ -81,13 +81,10 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
         // Split contract name into token name and pair name
         const [tokenName, pairName] = splitContractName(contract.name)
 
-        // Get subscription status and duration
+        // Get subscription status
         const subscriptionStatus = getSubscriptionStatus(contract)
-        const subscriptionDuration =
-          parseInt(contract.secondsPerSubscription) / 3600
 
         // Create an object with the required data and push it to the assetsData array
-
         assetsData.push({
           tokenName,
           pairName,
@@ -97,7 +94,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
           quoteToken: contract.quoteToken,
           subscriptionPrice: contract.price,
           interval: contract.interval,
-          subscriptionDuration,
+          secondsPerSubscription: parseInt(contract.secondsPerSubscription),
           subscription: subscriptionStatus
         })
       })
@@ -175,10 +172,11 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
               <div
                 className={styles.assetHeaderContainer}
                 key={`assetHeader${item.accessor}`}
+                id={item.accessor}
               >
                 <span>{item.Header}</span>
                 <Tooltip
-                  selector={item.accessor}
+                  selector={`${item.accessor}Tooltip`}
                   text={
                     tooltipsText[item.accessor as keyof typeof tooltipOptions]
                   }

@@ -5,8 +5,8 @@ declare module 'react-notifications' {
   }
 
   export interface NotificationManager {
-    success(message: string, title: string, duration: number): void
-    error(message: string, title: string, duration: number): void
+    success(message: string, title: string, ms: number): void
+    error(message: string, title: string, ms: number): void
   }
 
   export const NotificationContainer: ComponentType

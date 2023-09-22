@@ -6,16 +6,14 @@
 }
 
 .price {
-  margin-bottom: calc(var(--spacer) / 12);
-}
-
-.status {
-  color: rgb(0, 153, 0);
-  line-height: 1;
   font-size: var(--font-size-small);
 }
 
 .tokenImage {
-  height: 13px;
+  height: 8px;
   margin-right: 3px;
+}
+
+.priceContent {
+  margin-bottom: calc(var(--spacer) / 14);
 }

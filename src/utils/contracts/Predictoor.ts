@@ -205,10 +205,11 @@ class Predictoor {
     }
   }
 
+  // Looks like this isn't being used anywhere
   async getContractSubscriptionInfo(): Promise<
     | {
         price: number
-        duration: string
+        secondsPerSubscription: string
       }
     | Error
   > {
@@ -216,20 +217,18 @@ class Predictoor {
       return await Promise.all([
         this.getContractPrice(),
         this.instance?.secondsPerSubscription()
-      ]).then(([contractPrice, duration]) => {
+      ]).then(([contractPrice, secondsPerSubscription]) => {
         if (contractPrice instanceof Error) {
           return contractPrice
         }
-        if (!duration) {
+        if (!secondsPerSubscription) {
           return Error('Assert contract requirements.')
         }
         const price = parseFloat(contractPrice.formattedBaseTokenAmount)
 
-        const durationInHours = duration.div(60 * 60).toString()
-
         return {
           price,
-          duration: durationInHours
+          secondsPerSubscription: secondsPerSubscription
         }
       })
     } catch (e: any) {
