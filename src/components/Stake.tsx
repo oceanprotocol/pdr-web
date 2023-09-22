@@ -11,7 +11,9 @@ export default function Stake({
   let delta =
     ((totalStake - totalStakePreviousDay) / totalStakePreviousDay) * 100
   const getDelta = (): string => {
-    return `${delta > 0 ? '+' : '-'}${Math.abs(delta).toFixed(0)}%`
+    return `${delta ? (delta > 0 ? '+' : '-') : '?'}${
+      delta ? Math.abs(delta).toFixed(0) : ''
+    }%`
   }
 
   return (
@@ -26,7 +28,13 @@ export default function Stake({
       </div>
       <span
         className={styles.delta}
-        style={{ color: delta > 0 ? '#3AD315' : '#E40F16' }}
+        style={{
+          color: delta
+            ? delta > 0
+              ? '#3AD315'
+              : '#E40F16'
+            : 'var(--dark-grey)'
+        }}
       >
         {getDelta()}
       </span>
