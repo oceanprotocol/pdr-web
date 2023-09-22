@@ -107,7 +107,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   // Calculate accuracy and set state
   const loadAccuracy = useCallback(async () => {
-    let accuracy = await getAssetPairAccuracyForRow({
+    const accuracy = await getAssetPairAccuracyForRow({
       contract: contract.address,
       lastSlotTS: currentEpoch
     })
@@ -133,7 +133,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   useEffect(() => {
     if (!allPairsData) return
-    loadAccuracy()
+    //loadAccuracy()
     loadData(allPairsData)
   }, [allPairsData, loadData, loadAccuracy])
 
