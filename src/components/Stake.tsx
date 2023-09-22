@@ -7,7 +7,6 @@ export default function Stake({
   totalStake: number
   totalStakePreviousDay: number
 }) {
-  console.log(totalStake, totalStakePreviousDay)
   let delta =
     ((totalStake - totalStakePreviousDay) / totalStakePreviousDay) * 100
   const getDelta = (): string => {
