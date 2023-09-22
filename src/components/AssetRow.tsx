@@ -81,16 +81,21 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       contract: string
       lastSlotTS: number
       firstSlotTS: number
-    }) => Promise<[number, number]>
+    }) => Promise<[number, number, number]>
   >(async ({ contract, lastSlotTS, firstSlotTS }) => {
-    if (!lastSlotTS) return Promise.resolve([0, 0])
-    const [accuracyRecord, totalStakeRecord] = await calculateSlotStats(
-      currentConfig.subgraph,
-      [contract],
-      lastSlotTS,
-      firstSlotTS
-    )
-    return [accuracyRecord[contract], totalStakeRecord[contract]]
+    if (!lastSlotTS) return Promise.resolve([0, 0, 0])
+    const [accuracyRecord, totalStakeYesterdayRecord, totalStakedTodayRecord] =
+      await calculateSlotStats(
+        currentConfig.subgraph,
+        [contract],
+        lastSlotTS,
+        firstSlotTS
+      )
+    return [
+      accuracyRecord[contract],
+      totalStakeYesterdayRecord[contract],
+      totalStakedTodayRecord[contract]
+    ]
   }, [])
 
   const loadData = async () => {
@@ -127,24 +132,25 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   // Calculate accuracy and set state
   const loadAccuracy = useCallback(async () => {
     if (!currentEpoch) return
-    let [accuracy, totalStake] = await getAssetPairStatsForRow({
-      contract: contract.address,
-      lastSlotTS: currentEpoch,
-      firstSlotTS: currentEpoch - SECONDS_IN_24_HOURS
-    })
+    let [accuracy, totalTodayStake, totalStakeYesterdayBefore] =
+      await getAssetPairStatsForRow({
+        contract: contract.address,
+        lastSlotTS: currentEpoch,
+        firstSlotTS: currentEpoch - SECONDS_IN_24_HOURS - SECONDS_IN_24_HOURS
+      })
 
     console.log(currentEpoch - 2 * SECONDS_IN_24_HOURS)
 
-    let [accuracy1DayBefor, totalStake1DayBefore] =
+    /*let [accuracy1DayBefor, totalStake1DayBefore] =
       await getAssetPairStatsForRow({
         contract: contract.address,
         lastSlotTS: currentEpoch - SECONDS_IN_24_HOURS,
         firstSlotTS: currentEpoch - 2 * SECONDS_IN_24_HOURS
-      })
+      })*/
 
     setTokenAccuracy(accuracy)
-    setTokenTotalStake(totalStake)
-    setTokenTotalStakePreviousDay(totalStake1DayBefore)
+    setTokenTotalStake(totalTodayStake)
+    setTokenTotalStakePreviousDay(totalStakeYesterdayBefore)
   }, [getAssetPairStatsForRow, currentEpoch, contract.address])
 
   useEffect(() => {

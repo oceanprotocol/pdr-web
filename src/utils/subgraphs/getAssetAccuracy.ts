@@ -4,6 +4,7 @@ import { graphqlClientInstance } from '../graphqlClient'
 
 import {
   GET_PREDICT_SLOTS,
+  SECONDS_IN_24_HOURS,
   TGetPredictSlotsQuery,
   TPredictSlots
 } from './queries/getPredictSlots'
@@ -24,7 +25,6 @@ export const getSlots = async (
         assetIds: [address],
         initialSlot: firstSlotTS,
         first: records_per_page,
-        lastSlot: lastSlotTS,
         skip: skip
       },
       subgraphURL
@@ -77,7 +77,9 @@ export const calculateSlotStats = async (
   assets: string[],
   lastSlotTS: number,
   firstSlotTS: number
-): Promise<[Record<string, number>, Record<string, number>]> => {
+): Promise<
+  [Record<string, number>, Record<string, number>, Record<string, number>]
+> => {
   const slotsData = await fetchSlots(
     subgraphURL,
     assets,
@@ -85,8 +87,10 @@ export const calculateSlotStats = async (
     firstSlotTS
   )
   const contractAccuracy: Record<string, number> = {}
-  const contractTotalStake: Record<string, number> = {}
-  let totalStake: number = 0
+  const contractTotalStakeYesterday: Record<string, number> = {}
+  const contractTotalStakeToday: Record<string, number> = {}
+  let totalStakeToday: number = 0
+  let totalStakedYesterday: number = 0
 
   for (const assetId in slotsData) {
     let totalSlots = 0
@@ -98,7 +102,11 @@ export const calculateSlotStats = async (
     }
 
     for (const slot of slotsData[assetId]) {
-      totalStake += parseFloat(slot.roundSumStakes)
+      if (slot.slot < lastSlotTS - 2 * SECONDS_IN_24_HOURS) {
+        totalStakedYesterday += parseFloat(slot.roundSumStakes)
+        continue
+      }
+      totalStakeToday += parseFloat(slot.roundSumStakes)
       const prediction: PredictionResult = calculatePrediction(
         slot.roundSumStakesUp.toString(),
         slot.roundSumStakes.toString()
@@ -125,8 +133,13 @@ export const calculateSlotStats = async (
     // console.log(`Average accuracy for ${assetId}: ${(correctPredictions / totalSlots) * 100}%`);
     const averageAccuracy = (correctPredictions / totalSlots) * 100
     contractAccuracy[assetId] = averageAccuracy
-    contractTotalStake[assetId] = totalStake
+    contractTotalStakeYesterday[assetId] = totalStakedYesterday
+    contractTotalStakeToday[assetId] = totalStakeToday
   }
 
-  return [contractAccuracy, contractTotalStake]
+  return [
+    contractAccuracy,
+    contractTotalStakeYesterday,
+    contractTotalStakeToday
+  ]
 }
