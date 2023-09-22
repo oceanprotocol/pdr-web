@@ -17,7 +17,7 @@ export const getSlots = async (
   skip: number = 0,
   slots: Array<TPredictSlots> = []
 ): Promise<Array<TPredictSlots>> => {
-  const records_per_page = 289
+  const records_per_page = 578
   const { data, errors } =
     await graphqlClientInstance.query<TGetPredictSlotsQuery>(
       GET_PREDICT_SLOTS,
@@ -102,7 +102,7 @@ export const calculateSlotStats = async (
     }
 
     for (const slot of slotsData[assetId]) {
-      if (slot.slot < lastSlotTS - 2 * SECONDS_IN_24_HOURS) {
+      if (slot.slot < lastSlotTS - SECONDS_IN_24_HOURS) {
         totalStakedYesterday += parseFloat(slot.roundSumStakes)
         continue
       }
