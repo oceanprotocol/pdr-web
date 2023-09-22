@@ -126,18 +126,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       await getAssetPairStatsForRow({
         contract: contract.address,
         lastSlotTS: currentEpoch,
-        firstSlotTS: currentEpoch - SECONDS_IN_24_HOURS - SECONDS_IN_24_HOURS
-      })
-
-    console.log(currentEpoch - 2 * SECONDS_IN_24_HOURS)
-
-    /*let [accuracy1DayBefor, totalStake1DayBefore] =
-      await getAssetPairStatsForRow({
-        contract: contract.address,
-        lastSlotTS: currentEpoch - SECONDS_IN_24_HOURS,
         firstSlotTS: currentEpoch - 2 * SECONDS_IN_24_HOURS
-      })*/
-
+      })
     setTokenAccuracy(accuracy)
     setTokenTotalStake(totalTodayStake)
     setTokenTotalStakePreviousDay(totalStakeYesterdayBefore)
@@ -162,7 +152,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   useEffect(() => {
     if (!allPairsData) return
-    loadAccuracy()
+    //loadAccuracy()
     loadData(allPairsData)
   }, [allPairsData, loadData, loadAccuracy])
 

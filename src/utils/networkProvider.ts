@@ -28,7 +28,11 @@ class NetworkProvider {
   }
 
   async init() {
-    await this.provider.send('eth_accounts', [])
+    try {
+      await this.provider.send('eth_accounts', [])
+    } catch (e) {
+      console.log('Network Provider cannot be initialized', e)
+    }
   }
 
   getProvider() {
