@@ -19,7 +19,7 @@
 .button:disabled {
   opacity: 0.3;
   cursor: default;
-  color: black;
+  color: white;
 }
 
 .secondary {

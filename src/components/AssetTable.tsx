@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
+import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import LiveTime from '@/elements/LiveTime'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
@@ -41,6 +42,9 @@ export type TAssetTableState = {
 export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
   const { subscribedPredictoors, currentEpoch, secondsPerEpoch } =
     usePredictoorsContext()
+
+  const { fetchAndCacheAllPairs } = useMarketPriceContext()
+
   const [tableColumns, setTableColumns] = useState<any>(assetTableColumns)
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
@@ -144,6 +148,14 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
     setTableColumns(newAssetTableColumns)
   }, [currentEpoch])
+
+  useEffect(() => {
+    fetchAndCacheAllPairs()
+    const interval = setInterval(() => {
+      fetchAndCacheAllPairs()
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [fetchAndCacheAllPairs])
 
   return (
     tableColumns && (

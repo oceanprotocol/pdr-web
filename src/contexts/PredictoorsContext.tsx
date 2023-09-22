@@ -113,9 +113,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     async (signer: ethers.providers.JsonRpcSigner) => {
       const initialData = await authorizeWithWallet(signer, 86400)
 
+      if (!initialData) return
       const authorizationData = new AuthorizationData<TAuthorization>({
         initialData,
-        createCallback: () => authorizeWithWallet(signer, 86400)
+        createCallback: async () => authorizeWithWallet(signer, 86400)
       })
       authorizationDataInstance.current = authorizationData
     },
@@ -205,7 +206,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     [checkIfContractIsSubscribed]
   )
 
-  const eleminateFreeContracts = useCallback<
+  /*const eleminateFreeContracts = useCallback<
     (contracts: Record<string, TPredictionContract>) => TPredictionContract[]
   >(
     (contracts) =>
@@ -214,7 +215,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           !currentConfig.opfProvidedPredictions.includes(contract.address)
       ),
     []
-  )
+  )*/
 
   const checkAllContractsForSubscriptions = useCallback<
     (args: {
@@ -277,6 +278,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
             isSapphireNetwork()
           )
           await predictoor.init()
+
           if (key == 0) {
             cEpoch = await predictoor.getCurrentEpoch()
             sPerEpoch = await predictoor.getSecondsPerEpoch()
@@ -483,11 +485,12 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       currentConfig.subgraph,
       currentConfig.blacklistedPredictions
     ).then((contracts) => {
-      const allowedContracts : Record<string, TPredictionContract> = filterAllowedContracts({
-        contracts,
-        opfOwnerAddress: currentConfig.opfOwnerAddress,
-        allowedPredConfig: currentConfig.allowedPredictions
-      })
+      const allowedContracts: Record<string, TPredictionContract> =
+        filterAllowedContracts({
+          contracts,
+          opfOwnerAddress: currentConfig.opfOwnerAddress,
+          allowedPredConfig: currentConfig.allowedPredictions
+        })
 
       const interval5mContracts = filterIntervalContracts({
         contracts: allowedContracts,
