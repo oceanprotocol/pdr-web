@@ -10,9 +10,9 @@ export default function Stake({
   let delta =
     ((totalStake - totalStakePreviousDay) / totalStakePreviousDay) * 100
   const getDelta = (): string => {
-    return `${delta ? (delta == 0 ? '' : delta > 0 ? '+' : '-') : '?'}${
-      delta ? Math.abs(delta).toFixed(0) : ''
-    }%`
+    return `${
+      delta ? (delta > 0 && delta < 0.5 ? '' : delta > 0 ? '+' : '-') : '?'
+    }${delta ? Math.abs(delta).toFixed(0) : ''}%`
   }
 
   return (
@@ -29,7 +29,7 @@ export default function Stake({
         className={styles.delta}
         style={{
           color: delta
-            ? delta == 0
+            ? delta > 0 && delta < 0.5
               ? 'var(--dark-grey)'
               : delta > 0
               ? 'var(--green)'
