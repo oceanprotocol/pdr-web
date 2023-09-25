@@ -45,11 +45,11 @@ export const assetTableColumns: ASSET_TABLE_COLUMNS = [
     accessor: 'prediction'
   },
   {
-    Header: 'Accuracy 24h',
+    Header: 'Accuracy',
     accessor: 'accuracy'
   },
   {
-    Header: 'Stake 24h',
+    Header: 'Stake',
     accessor: 'stake'
   }
 ]

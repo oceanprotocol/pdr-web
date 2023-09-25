@@ -43,14 +43,7 @@
   position: relative;
 }
 
-.predictionHeader {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.predictionText {
+.headerTextSmall {
   font-size: var(--font-size-small);
   font-weight: normal;
 }
@@ -59,9 +52,9 @@
   font-weight: normal;
 }
 
-.greyText {
-  font-weight: normal;
-  color: var(--dark-grey);
+.displayColumn {
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (max-width: 1000px) {
