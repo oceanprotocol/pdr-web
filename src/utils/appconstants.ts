@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import { config } from './config'
+import { EPredictoorContractInterval } from './utils'
 
 export const formatTime = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, '0')
@@ -47,5 +48,21 @@ export const assetTableColumns: ASSET_TABLE_COLUMNS = [
   {
     Header: 'Accuracy 24h',
     accessor: 'accuracy'
+  }
+]
+
+export type TAvailableTimeFrames = Array<{
+  label: string
+  value: EPredictoorContractInterval
+}>
+
+export const availableTimeFrames: TAvailableTimeFrames = [
+  {
+    label: '5m',
+    value: EPredictoorContractInterval.e_5M
+  },
+  {
+    label: '1h',
+    value: EPredictoorContractInterval.e_1H
   }
 ]

@@ -19,10 +19,10 @@ import {
 } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import {
   DeepNonNullable,
+  EPredictoorContractInterval,
   calculatePredictionEpochs,
   isSapphireNetwork,
-  omit,
-  predictoorContractInterval
+  omit
 } from '@/utils/utils'
 import { ethers } from 'ethers'
 import {
@@ -494,7 +494,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
       const interval5mContracts = filterIntervalContracts({
         contracts: allowedContracts,
-        interval: predictoorContractInterval.e_5M
+        interval: EPredictoorContractInterval.e_5M
       })
       setContracts(interval5mContracts)
     })

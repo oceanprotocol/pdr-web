@@ -1,12 +1,11 @@
 import { States } from '@/components/Banner'
 import { currentConfig } from './appconstants'
-const { chainId } = currentConfig
 
 /* eslint-env mocha */
 /* global */
 
 // enum for predictoorContractInterval
-export enum predictoorContractInterval {
+export enum EPredictoorContractInterval {
   e_5M = '5m',
   e_1H = '1h'
 }
