@@ -117,14 +117,14 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       cacheTimestamp:
         epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch,
       historicalPairsCache,
-      epochStartTs: epochStartTs - secondsPerEpoch
+      epochStartTs: epochStartTs - 2 * secondsPerEpoch
     })?.close
     const finalPrice = getRelatedPair({
       pairSymbol: tokenName + pairName,
       cacheTimestamp:
         epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch,
       historicalPairsCache,
-      epochStartTs: epochStartTs
+      epochStartTs: epochStartTs - secondsPerEpoch
     })?.close
     if (!initialPrice || !finalPrice) return
 
