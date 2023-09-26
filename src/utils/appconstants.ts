@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { config } from './config'
-import { EPredictoorContractInterval } from './utils'
+import { EPredictoorContractInterval } from './types/EPredictoorContractInterval'
 
 export const formatTime = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, '0')

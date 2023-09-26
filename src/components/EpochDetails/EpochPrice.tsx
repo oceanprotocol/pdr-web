@@ -3,12 +3,19 @@ import styles from '../../styles/Epoch.module.css'
 export type TEpochPriceProps = {
   delta: number | undefined
   price: number
+  isPriceLoading: boolean
 }
 
-export const EpochPrice: React.FC<TEpochPriceProps> = ({ delta, price }) => {
+export const EpochPrice: React.FC<TEpochPriceProps> = ({
+  delta,
+  price,
+  isPriceLoading
+}) => {
   return (
     <div className={styles.epochPriceContainer}>
-      <span className={styles.price}>{`$${price}`}</span>{' '}
+      <span className={styles.price}>
+        {isPriceLoading ? 'loading' : `$${price}`}
+      </span>{' '}
       {delta == undefined ? (
         <img
           className={styles.arrow}

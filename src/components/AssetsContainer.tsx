@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { currentConfig } from '@/utils/appconstants'
@@ -22,9 +21,7 @@ export const AssetsContainer: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <MarketPriceProvider>
-        {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
-      </MarketPriceProvider>
+      {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
     </div>
   )
 }

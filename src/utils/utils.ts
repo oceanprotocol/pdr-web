@@ -4,12 +4,6 @@ import { currentConfig } from './appconstants'
 /* eslint-env mocha */
 /* global */
 
-// enum for predictoorContractInterval
-export enum EPredictoorContractInterval {
-  e_5M = '5m',
-  e_1H = '1h'
-}
-
 export const findContractMarketInConfig = (
   tokenName: string,
   pairName: string

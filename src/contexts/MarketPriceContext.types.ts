@@ -26,6 +26,8 @@ export type TMarketPriceContext = {
     timestamp: number
   ) => Promise<Array<HistoricalPair> | undefined>
   fetchAndCacheAllPairs: () => void
+  isPriceLoading: boolean
+  setIsPriceLoading: (isLoading: boolean) => void
 }
 
 export type TMarketPriceContextProps = {

@@ -1,0 +1,48 @@
+.switcherMain {
+  display: flex;
+  flex-direction: row;
+}
+
+.leftIcon {
+  border: 1px solid #ccc;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.switcherContainer {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.switcherContainer.withLeftIcon {
+  padding-left: 5px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left: 0px none;
+}
+
+.switcherItem {
+  width: 50px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.switcherOverlay {
+  width: 50px;
+  height: 25px;
+  position: absolute;
+  top: 3px;
+  left: 0;
+  transition: all 0.3s ease;
+  background-color: #ccc;
+  opacity: 0.6;
+  border-radius: 5px;
+}

@@ -49,6 +49,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   const [finalPrice, setFinalPrice] = useState<number>(0)
   const { fetchHistoricalPair, historicalPairsCache } = useMarketPriceContext()
   const [isFetching, setIsFetching] = useState<boolean>(false)
+  const { isPriceLoading } = useMarketPriceContext()
 
   const isNextEpoch = useMemo<boolean>(
     () => status === EEpochDisplayStatus.NextEpoch,
@@ -132,7 +133,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
       timestamp: cacheTimestamp
     })
 
-    if (!historicalPair) return
+    if (!historicalPair || historicalPair.length === 0) return
 
     const result = getClosestHistoricalPairsCache({
       historicalPair,
@@ -161,7 +162,11 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   return (
     <div className={styles.container}>
       {status !== EEpochDisplayStatus.NextEpoch && (
-        <EpochPrice price={finalPrice} delta={delta} />
+        <EpochPrice
+          price={finalPrice}
+          delta={delta}
+          isPriceLoading={isPriceLoading}
+        />
       )}
       {status === EEpochDisplayStatus.NextEpoch ? (
         subscription !== SubscriptionStatus.INACTIVE ? (

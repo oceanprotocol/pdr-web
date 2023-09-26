@@ -19,7 +19,6 @@ import {
 } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import {
   DeepNonNullable,
-  EPredictoorContractInterval,
   calculatePredictionEpochs,
   isSapphireNetwork,
   omit
@@ -44,6 +43,7 @@ import {
   filterIntervalContracts
 } from './PredictoorsContextHelper'
 import { useSocketContext } from './SocketContext'
+import { useTimeFrameContext } from './TimeFrameContext'
 
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
@@ -60,11 +60,13 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   runCheckContracts: () => {},
   setCurrentChainTime: (data) => {},
   setCurrentEpoch: (data) => {},
+  setIsNewContractsInitialized: (data) => {},
   subscribedPredictoors: [],
   contracts: undefined,
   secondsPerEpoch: 0,
   currentEpoch: 0,
   currentChainTime: 0,
+  isNewContractsInitialized: false,
   contractPrices: {}
 })
 
@@ -82,6 +84,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     chainId: parseInt(currentConfig.chainId)
   })
   const { isCorrectNetwork } = useIsCorrectChain()
+  const { timeFrameInterval } = useTimeFrameContext()
 
   const { setEpochData, initialEpochData } = useSocketContext()
   const [currentChainTime, setCurrentChainTime] = useState<number>(0)
@@ -100,6 +103,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const [contractPrices, setContractPrices] = useState<
     TPredictoorsContext['contractPrices']
   >({})
+
+  const [isNewContractsInitialized, setIsNewContractsInitialized] =
+    useState<boolean>(false)
 
   const contractPricesRef = useRef(contractPrices)
 
@@ -289,6 +295,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         })
       )
 
+      setIsNewContractsInitialized(true)
       setPredictorInstances(contractsResult)
 
       const address = await tempSigner.getAddress()
@@ -492,13 +499,13 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           allowedPredConfig: currentConfig.allowedPredictions
         })
 
-      const interval5mContracts = filterIntervalContracts({
+      const contractsOfTheTimeframe = filterIntervalContracts({
         contracts: allowedContracts,
-        interval: EPredictoorContractInterval.e_5M
+        interval: timeFrameInterval
       })
-      setContracts(interval5mContracts)
+      setContracts(contractsOfTheTimeframe)
     })
-  }, [setContracts])
+  }, [setContracts, timeFrameInterval])
 
   useEffect(() => {
     if (!initialEpochData) return
@@ -521,12 +528,14 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         getPredictorInstanceByAddress,
         setCurrentChainTime,
         setCurrentEpoch,
+        setIsNewContractsInitialized,
         contracts,
         currentEpoch,
         secondsPerEpoch,
         subscribedPredictoors,
         contractPrices,
-        currentChainTime
+        currentChainTime,
+        isNewContractsInitialized
       }}
     >
       {children}
