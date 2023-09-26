@@ -112,16 +112,22 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   }
 
   useEffect(() => {
-    const result = getRelatedPair({
+    const initialPrice = getRelatedPair({
       pairSymbol: tokenName + pairName,
       cacheTimestamp:
         epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch,
       historicalPairsCache,
-      epochStartTs
-    })
-    if (!result) return
+      epochStartTs: epochStartTs - secondsPerEpoch
+    })?.close
+    const finalPrice = getRelatedPair({
+      pairSymbol: tokenName + pairName,
+      cacheTimestamp:
+        epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch,
+      historicalPairsCache,
+      epochStartTs: epochStartTs
+    })?.close
+    if (!initialPrice || !finalPrice) return
 
-    const { open: initialPrice, close: finalPrice } = result
     setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
