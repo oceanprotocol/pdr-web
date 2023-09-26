@@ -38,9 +38,9 @@ export default function Price({
 
     const data = getRelatedPair({
       pairSymbol: assetData.pair,
-      cacheTimestamp: currentEpoch - 2 * secondsPerEpoch,
+      cacheTimestamp: currentEpoch - 3 * secondsPerEpoch,
       historicalPairsCache,
-      epochStartTs: currentEpoch + secondsPerEpoch
+      epochStartTs: currentEpoch - secondsPerEpoch
     })
 
     if (data) {
