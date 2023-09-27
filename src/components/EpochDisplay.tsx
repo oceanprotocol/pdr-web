@@ -1,8 +1,5 @@
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
-import {
-  getClosestHistoricalPairsCache,
-  getFromTheHistoricalPairsCache
-} from '@/contexts/MarketPriceContextHelpers'
+import { getRelatedPair } from '@/contexts/MarketPriceContextHelpers'
 import { useSocketContext } from '@/contexts/SocketContext'
 import {
   compareSplittedNames,
@@ -77,70 +74,33 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         )
         ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
     : null
-  /*
-  useEffect(() => {
-    if (!isNextEpoch || !relatedData || relatedData.stake == 0 || !epochStartTs)
-      return
-
-    if (!initialPrice) {
-      if (isFetching) return
-
-      setIsFetching(true)
-      fetchHistoricalPair(
-        tokenName + pairName,
-        epochStartTs - (secondsPerEpoch + 2)
-      ).then((historicalPair) => {
-        if (!historicalPair) {
-          setIsFetching(false)
-          return
-        }
-        const startPrice = historicalPair[0].open
-        setInitialPrice(parseFloat(startPrice))
-        setDelta(parseFloat(startPrice) - price)
-        setIsFetching(false)
-      })
-    } else {
-      setDelta((100 * (price - initialPrice)) / ((price + initialPrice) / 2))
-    }
-  }, [price, isNextEpoch, epochStartTs])*/
 
   const getHistoryEpochPriceDelta = async () => {
     if (status !== EEpochDisplayStatus.PastEpoch) return
 
-    const result = await fetchHistoricalPair(
+    await fetchHistoricalPair(
       tokenName + pairName,
-      epochStartTs - secondsPerEpoch
+      epochStartTs - 2 * secondsPerEpoch
     )
-
-    /*if (!result) return
-
-    const { open: initialPrice } = result[0]
-    const { close: finalPrice } = result[result.length - 1]
-
-    setFinalPrice(parseFloat(finalPrice))
-    const delta =
-      (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
-      ((parseFloat(finalPrice) + parseFloat(initialPrice)) / 2)
-    setDelta(delta)*/
   }
 
   useEffect(() => {
-    const cacheTimestamp =
-      epochStartTs - (relatedPredictionIndex + 1) * secondsPerEpoch
-    const historicalPair = getFromTheHistoricalPairsCache({
-      historicalPairsCache,
+    const initialPrice = getRelatedPair({
       pairSymbol: tokenName + pairName,
-      timestamp: cacheTimestamp
-    })
+      cacheTimestamp:
+        epochStartTs - (relatedPredictionIndex + 2) * secondsPerEpoch,
+      historicalPairsCache,
+      epochStartTs: epochStartTs - 2 * secondsPerEpoch
+    })?.close
+    const finalPrice = getRelatedPair({
+      pairSymbol: tokenName + pairName,
+      cacheTimestamp:
+        epochStartTs - (relatedPredictionIndex + 2) * secondsPerEpoch,
+      historicalPairsCache,
+      epochStartTs: epochStartTs - secondsPerEpoch
+    })?.close
+    if (!initialPrice || !finalPrice) return
 
-    if (!historicalPair || historicalPair.length === 0) return
-
-    const result = getClosestHistoricalPairsCache({
-      historicalPair,
-      timestamp: epochStartTs * 1000
-    })
-
-    const { open: initialPrice, close: finalPrice } = result
     setFinalPrice(parseFloat(finalPrice))
     const delta =
       (100 * (parseFloat(finalPrice) - parseFloat(initialPrice))) /
@@ -151,6 +111,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     tokenName,
     pairName,
     epochStartTs,
+    price,
     relatedPredictionIndex
   ])
 
@@ -192,7 +153,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           totalStaked={
             relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
           }
-          status={status}
+          loading={!relatedData}
           direction={relatedData?.dir}
         />
       )}

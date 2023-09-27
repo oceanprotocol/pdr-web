@@ -351,9 +351,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
       const provider = networkProvider.getProvider()
       let cEpoch = currentEpoch
       provider.on('block', async (blockNumber) => {
-        if ((currentEpoch + secondsPerEpoch) * 1000 > new Date().getTime())
-          return
-        const block = await provider.getBlock(blockNumber)
+        let block = await provider.getBlock(blockNumber)
         const currentTs = block.timestamp
         const newCurrentEpoch = Math.floor(currentTs / SPE)
         if (

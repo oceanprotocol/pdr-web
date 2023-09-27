@@ -31,7 +31,7 @@ export const EpochPrice: React.FC<TEpochPriceProps> = ({
                 delta && delta > 0 ? 'arrowUp' : 'arrowDown'
               }Colored.png`}
               alt="direction"
-            ></img>
+            />
           )}
         </>
       )}
