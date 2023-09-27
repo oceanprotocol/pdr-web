@@ -28,6 +28,7 @@
 
 .switcherItem {
   display: flex;
+  width: calc(var(--spacer));
   justify-content: center;
   align-items: center;
   color: var(--dark-grey);
