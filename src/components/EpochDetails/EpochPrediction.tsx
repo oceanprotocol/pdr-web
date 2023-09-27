@@ -1,12 +1,11 @@
 import styles from '../../styles/Epoch.module.css'
-import { EEpochDisplayStatus } from '../EpochDisplay'
 import { EpochStakedTokens } from './EpochStakedTokens'
 
 export type TEpochPredictionProps = {
   direction: number | undefined
   stakedUp: number | undefined
   totalStaked: number | undefined
-  status: EEpochDisplayStatus
+  loading: boolean
 }
 
 export const getPredictionBackgroundColor = (
@@ -26,7 +25,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
   direction,
   stakedUp,
   totalStaked,
-  status
+  loading
 }) => {
   return (
     <div
@@ -38,8 +37,15 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
       <div className={styles.directionConainer}>
         <>
           <span className={styles.predictionText}>{`Pred${
-            direction == undefined || totalStaked == 0 ? ' ?' : ''
+            (direction == undefined || totalStaked == 0) && !loading ? '?' : ''
           }`}</span>
+          {loading && (
+            <img
+              className={styles.refresh}
+              src={`/assets/icons/refresh.png`}
+              alt="refresh"
+            />
+          )}
           {(direction !== undefined || totalStaked == 0) && (
             <img
               className={styles.predictionArrow}
@@ -50,6 +56,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
           )}
         </>
       </div>
+
       {direction !== undefined && (
         <EpochStakedTokens stakedUp={stakedUp} totalStaked={totalStaked} />
       )}

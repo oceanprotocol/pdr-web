@@ -119,6 +119,18 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     [getSubscriptionStatus]
   )
 
+  const getThowLinesHeader = (
+    firstLineText: string,
+    secondLineText: string
+  ) => {
+    return (
+      <div className={styles.displayColumn}>
+        {firstLineText}
+        <span className={styles.headerTextSmall}>{secondLineText}</span>
+      </div>
+    )
+  }
+
   useEffect(() => {
     if (!contracts || !prepareAssetData) return
     prepareAssetData(contracts)
@@ -132,20 +144,19 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
     newAssetTableColumns[2].Header = formatTime(new Date(currentEpoch * 1000))
     newAssetTableColumns[3].Header = <LiveTime />
-    newAssetTableColumns[4].Header = (
-      <div className={styles.predictionHeader}>
-        <span>
-          {formatTime(new Date((currentEpoch + secondsPerEpoch) * 1000))}
-        </span>
-        <span className={styles.predictionText}>Predictions</span>
-      </div>
+    newAssetTableColumns[4].Header = getThowLinesHeader(
+      formatTime(new Date((currentEpoch + secondsPerEpoch) * 1000)),
+      'Predictions'
     )
-    newAssetTableColumns[5].Header = (
-      <div>
-        Accuracy
-        <span className={styles.greyText}>{` 24h`}</span>
-      </div>
+    newAssetTableColumns[5].Header = getThowLinesHeader(
+      newAssetTableColumns[5].Header,
+      '24h'
     )
+    newAssetTableColumns[6].Header = getThowLinesHeader(
+      newAssetTableColumns[6].Header,
+      '24h'
+    )
+
     setTableColumns(newAssetTableColumns)
   }, [currentEpoch])
 
