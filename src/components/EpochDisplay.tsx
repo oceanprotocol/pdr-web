@@ -187,7 +187,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           totalStaked={
             relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
           }
-          status={status}
+          loading={!relatedData}
           direction={relatedData?.dir}
         />
       )}

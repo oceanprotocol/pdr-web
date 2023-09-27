@@ -14,7 +14,7 @@ export const EpochPrice: React.FC<TEpochPriceProps> = ({ delta, price }) => {
           className={styles.arrow}
           src={`/assets/icons/refresh.png`}
           alt="refresh"
-        ></img>
+        />
       ) : delta == 0 ? (
         ''
       ) : (
@@ -24,7 +24,7 @@ export const EpochPrice: React.FC<TEpochPriceProps> = ({ delta, price }) => {
             delta && delta > 0 ? 'arrowUp' : 'arrowDown'
           }Colored.png`}
           alt="direction"
-        ></img>
+        />
       )}
     </div>
   )
