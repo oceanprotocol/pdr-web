@@ -17,7 +17,7 @@ export const TimeFrameSwitch = () => {
     <div>
       <Switcher
         activeIndex={activeIndex}
-        leftIcon={
+        icon={
           <div className={styles.leftIcon}>
             <Image
               src="assets/svg/timer.svg"
@@ -30,7 +30,7 @@ export const TimeFrameSwitch = () => {
         }
       >
         {availableTimeFrames.map((timeFrame, index) => (
-          <div
+          <span
             key={index}
             onClick={() => {
               setActiveIndex(index)
@@ -40,7 +40,7 @@ export const TimeFrameSwitch = () => {
             }}
           >
             {timeFrame.label}
-          </div>
+          </span>
         ))}
       </Switcher>
     </div>

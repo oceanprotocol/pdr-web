@@ -4,13 +4,13 @@ import styles from '../styles/Switcher.module.css'
 type TSwitcherProps = {
   activeIndex: number
   children: ReactElement[]
-  leftIcon?: ReactElement
+  icon?: ReactElement
 }
 
 export const Switcher: React.FC<TSwitcherProps> = ({
   activeIndex,
   children,
-  leftIcon
+  icon
 }) => {
   const [currentIndex, setCurrentIndex] = useState(activeIndex)
 
@@ -20,16 +20,12 @@ export const Switcher: React.FC<TSwitcherProps> = ({
 
   return (
     <div className={styles.switcherMain}>
-      {leftIcon && <div className={styles.leftIcon}>{leftIcon}</div>}
+      {icon && <div className={styles.leftIcon}>{icon}</div>}
       <div
         className={`${styles.switcherContainer} ${
-          leftIcon ? styles.withLeftIcon : ''
+          icon ? styles.withLeftIcon : ''
         }`}
       >
-        <div
-          className={styles.switcherOverlay}
-          style={{ left: `${currentIndex * 50 + 3}px` }}
-        ></div>
         {React.Children.map(children, (child, index) => (
           <div
             className={`${styles.switcherItem} ${
