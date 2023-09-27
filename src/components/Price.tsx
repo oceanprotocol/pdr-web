@@ -15,6 +15,7 @@ export default function Price({
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const { historicalPairsCache } = useMarketPriceContext()
   const lastSuccessfullGetRef = useRef<number>(0)
+  const { isPriceLoading } = useMarketPriceContext()
 
   useEffect(() => {
     if (
@@ -51,5 +52,11 @@ export default function Price({
 
   if (!assetData) return null
 
-  return <EpochPrice price={assetData.price} delta={delta} />
+  return (
+    <EpochPrice
+      price={assetData.price}
+      delta={delta}
+      isPriceLoading={isPriceLoading}
+    />
+  )
 }
