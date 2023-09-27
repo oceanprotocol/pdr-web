@@ -20,7 +20,7 @@ export const tooltipsText = {
   Check OCEAN staked and stake directions for a higher confidence.
   `,
   accuracy: `Percentage of accurate predicitons over the last 24 hours.`,
-  subscription: `Purchase a subscription in order to have access to price direction predictions.`
+  stake: `Total OCEAN tokens staked in the last 24 hours and the percentage difference compared to the previous day.`
 }
 
 export const tooltipOptions = {
@@ -29,5 +29,5 @@ export const tooltipOptions = {
   live: 'Live',
   history: 'History',
   accuracy: 'Accuracy',
-  subscription: 'Subscription'
+  stake: 'Stake'
 }
