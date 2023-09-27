@@ -1,4 +1,4 @@
-import { ElementOf, ValueOfMap } from '@/utils/utils'
+import { ElementOf, Maybe, ValueOfMap } from '@/utils/utils'
 import { HistoricalPair, TMarketPriceContext } from './MarketPriceContext.types'
 
 export type TGetSpecificPairFromContextDataArgs = {
@@ -56,6 +56,33 @@ export const getClosestHistoricalPairsCache = ({
       : prev
   })
   return closestHistoricalPair
+}
+
+export type TGetRelatedPairArgs = {
+  pairSymbol: string
+  cacheTimestamp: number
+  historicalPairsCache: Map<string, HistoricalPair[]>
+  epochStartTs: number
+}
+
+export const getRelatedPair = ({
+  pairSymbol,
+  cacheTimestamp,
+  historicalPairsCache,
+  epochStartTs
+}: TGetRelatedPairArgs): Maybe<HistoricalPair> => {
+  const historicalPair = getFromTheHistoricalPairsCache({
+    historicalPairsCache,
+    pairSymbol,
+    timestamp: cacheTimestamp
+  })
+
+  if (!historicalPair) return null
+
+  return getClosestHistoricalPairsCache({
+    historicalPair,
+    timestamp: epochStartTs * 1000
+  })
 }
 
 export const convertArrayToHistoricalPair = (
