@@ -7,6 +7,7 @@ import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { NonError, ValueOf } from '@/utils/utils'
 import { useCallback, useMemo, useState } from 'react'
 import { NotificationManager } from 'react-notifications'
+import { ClipLoader } from 'react-spinners'
 import { useAccount } from 'wagmi'
 import styles from '../styles/Subscription.module.css'
 
@@ -111,7 +112,8 @@ export default function Subscription({
               src={'oceanToken.png'}
               alt="Coin symbol image"
             />
-            <b>{contractPriceInfo.price}</b> / {subscriptionData.secondsPerSubscription/3600}h
+            <b>{contractPriceInfo.price}</b> /{' '}
+            {subscriptionData.secondsPerSubscription / 3600}h
           </div>
           <Button
             text={`${isBuying ? 'Buying...' : 'Buy'}`}
@@ -123,7 +125,7 @@ export default function Subscription({
           />
         </>
       ) : (
-        `${contractPriceInfo.alternativeText}`
+        <ClipLoader size={12} color="var(--dark-grey)" loading={true} />
       )}
     </div>
   )
