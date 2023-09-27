@@ -20,7 +20,7 @@ export const MarketPriceContext = createContext<TMarketPriceContext>({
   historicalPairsCache: new Map(),
   fetchAndCacheAllPairs: async () => undefined,
   fetchHistoricalPair: async () => undefined,
-  isPriceLoading: false,
+  isPriceLoading: true,
   setIsPriceLoading: () => {}
 })
 
@@ -36,7 +36,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
   const lastFetchTimestampRef = useRef<number | null>(null)
   const historicalTimestampsRef = useRef<number[]>([])
   const { timeFrameInterval } = useTimeFrameContext()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const { isNewContractsInitialized } = usePredictoorsContext()
   /**
    * Fetches all pairs from Binance API and stores them in the state.
