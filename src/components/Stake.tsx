@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import styles from '../styles/Stake.module.css'
 
 export default function Stake({
@@ -15,6 +16,18 @@ export default function Stake({
     }${delta ? Math.abs(delta).toFixed(0) : ''}%`
   }
 
+  const deltaColorStyle = useMemo(
+    () =>
+      delta
+        ? delta > 0 && delta < 0.5
+          ? 'var(--dark-grey)'
+          : delta > 0
+          ? 'var(--green)'
+          : 'var(--red)'
+        : 'var(--dark-grey)',
+    [delta]
+  )
+
   return (
     <div className={styles.container}>
       <div className={styles.container}>
@@ -28,13 +41,7 @@ export default function Stake({
       <span
         className={styles.delta}
         style={{
-          color: delta
-            ? delta > 0 && delta < 0.5
-              ? 'var(--dark-grey)'
-              : delta > 0
-              ? 'var(--green)'
-              : 'var(--red)'
-            : 'var(--dark-grey)'
+          color: deltaColorStyle
         }}
       >
         {getDelta()}
