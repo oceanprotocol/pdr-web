@@ -1,3 +1,4 @@
+import { ClipLoader } from 'react-spinners'
 import styles from '../../styles/Epoch.module.css'
 import { EpochStakedTokens } from './EpochStakedTokens'
 
@@ -40,10 +41,11 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
             (direction == undefined || totalStaked == 0) && !loading ? '?' : ''
           }`}</span>
           {loading && (
-            <img
-              className={styles.refresh}
-              src={`/assets/icons/refresh.png`}
-              alt="refresh"
+            <ClipLoader
+              size={8}
+              color="var(--dark-grey)"
+              loading={true}
+              className={styles.loader}
             />
           )}
           {(direction !== undefined || totalStaked == 0) && (
