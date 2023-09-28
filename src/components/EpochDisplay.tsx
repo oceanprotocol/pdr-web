@@ -1,10 +1,6 @@
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { getRelatedPair } from '@/contexts/MarketPriceContextHelpers'
 import { useSocketContext } from '@/contexts/SocketContext'
-import {
-  compareSplittedNames,
-  splitContractName
-} from '@/utils/splitContractName'
 import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
@@ -22,7 +18,7 @@ export enum EEpochDisplayStatus {
 export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
   price: number
-  market: string
+  address: string
   tokenName: string
   pairName: string
   subscription: SubscriptionStatus
@@ -33,7 +29,7 @@ export type TEpochDisplayProps = {
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   status,
   price,
-  market,
+  address,
   tokenName,
   pairName,
   subscription,
@@ -41,6 +37,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   secondsPerEpoch
 }) => {
   const { epochData } = useSocketContext()
+  const [relatedData, setRelatedData] = useState<any>()
   const [delta, setDelta] = useState<number>()
   const [initialPrice, setInitialPrice] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
@@ -62,17 +59,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         return 0
     }
   }, [status])
-
-  const relatedData = Array.isArray(epochData)
-    ? epochData
-        ?.find((data) =>
-          compareSplittedNames(splitContractName(data.contractInfo.name), [
-            tokenName,
-            pairName
-          ])
-        )
-        ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
-    : null
 
   const getHistoryEpochPriceDelta = async () => {
     if (status !== EEpochDisplayStatus.PastEpoch) return
@@ -113,6 +99,18 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     price,
     relatedPredictionIndex
   ])
+
+  useEffect(() => {
+    setRelatedData(
+      Array.isArray(epochData)
+        ? epochData
+            ?.find((data) => data.contractInfo.address == address)
+            ?.predictions.sort((a, b) => a.epoch - b.epoch)[
+            relatedPredictionIndex
+          ]
+        : null
+    )
+  }, [epochData])
 
   useEffect(() => {
     if (isNextEpoch || !secondsPerEpoch || !epochStartTs) return
