@@ -15,7 +15,7 @@ export default function Accuracy({ accuracy }: { accuracy: number }) {
 
   return (
     <div className={styles.container}>
-      {accuracy ? (
+      {accuracy !== undefined || accuracy !== null ? (
         <span className={styles.accuracy}>{`${getFormattedAccuracy(
           accuracy
         )}`}</span>
