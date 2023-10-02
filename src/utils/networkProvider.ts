@@ -29,7 +29,8 @@ class NetworkProvider {
 
   async init() {
     try {
-      const resp = await this.provider.send('eth_accounts', [])
+      await this.provider.send('eth_accounts', [])
+      await this.provider._networkPromise
     } catch (e) {
       console.log('Network Provider cannot be initialized', e)
     }
@@ -73,8 +74,7 @@ class NetworkProvider {
     return `Chain ${this.provider.network?.chainId}`
   }
 
-  async getChainInfo(): Promise<Maybe<Chain>> {
-    await this.provider._networkPromise
+  getChainInfo(): Maybe<Chain> {
     if (!this.provider.network) return null
 
     return {
