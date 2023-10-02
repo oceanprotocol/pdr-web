@@ -9,7 +9,6 @@ import React, {
   useState
 } from 'react'
 import { Socket, io } from 'socket.io-client'
-import { usePredictoorsContext } from './PredictoorsContext'
 import {
   TSocketContext,
   TSocketFeedData,
@@ -22,7 +21,7 @@ const SocketContext = createContext<TSocketContext>({
   epochData: null,
   initialEpochData: null,
   setInitialData: (data) => {},
-  setEpochData: (data) => {}
+  handleEpochData: (data) => {}
 })
 
 // Custom hook to use the SocketContext
@@ -38,9 +37,23 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   const [epochData, setEpochData] = useState<TSocketFeedData | null>(null)
   const [initialEpochData, setInitialEpochData] =
     useState<TSocketFeedData | null>(null)
-  const { setCurrentChainTime } = usePredictoorsContext()
 
   const isFirstDataEnter = useRef<boolean>(false)
+
+  const handleEpochData = useCallback((data: Maybe<TSocketFeedData>) => {
+    if (!data) return
+    setEpochData((prev) => {
+      if (!prev) return data
+
+      const dataContractAddresses = data.map((d) => d.contractInfo.address)
+
+      const prevItems = prev.filter(
+        (item) => !dataContractAddresses.includes(item.contractInfo.address)
+      )
+
+      return [...prevItems, ...data]
+    })
+  }, [])
 
   const setInitialData = useCallback((data: Maybe<TSocketFeedData>) => {
     if (isFirstDataEnter.current || !data) return
@@ -63,12 +76,13 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
 
     newSocket.on('newEpoch', (data: Maybe<TSocketFeedData>) => {
       if (!data) return
+
       if (!isFirstDataEnter.current) {
         setInitialData(data)
         isFirstDataEnter.current = true
       }
-      setCurrentChainTime(data[0].predictions[0].currentTs)
-      setEpochData(data)
+
+      handleEpochData(data)
     })
 
     return () => {
@@ -82,7 +96,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
         socket,
         epochData,
         initialEpochData,
-        setEpochData,
+        handleEpochData,
         setInitialData
       }}
     >

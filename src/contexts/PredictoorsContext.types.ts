@@ -7,12 +7,10 @@ export type TPredictoorsContext = {
   checkAndAddInstance: (data: Predictoor) => void
   getPredictorInstanceByAddress: (address: string) => Predictoor | undefined
   runCheckContracts: () => void
-  setCurrentChainTime: (data: number) => void
   setCurrentEpoch: (data: number) => void
   setIsNewContractsInitialized: (data: boolean) => void
   contracts: Record<string, TPredictionContract> | undefined
   subscribedPredictoors: Array<Predictoor>
-  currentChainTime: number | undefined
   secondsPerEpoch: number
   currentEpoch: number
   isNewContractsInitialized: boolean

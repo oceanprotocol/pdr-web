@@ -17,6 +17,7 @@ import {
   TPredictionContract,
   getAllInterestingPredictionContracts
 } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import {
   DeepNonNullable,
   calculatePredictionEpochs,
@@ -58,14 +59,12 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   checkAndAddInstance: (data) => {},
   getPredictorInstanceByAddress: (data) => undefined,
   runCheckContracts: () => {},
-  setCurrentChainTime: (data) => {},
   setCurrentEpoch: (data) => {},
   setIsNewContractsInitialized: (data) => {},
   subscribedPredictoors: [],
   contracts: undefined,
   secondsPerEpoch: 0,
   currentEpoch: 0,
-  currentChainTime: 0,
   isNewContractsInitialized: false,
   contractPrices: {}
 })
@@ -86,8 +85,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const { isCorrectNetwork } = useIsCorrectChain()
   const { timeFrameInterval } = useTimeFrameContext()
 
-  const { setEpochData, initialEpochData } = useSocketContext()
-  const [currentChainTime, setCurrentChainTime] = useState<number>(0)
+  const { handleEpochData, initialEpochData } = useSocketContext()
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
 
@@ -110,6 +108,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const contractPricesRef = useRef(contractPrices)
 
   const lastCheckedEpoch = useRef<number>(0)
+  const lastTimeframe = useRef<EPredictoorContractInterval>(
+    EPredictoorContractInterval.e_5M
+  )
   const predictedEpochs =
     useRef<Record<string, Array<TPredictedEpochLogItem>>>()
 
@@ -211,17 +212,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     },
     [checkIfContractIsSubscribed]
   )
-
-  /*const eleminateFreeContracts = useCallback<
-    (contracts: Record<string, TPredictionContract>) => TPredictionContract[]
-  >(
-    (contracts) =>
-      Object.values(contracts).filter(
-        (contract) =>
-          !currentConfig.opfProvidedPredictions.includes(contract.address)
-      ),
-    []
-  )*/
 
   const checkAllContractsForSubscriptions = useCallback<
     (args: {
@@ -345,7 +335,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   }, [])
 
   const addChainListener = useCallback(
-    async (secondsPerEpoch: number, currentEpoch: number) => {
+    async (
+      secondsPerEpoch: number,
+      currentEpoch: number,
+      subscribedPredictoorsNew: TPredictoorsContext['subscribedPredictoors']
+    ) => {
       if (!predictoorInstances || currentEpoch == 0) return
       const SPE = secondsPerEpoch
       const provider = networkProvider.getProvider()
@@ -356,7 +350,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         const newCurrentEpoch = Math.floor(currentTs / SPE)
         if (
           currentTs - lastCheckedEpoch.current * SPE <
-          SPE + PREDICTION_FETCH_EPOCHS_DELAY
+            SPE + PREDICTION_FETCH_EPOCHS_DELAY &&
+          timeFrameInterval == lastTimeframe.current
         )
           return
 
@@ -377,6 +372,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           return
 
         lastCheckedEpoch.current = newCurrentEpoch
+        lastTimeframe.current = timeFrameInterval
         const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
 
         const newEpochs = detectNewEpochs({
@@ -385,7 +381,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           predictedEpochs: predictedEpochs.current
         })
 
-        const subscribedContractAddresses = subscribedPredictoors.map(
+        const subscribedContractAddresses = subscribedPredictoorsNew.map(
           (contract) => contract.address
         )
 
@@ -404,12 +400,12 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         getMultiplePredictions({
           currentTs: currentTs,
           epochs: newEpochs,
-          contracts: subscribedPredictoors,
+          contracts: subscribedPredictoorsNew,
           userWallet: signer,
           registerPrediction: addItemToPredictedEpochs,
           authorizationData
         }).then((result) => {
-          subscribedPredictoors.forEach((contract) => {
+          subscribedPredictoorsNew.forEach((contract) => {
             const pickedResults = result.filter(
               (item) =>
                 item !== null && item.contractAddress === contract.address
@@ -436,22 +432,14 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
               predictions: dataPredictions
             }
 
-            setEpochData((prev) => {
-              if (!prev) return [blockchainFeedData]
-
-              const prevItems = prev.filter(
-                (item) => item.contractInfo.address !== contract.address
-              )
-
-              return [...prevItems, blockchainFeedData]
-            })
+            handleEpochData([blockchainFeedData])
           })
         })
         //await contract.getAggPredval(epoch, predictoorWallet)
       })
     },
     [
-      setEpochData,
+      handleEpochData,
       address,
       contracts,
       subscribedPredictoors.length,
@@ -474,16 +462,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     )
       return
     const provider = networkProvider.getProvider()
-    addChainListener(secondsPerEpoch, currentEpoch)
+    addChainListener(secondsPerEpoch, currentEpoch, subscribedPredictoors)
     return () => {
       provider.removeAllListeners('block')
     }
-  }, [
-    predictoorInstances,
-    secondsPerEpoch,
-    currentEpoch,
-    subscribedPredictoors
-  ])
+  }, [subscribedPredictoors, currentEpoch])
 
   useEffect(() => {
     getAllInterestingPredictionContracts(
@@ -524,7 +507,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         runCheckContracts,
         checkAndAddInstance,
         getPredictorInstanceByAddress,
-        setCurrentChainTime,
         setCurrentEpoch,
         setIsNewContractsInitialized,
         contracts,
@@ -532,7 +514,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         secondsPerEpoch,
         subscribedPredictoors,
         contractPrices,
-        currentChainTime,
         isNewContractsInitialized
       }}
     >
