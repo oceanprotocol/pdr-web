@@ -29,7 +29,7 @@ class NetworkProvider {
 
   async init() {
     try {
-      await this.provider.send('eth_accounts', [])
+      const resp = await this.provider.send('eth_accounts', [])
     } catch (e) {
       console.log('Network Provider cannot be initialized', e)
     }
@@ -41,7 +41,7 @@ class NetworkProvider {
 
   getNativeCurrencyInfo(): Chain['nativeCurrency'] {
     const defaultDecimals = 18
-    switch (this.provider.network.chainId) {
+    switch (this.provider.network?.chainId) {
       case 8996:
         return {
           name: 'Ganache Token',
@@ -64,19 +64,21 @@ class NetworkProvider {
   }
 
   getChainName(): string {
-    if (this.provider.network.name !== 'unknown')
-      return this.provider.network.name
+    if (this.provider.network?.name !== 'unknown')
+      return this.provider.network?.name
 
-    if (this.provider.network.chainId === 23295) return 'Oasis Sapphire Testnet'
+    if (this.provider.network?.chainId === 23295)
+      return 'Oasis Sapphire Testnet'
 
-    return `Chain ${this.provider.network.chainId}`
+    return `Chain ${this.provider.network?.chainId}`
   }
 
-  getChainInfo(): Maybe<Chain> {
+  async getChainInfo(): Promise<Maybe<Chain>> {
+    await this.provider._networkPromise
     if (!this.provider.network) return null
 
     return {
-      id: this.provider.network.chainId,
+      id: this.provider.network?.chainId,
       name: this.getChainName(),
       network: this.getChainName(),
       nativeCurrency: this.getNativeCurrencyInfo(),

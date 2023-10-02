@@ -16,7 +16,7 @@ function useEthereumClient() {
   useEffect(() => {
     async function initializeEthereumClient() {
       await networkProvider.init()
-      const chainInfo = networkProvider.getChainInfo()
+      const chainInfo = await networkProvider.getChainInfo()
 
       if (!chainInfo) return
 
