@@ -48,7 +48,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
               className={styles.loader}
             />
           )}
-          {(direction !== undefined || totalStaked == 0) && (
+          {direction !== undefined && totalStaked != 0 && (
             <img
               className={styles.predictionArrow}
               src={`/assets/icons/${

@@ -9,7 +9,6 @@ import React, {
   useState
 } from 'react'
 import { Socket, io } from 'socket.io-client'
-import { usePredictoorsContext } from './PredictoorsContext'
 import {
   TSocketContext,
   TSocketFeedData,
@@ -38,7 +37,6 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   const [epochData, setEpochData] = useState<TSocketFeedData | null>(null)
   const [initialEpochData, setInitialEpochData] =
     useState<TSocketFeedData | null>(null)
-  const { setCurrentChainTime } = usePredictoorsContext()
 
   const isFirstDataEnter = useRef<boolean>(false)
 
@@ -62,13 +60,30 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
     setSocket(newSocket)
 
     newSocket.on('newEpoch', (data: Maybe<TSocketFeedData>) => {
+      console.log(data)
       if (!data) return
+      console.log('here')
       if (!isFirstDataEnter.current) {
         setInitialData(data)
         isFirstDataEnter.current = true
       }
-      setCurrentChainTime(data[0].predictions[0].currentTs)
-      setEpochData(data)
+      console.log(epochData)
+      let updatedData = JSON.parse(JSON.stringify(epochData))
+      if (!epochData) {
+        setEpochData(data)
+        return
+      }
+      console.log(data)
+      console.log(epochData)
+      updatedData = updatedData?.filter(
+        (d: any) => d.contractInfo.address != data[0].contractInfo.address
+      )
+      console.log(updatedData)
+      data.forEach((d) => {
+        updatedData.push(d)
+      })
+      console.log(updatedData)
+      setEpochData(updatedData)
     })
 
     return () => {

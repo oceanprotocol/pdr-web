@@ -39,7 +39,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   const { epochData } = useSocketContext()
   const [relatedData, setRelatedData] = useState<any>()
   const [delta, setDelta] = useState<number>()
-  const [initialPrice, setInitialPrice] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
   const { fetchHistoricalPair, historicalPairsCache } = useMarketPriceContext()
   const { isPriceLoading } = useMarketPriceContext()

@@ -59,14 +59,12 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   checkAndAddInstance: (data) => {},
   getPredictorInstanceByAddress: (data) => undefined,
   runCheckContracts: () => {},
-  setCurrentChainTime: (data) => {},
   setCurrentEpoch: (data) => {},
   setIsNewContractsInitialized: (data) => {},
   subscribedPredictoors: [],
   contracts: undefined,
   secondsPerEpoch: 0,
   currentEpoch: 0,
-  currentChainTime: 0,
   isNewContractsInitialized: false,
   contractPrices: {}
 })
@@ -87,8 +85,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const { isCorrectNetwork } = useIsCorrectChain()
   const { timeFrameInterval } = useTimeFrameContext()
 
-  const { setEpochData, initialEpochData } = useSocketContext()
-  const [currentChainTime, setCurrentChainTime] = useState<number>(0)
+  const { setEpochData, initialEpochData, epochData } = useSocketContext()
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
 
@@ -111,7 +108,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const contractPricesRef = useRef(contractPrices)
 
   const lastCheckedEpoch = useRef<number>(0)
-  let lastTimeframe = useRef<EPredictoorContractInterval>(
+  const lastTimeframe = useRef<EPredictoorContractInterval>(
     EPredictoorContractInterval.e_5M
   )
   const predictedEpochs =
@@ -354,7 +351,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         if (
           currentTs - lastCheckedEpoch.current * SPE <
             SPE + PREDICTION_FETCH_EPOCHS_DELAY &&
-          timeFrameInterval == lastTimeframe
+          timeFrameInterval == lastTimeframe.current
         )
           return
 
@@ -375,7 +372,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           return
 
         lastCheckedEpoch.current = newCurrentEpoch
-        lastTimeframe = timeFrameInterval
+        lastTimeframe.current = timeFrameInterval
         const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
 
         const newEpochs = detectNewEpochs({
@@ -399,6 +396,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
             })
           }
         )
+
+        console.log(epochData)
 
         getMultiplePredictions({
           currentTs: currentTs,
@@ -479,7 +478,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     return () => {
       provider.removeAllListeners('block')
     }
-  }, [subscribedPredictoors])
+  }, [subscribedPredictoors, currentEpoch])
 
   useEffect(() => {
     getAllInterestingPredictionContracts(
@@ -520,7 +519,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         runCheckContracts,
         checkAndAddInstance,
         getPredictorInstanceByAddress,
-        setCurrentChainTime,
         setCurrentEpoch,
         setIsNewContractsInitialized,
         contracts,
@@ -528,7 +526,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         secondsPerEpoch,
         subscribedPredictoors,
         contractPrices,
-        currentChainTime,
         isNewContractsInitialized
       }}
     >
