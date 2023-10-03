@@ -98,6 +98,9 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const [subscribedPredictoors, setSubscribedPredictoors] = useState<
     TPredictoorsContext['subscribedPredictoors']
   >([])
+  const [previousSubscribedPredictoors, setPreviousSubscribedPredictoors] =
+    useState<TPredictoorsContext['subscribedPredictoors']>([])
+  const previousSubscribedPredictoorsRef = useRef(previousSubscribedPredictoors)
   const [contracts, setContracts] = useState<TPredictoorsContext['contracts']>()
 
   const [contractPrices, setContractPrices] = useState<
@@ -338,6 +341,15 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     predictedEpochs.current[contractAddress].push(item)
   }, [])
 
+  function arraysAreSame(x: any, y: any) {
+    if (x.length != y.length) return false
+    var arraysAreSame = true
+    x.forEach((xElement: any, index: number) => {
+      if (x[index].address !== y[index].address) return false
+    })
+    return arraysAreSame
+  }
+
   const addChainListener = useCallback(
     async (
       secondsPerEpoch: number,
@@ -355,7 +367,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         if (
           currentTs - lastCheckedEpoch.current * SPE <
             SPE + PREDICTION_FETCH_EPOCHS_DELAY &&
-          timeFrameInterval == lastTimeframe.current
+          timeFrameInterval == lastTimeframe.current &&
+          arraysAreSame(
+            subscribedPredictoorsNew,
+            previousSubscribedPredictoorsRef.current
+          )
         )
           return
 
@@ -376,13 +392,14 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           return
 
         setFetcingPredictions(true)
+        setPreviousSubscribedPredictoors([...subscribedPredictoorsNew])
 
         lastCheckedEpoch.current = newCurrentEpoch
         lastTimeframe.current = timeFrameInterval
         const predictionEpochs = calculatePredictionEpochs(newCurrentEpoch, SPE)
 
         const newEpochs = detectNewEpochs({
-          subscribedPredictoors,
+          subscribedPredictoors: subscribedPredictoorsNew,
           predictionEpochs,
           predictedEpochs: predictedEpochs.current
         })
@@ -514,6 +531,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   useEffect(() => {
     setFetcingPredictions(true)
   }, [timeFrameInterval])
+
+  useEffect(() => {
+    previousSubscribedPredictoorsRef.current = previousSubscribedPredictoors
+  }, [previousSubscribedPredictoors])
 
   return (
     <PredictoorsContext.Provider

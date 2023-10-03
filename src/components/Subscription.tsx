@@ -4,7 +4,7 @@ import { useUserContext } from '@/contexts/UserContext'
 import Button, { ButtonType } from '@/elements/Button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
-import { NonError, ValueOf } from '@/utils/utils'
+import { NonError, ValueOf, sleep } from '@/utils/utils'
 import { useCallback, useMemo, useState } from 'react'
 import { NotificationManager } from 'react-notifications'
 import { ClipLoader } from 'react-spinners'
@@ -80,6 +80,8 @@ export default function Subscription({
 
         if (!signer) return
         const receipt = await predictorInstance.buyAndStartSubscription(signer)
+
+        await sleep(3000)
 
         if (!!receipt) {
           runCheckContracts()

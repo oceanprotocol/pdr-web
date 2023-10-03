@@ -1,7 +1,7 @@
-import Predictoor from '@/utils/contracts/Predictoor'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
 import { Maybe } from '@/utils/utils'
 import { TPredictedEpochLogItem } from './PredictoorsContext'
+import { TPredictoorsContext } from './PredictoorsContext.types'
 
 export type TFilterAllowedContractsArgs = {
   contracts: Record<string, TPredictionContract>
@@ -58,7 +58,7 @@ export const filterIntervalContracts = ({
 }
 
 export type TDetectNewEpochsArgs = {
-  subscribedPredictoors: Array<Predictoor>
+  subscribedPredictoors: TPredictoorsContext['subscribedPredictoors']
   predictionEpochs: Array<number>
   predictedEpochs?: Record<string, Array<TPredictedEpochLogItem>>
 }

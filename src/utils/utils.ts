@@ -85,3 +85,9 @@ export function handleTransactionError(error: any) {
     return 'An error occurred while processing the transaction.'
   }
 }
+
+export const sleep = async (milliseconds: number) => {
+  await new Promise((resolve) => {
+    return setTimeout(resolve, milliseconds)
+  })
+}
