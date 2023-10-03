@@ -5,7 +5,7 @@ import Button, { ButtonType } from '@/elements/Button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { NonError, ValueOf, sleep } from '@/utils/utils'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { NotificationManager } from 'react-notifications'
 import { ClipLoader } from 'react-spinners'
 import { useAccount } from 'wagmi'
@@ -38,13 +38,13 @@ export default function Subscription({
   contractAddress
 }: TSubscriptionProps) {
   const { isConnected, address } = useAccount()
-  const { refetchBalance } = useUserContext()
+  const { refetchBalance, isBuyingSubscription, setIsBuyingSubscription } =
+    useUserContext()
   const signer = useEthersSigner({})
   const { isCorrectNetwork } = useIsCorrectChain()
 
   const { getPredictorInstanceByAddress, runCheckContracts, contractPrices } =
     usePredictoorsContext()
-  const [isBuying, setIsBuying] = useState(false)
 
   const contractPriceInfo: TContractPriceInfo = useMemo(() => {
     const loadingResult = {
@@ -76,7 +76,7 @@ export default function Subscription({
         const predictorInstance = getPredictorInstanceByAddress(contractAddress)
 
         if (!predictorInstance) return
-        setIsBuying(true)
+        setIsBuyingSubscription(contractAddress)
 
         if (!signer) return
         const receipt = await predictorInstance.buyAndStartSubscription(signer)
@@ -87,7 +87,7 @@ export default function Subscription({
           runCheckContracts()
         }
         refetchBalance()
-        setIsBuying(false)
+        setIsBuyingSubscription('')
         NotificationManager.success(
           '',
           'Subscription purchase succesful!',
@@ -95,7 +95,7 @@ export default function Subscription({
         )
       } catch (e: any) {
         console.error(e)
-        setIsBuying(false)
+        setIsBuyingSubscription('')
         NotificationManager.error(e, 'Subscription purchase failed!', 5000)
       }
     },
@@ -118,12 +118,16 @@ export default function Subscription({
             {subscriptionData.secondsPerSubscription / 3600}h
           </div>
           <Button
-            text={`${isBuying ? 'Buying...' : 'Buy'}`}
+            text={`${
+              isBuyingSubscription == contractAddress ? 'Buying...' : 'Buy'
+            }`}
             type={ButtonType.SECONDARY}
             onClick={() =>
               BuyAction({ currentStatus: subscriptionData.status })
             }
-            disabled={!isConnected || isBuying || !isCorrectNetwork}
+            disabled={
+              !isConnected || isBuyingSubscription !== '' || !isCorrectNetwork
+            }
           />
         </>
       ) : (
