@@ -11,6 +11,7 @@ export type TPredictoorsContext = {
   setIsNewContractsInitialized: (data: boolean) => void
   contracts: Record<string, TPredictionContract> | undefined
   subscribedPredictoors: Array<Predictoor>
+  fetchingPredictions: boolean
   secondsPerEpoch: number
   currentEpoch: number
   isNewContractsInitialized: boolean

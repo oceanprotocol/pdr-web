@@ -32,7 +32,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
     <div
       className={styles.predictionContainer}
       style={{
-        justifyContent: direction == undefined ? 'center' : ''
+        justifyContent: direction == undefined || loading ? 'center' : ''
       }}
     >
       <div className={styles.directionConainer}>
@@ -48,7 +48,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
               className={styles.loader}
             />
           )}
-          {direction !== undefined && totalStaked != 0 && (
+          {direction !== undefined && totalStaked != 0 && !loading && (
             <img
               className={styles.predictionArrow}
               src={`/assets/icons/${
@@ -59,7 +59,7 @@ export const EpochPrediction: React.FC<TEpochPredictionProps> = ({
         </>
       </div>
 
-      {direction !== undefined && (
+      {direction !== undefined && !loading && (
         <EpochStakedTokens stakedUp={stakedUp} totalStaked={totalStaked} />
       )}
     </div>

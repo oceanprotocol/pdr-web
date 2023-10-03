@@ -1,5 +1,6 @@
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { getRelatedPair } from '@/contexts/MarketPriceContextHelpers'
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
@@ -40,6 +41,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   const [relatedData, setRelatedData] = useState<any>()
   const [delta, setDelta] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
+  const { fetchingPredictions } = usePredictoorsContext()
   const { fetchHistoricalPair, historicalPairsCache } = useMarketPriceContext()
   const { isPriceLoading } = useMarketPriceContext()
 
@@ -149,7 +151,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           totalStaked={
             relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
           }
-          loading={!relatedData}
+          loading={!relatedData || fetchingPredictions}
           direction={relatedData?.dir}
         />
       )}

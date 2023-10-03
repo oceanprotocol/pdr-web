@@ -64,6 +64,7 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   subscribedPredictoors: [],
   contracts: undefined,
   secondsPerEpoch: 0,
+  fetchingPredictions: false,
   currentEpoch: 0,
   isNewContractsInitialized: false,
   contractPrices: {}
@@ -88,6 +89,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   const { handleEpochData, initialEpochData } = useSocketContext()
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
+  const [fetchingPredictions, setFetcingPredictions] = useState<boolean>(false)
 
   const [predictoorInstances, setPredictorInstances] = useState<
     TPredictoorsContext['predictoorInstances']
@@ -310,7 +312,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         const validEpochs = sortedEpochs.filter(
           (d) => epoch - d.epoch <= sPerEpoch
         )
-        console.log(validEpochs)
         return validEpochs
       }
       return []
@@ -373,6 +374,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           !authorizationData
         )
           return
+
+        setFetcingPredictions(true)
 
         lastCheckedEpoch.current = newCurrentEpoch
         lastTimeframe.current = timeFrameInterval
@@ -441,6 +444,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
             handleEpochData([blockchainFeedData])
           })
+          setFetcingPredictions(false)
         })
         //await contract.getAggPredval(epoch, predictoorWallet)
       })
@@ -507,6 +511,10 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     setContracts(serverContracts)
   }, [initialEpochData])
 
+  useEffect(() => {
+    setFetcingPredictions(true)
+  }, [timeFrameInterval])
+
   return (
     <PredictoorsContext.Provider
       value={{
@@ -520,6 +528,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         currentEpoch,
         secondsPerEpoch,
         subscribedPredictoors,
+        fetchingPredictions,
         contractPrices,
         isNewContractsInitialized
       }}
