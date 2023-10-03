@@ -303,12 +303,15 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   )
 
   const getPredictedEpochsByContract = useCallback(
-    (contractAddress: string) => {
+    (contractAddress: string, epoch: number, sPerEpoch: number) => {
       const tempData = predictedEpochs.current?.[contractAddress]
       if (tempData) {
         const sortedEpochs = tempData.sort((a, b) => a.epoch - b.epoch)
-        const lastThreeEpochs = sortedEpochs.slice(-2)
-        return lastThreeEpochs
+        const validEpochs = sortedEpochs.filter(
+          (d) => epoch - d.epoch <= sPerEpoch
+        )
+        console.log(validEpochs)
+        return validEpochs
       }
       return []
     },
@@ -387,7 +390,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
         const cachedValues = subscribedContractAddresses.flatMap(
           (contractAddress) => {
-            const cachedValue = getPredictedEpochsByContract(contractAddress)
+            const cachedValue = getPredictedEpochsByContract(
+              contractAddress,
+              cEpoch,
+              SPE
+            )
             return cachedValue.map((item) => {
               return {
                 ...item,
