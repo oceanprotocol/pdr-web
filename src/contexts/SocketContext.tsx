@@ -14,6 +14,7 @@ import {
   TSocketFeedData,
   TSocketProviderProps
 } from './SocketContext.types'
+import { useTimeFrameContext } from './TimeFrameContext'
 
 // SocketContext
 const SocketContext = createContext<TSocketContext>({
@@ -37,6 +38,8 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
   const [epochData, setEpochData] = useState<TSocketFeedData | null>(null)
   const [initialEpochData, setInitialEpochData] =
     useState<TSocketFeedData | null>(null)
+
+  const { timeFrameInterval } = useTimeFrameContext()
 
   const isFirstDataEnter = useRef<boolean>(false)
 
@@ -66,29 +69,33 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
     if (currentConfig.opfProvidedPredictions.length === 0) return
     const socketUrl =
       process.env.NEXT_PUBLIC_SOCKET_IO_URL || currentConfig.websocketURL
-    console.log('socketUrl', socketUrl)
+
     const newSocket = io(socketUrl, {
       path: '/api/datafeed',
-      transports: ['websocket']
+      transports: ['websocket'],
+      query: {}
     })
 
     setSocket(newSocket)
 
-    newSocket.on('newEpoch', (data: Maybe<TSocketFeedData>) => {
-      if (!data) return
+    newSocket.on(
+      `newEpoch-${timeFrameInterval}`,
+      (data: Maybe<TSocketFeedData>) => {
+        if (!data) return
 
-      if (!isFirstDataEnter.current) {
-        setInitialData(data)
-        isFirstDataEnter.current = true
+        if (!isFirstDataEnter.current) {
+          setInitialData(data)
+          isFirstDataEnter.current = true
+        }
+
+        handleEpochData(data)
       }
-
-      handleEpochData(data)
-    })
+    )
 
     return () => {
       newSocket.close()
     }
-  }, [])
+  }, [timeFrameInterval, handleEpochData, setInitialData])
 
   return (
     <SocketContext.Provider
