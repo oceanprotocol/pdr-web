@@ -36,7 +36,7 @@ export default function Stake({
           src={'oceanToken.png'}
           alt="Coin symbol image"
         />
-        <span className={styles.accuracy}>{totalStake.toFixed(0)}</span>
+        <span className={styles.accuracy}>{totalStake?.toFixed(0)}</span>
       </div>
       <span
         className={styles.delta}
