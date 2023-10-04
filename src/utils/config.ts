@@ -47,7 +47,7 @@ export const config: TRuntimeConfig = {
     chainId: '23295',
     subgraph:
       'https://v4.subgraph.sapphire-testnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
-    websocketURL: 'https://test.websocket.predictoor.ai',
+    websocketURL: 'http://localhost:8888',
     oceanTokenAddress: '0x973e69303259b0c2543a38665122b773d28405fb',
     tokenPredictions: [
       {
@@ -56,7 +56,10 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    opfProvidedPredictions: ['0xda1e3c0ac74f2f10bb0c7635c9dc68bd3da0c95b'],
+    opfProvidedPredictions: [
+      '0xda1e3c0ac74f2f10bb0c7635c9dc68bd3da0c95b',
+      '0xc2c5c790b411a835742ed0d517df68fea958058d'
+    ],
     allowedPredictions: null,
     blacklistedPredictions: [''],
 
