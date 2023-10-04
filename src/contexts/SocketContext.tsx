@@ -51,7 +51,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
       const dataContractAddresses = data.map((d) => d.contractInfo?.address)
 
       const prevItems = prev.filter(
-        (item) => !dataContractAddresses.includes(item.contractInfo.address)
+        (item) => !dataContractAddresses.includes(item.contractInfo?.address)
       )
 
       return [...prevItems, ...data]

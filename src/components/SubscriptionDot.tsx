@@ -1,8 +1,10 @@
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
+import { useUserContext } from '@/contexts/UserContext'
 import { calculateTimeRemaining } from '@/elements/CountdownComponent'
 import Tooltip from '@/elements/Tooltip'
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import { useAccount } from 'wagmi'
 import styles from '../styles/SubscriptionDot.module.css'
 import { SubscriptionStatus } from './Subscription'
@@ -27,6 +29,7 @@ export default function SubscriptionDot({
   const [expiryTimestamp, setExpiryTimestamp] = useState<number | undefined>()
   const [message, setMessage] = useState<string>('')
   const [closeToExpiry, setCloseToExpiry] = useState<boolean>(false)
+  const { isBuyingSubscription } = useUserContext()
 
   const userSubscription = () => {
     if (!address || !contractPrices) return
@@ -41,7 +44,7 @@ export default function SubscriptionDot({
     const timeRemaining = expiryTimestamp
       ? calculateTimeRemaining(expiryTimestamp)
       : 0
-    const seconds = Math.floor((timeRemaining / 1000))
+    const seconds = Math.floor(timeRemaining / 1000)
     const minutes = Math.floor((timeRemaining / 1000 / 60) % 60)
     const hours = Math.floor((timeRemaining / 1000 / 3600) % 24)
 
@@ -68,18 +71,32 @@ export default function SubscriptionDot({
     userSubscription()
   }, [address, contractPrices, status])
 
-  return status !== SubscriptionStatus.INACTIVE ? (
+  const dotBackgroundColor = useMemo(
+    () =>
+      isBuyingSubscription == contractAddress ||
+      status === SubscriptionStatus.INACTIVE
+        ? 'white'
+        : status === SubscriptionStatus.ACTIVE && closeToExpiry
+        ? 'orange'
+        : 'green',
+    [isBuyingSubscription, status, closeToExpiry]
+  )
+
+  return status !== SubscriptionStatus.INACTIVE || isBuyingSubscription ? (
     <div className={styles.container} id={assetName}>
       <div
         className={styles.image}
         style={{
-          backgroundColor:
-            status === SubscriptionStatus.ACTIVE && closeToExpiry
-              ? 'orange'
-              : 'green'
+          backgroundColor: dotBackgroundColor,
+          display:
+            isBuyingSubscription == contractAddress ? 'contents' : 'block'
         }}
       >
-        {' '}
+        {isBuyingSubscription == contractAddress ? (
+          <ClipLoader size={12} color="var(--dark-grey)" loading={true} />
+        ) : (
+          ' '
+        )}
       </div>
       {message && (
         <Tooltip selector={assetName} text={message} hideIcon textAlignCenter />

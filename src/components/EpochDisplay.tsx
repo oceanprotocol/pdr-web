@@ -105,7 +105,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
     setRelatedData(
       Array.isArray(epochData)
         ? epochData
-            ?.find((data) => data.contractInfo.address == address)
+            ?.find((data) => data.contractInfo?.address == address)
             ?.predictions.sort((a, b) => a.epoch - b.epoch)[
             relatedPredictionIndex
           ]

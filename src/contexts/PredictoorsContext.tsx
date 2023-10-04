@@ -343,11 +343,14 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   function arraysAreSame(x: any, y: any) {
     if (x.length != y.length) return false
-    var arraysAreSame = true
-    x.forEach((xElement: any, index: number) => {
-      if (x[index].address !== y[index].address) return false
-    })
-    return arraysAreSame
+
+    for (let index = 0; index < x.length; index++) {
+      if (x[index].address !== y[index].address) {
+        return false
+      }
+    }
+
+    return true
   }
 
   const addChainListener = useCallback(
@@ -520,8 +523,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     if (!initialEpochData) return
     let serverContracts = contracts || {}
     initialEpochData.forEach((data) => {
-      serverContracts[data.contractInfo.address] = {
-        ...data.contractInfo,
+      serverContracts[data.contractInfo?.address] = {
+        ...data?.contractInfo,
         owner: currentConfig.opfOwnerAddress
       }
     })
