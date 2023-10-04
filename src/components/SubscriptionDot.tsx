@@ -3,7 +3,7 @@ import { useUserContext } from '@/contexts/UserContext'
 import { calculateTimeRemaining } from '@/elements/CountdownComponent'
 import Tooltip from '@/elements/Tooltip'
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import { useAccount } from 'wagmi'
 import styles from '../styles/SubscriptionDot.module.css'
@@ -71,18 +71,23 @@ export default function SubscriptionDot({
     userSubscription()
   }, [address, contractPrices, status])
 
+  const dotBackgroundColor = useMemo(
+    () =>
+      isBuyingSubscription == contractAddress ||
+      status === SubscriptionStatus.INACTIVE
+        ? 'white'
+        : status === SubscriptionStatus.ACTIVE && closeToExpiry
+        ? 'orange'
+        : 'green',
+    [isBuyingSubscription, status, closeToExpiry]
+  )
+
   return status !== SubscriptionStatus.INACTIVE || isBuyingSubscription ? (
     <div className={styles.container} id={assetName}>
       <div
         className={styles.image}
         style={{
-          backgroundColor:
-            isBuyingSubscription == contractAddress ||
-            status === SubscriptionStatus.INACTIVE
-              ? 'white'
-              : status === SubscriptionStatus.ACTIVE && closeToExpiry
-              ? 'orange'
-              : 'green',
+          backgroundColor: dotBackgroundColor,
           display:
             isBuyingSubscription == contractAddress ? 'contents' : 'block'
         }}
