@@ -1,8 +1,8 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
-import Balance from '@/components/Balance'
 import Banner from '@/components/Banner'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
+import { TimeFrameSwitch } from '@/components/TimeFrameSwitch'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -26,7 +26,7 @@ export default function Home() {
           <p className={styles.oneliner}>
             Accurate price predictions for your favorite crypto assets
           </p>
-          <Balance />
+          <TimeFrameSwitch />
         </div>
         <AssetsContainer />
         <Footer />

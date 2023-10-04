@@ -1,10 +1,7 @@
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { getRelatedPair } from '@/contexts/MarketPriceContextHelpers'
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
-import {
-  compareSplittedNames,
-  splitContractName
-} from '@/utils/splitContractName'
 import { useEffect, useMemo, useState } from 'react'
 import styles from '../styles/Epoch.module.css'
 import { EpochPrediction } from './EpochDetails/EpochPrediction'
@@ -22,7 +19,7 @@ export enum EEpochDisplayStatus {
 export type TEpochDisplayProps = {
   status: EEpochDisplayStatus
   price: number
-  market: string
+  address: string
   tokenName: string
   pairName: string
   subscription: SubscriptionStatus
@@ -33,7 +30,7 @@ export type TEpochDisplayProps = {
 export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   status,
   price,
-  market,
+  address,
   tokenName,
   pairName,
   subscription,
@@ -41,9 +38,12 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   secondsPerEpoch
 }) => {
   const { epochData } = useSocketContext()
+  const [relatedData, setRelatedData] = useState<any>()
   const [delta, setDelta] = useState<number>()
   const [finalPrice, setFinalPrice] = useState<number>(0)
+  const { fetchingPredictions } = usePredictoorsContext()
   const { fetchHistoricalPair, historicalPairsCache } = useMarketPriceContext()
+  const { isPriceLoading } = useMarketPriceContext()
 
   const isNextEpoch = useMemo<boolean>(
     () => status === EEpochDisplayStatus.NextEpoch,
@@ -60,17 +60,6 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
         return 0
     }
   }, [status])
-
-  const relatedData = Array.isArray(epochData)
-    ? epochData
-        ?.find((data) =>
-          compareSplittedNames(splitContractName(data.contractInfo.name), [
-            tokenName,
-            pairName
-          ])
-        )
-        ?.predictions.sort((a, b) => a.epoch - b.epoch)[relatedPredictionIndex]
-    : null
 
   const getHistoryEpochPriceDelta = async () => {
     if (status !== EEpochDisplayStatus.PastEpoch) return
@@ -113,6 +102,18 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   ])
 
   useEffect(() => {
+    setRelatedData(
+      Array.isArray(epochData)
+        ? epochData
+            ?.find((data) => data.contractInfo?.address == address)
+            ?.predictions.sort((a, b) => a.epoch - b.epoch)[
+            relatedPredictionIndex
+          ]
+        : null
+    )
+  }, [epochData])
+
+  useEffect(() => {
     if (isNextEpoch || !secondsPerEpoch || !epochStartTs) return
     getHistoryEpochPriceDelta()
   }, [relatedData, secondsPerEpoch, epochStartTs, isNextEpoch])
@@ -120,7 +121,11 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
   return (
     <div className={styles.container}>
       {status !== EEpochDisplayStatus.NextEpoch && (
-        <EpochPrice price={finalPrice} delta={delta} />
+        <EpochPrice
+          price={finalPrice}
+          delta={delta}
+          isPriceLoading={isPriceLoading}
+        />
       )}
       {status === EEpochDisplayStatus.NextEpoch ? (
         subscription !== SubscriptionStatus.INACTIVE ? (
@@ -146,7 +151,7 @@ export const EpochDisplay: React.FC<TEpochDisplayProps> = ({
           totalStaked={
             relatedData?.nom ? parseFloat(relatedData?.denom) : undefined
           }
-          loading={!relatedData}
+          loading={!relatedData || fetchingPredictions}
           direction={relatedData?.dir}
         />
       )}

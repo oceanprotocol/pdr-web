@@ -1,15 +1,8 @@
 import { States } from '@/components/Banner'
 import { currentConfig } from './appconstants'
-const { chainId } = currentConfig
 
 /* eslint-env mocha */
 /* global */
-
-// enum for predictoorContractInterval
-export enum predictoorContractInterval {
-  e_5M = '5m',
-  e_1H = '1h'
-}
 
 export const findContractMarketInConfig = (
   tokenName: string,
@@ -91,4 +84,10 @@ export function handleTransactionError(error: any) {
     // Display a general error message
     return 'An error occurred while processing the transaction.'
   }
+}
+
+export const sleep = async (milliseconds: number) => {
+  await new Promise((resolve) => {
+    return setTimeout(resolve, milliseconds)
+  })
 }

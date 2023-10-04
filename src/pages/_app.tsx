@@ -7,7 +7,10 @@ import type { AppProps } from 'next/app'
 import { NotificationContainer } from 'react-notifications'
 import { WagmiConfig } from 'wagmi'
 
+import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
+import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
 import { useEthereumClient } from '@/hooks/useEthereumClient'
+import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import { useRouter } from 'next/router'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
@@ -57,9 +60,15 @@ function App({ Component, pageProps }: AppProps) {
             <WagmiConfig config={wagmiConfig}>
               <UserProvider>
                 <SocketProvider>
-                  <PredictoorsProvider>
-                    <Component {...pageProps} />
-                  </PredictoorsProvider>
+                  <TimeFrameProvider
+                    defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
+                  >
+                    <PredictoorsProvider>
+                      <MarketPriceProvider>
+                        <Component {...pageProps} />
+                      </MarketPriceProvider>
+                    </PredictoorsProvider>
+                  </TimeFrameProvider>
                 </SocketProvider>
               </UserProvider>
             </WagmiConfig>

@@ -1,0 +1,45 @@
+.switcherMain {
+  display: flex;
+  flex-direction: row;
+}
+
+.leftIcon {
+  border: 1px solid var(--dark-grey);
+  border-bottom-left-radius: var(--border-radius-box);
+  border-top-left-radius: var(--border-radius-box);
+  padding: 0 calc(var(--spacer) / 20);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.switcherContainer {
+  display: flex;
+  padding: calc(var(--spacer) / 10) calc(var(--spacer) / 10);
+  border: 1px solid var(--dark-grey);
+  border-radius: var(--border-radius-box);
+}
+
+.switcherContainer.withLeftIcon {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left: 0px none;
+}
+
+.switcherItem {
+  display: flex;
+  width: calc(var(--spacer));
+  justify-content: center;
+  align-items: center;
+  color: var(--dark-grey);
+  padding: calc(var(--spacer) / 20) calc(var(--spacer) / 4);
+  cursor: pointer;
+}
+
+.switcherItemActive {
+  color: black;
+  cursor: default;
+  transition: all 0.3s ease;
+  background-color: var(--shadow-grey);
+  border-radius: var(--border-radius-box);
+}

@@ -131,7 +131,8 @@ export const calculateSlotStats = async (
     // console.log(`Total slots for ${assetId}: ${totalSlots}`);
     // console.log(`Correct predictions for ${assetId}: ${correctPredictions}`);
     // console.log(`Average accuracy for ${assetId}: ${(correctPredictions / totalSlots) * 100}%`);
-    const averageAccuracy = (correctPredictions / totalSlots) * 100
+    const averageAccuracy =
+      correctPredictions == 0 ? 0 : (correctPredictions / totalSlots) * 100
     contractAccuracy[assetId] = averageAccuracy
     contractTotalStakeYesterday[assetId] = totalStakedYesterday
     contractTotalStakeToday[assetId] = totalStakeToday
