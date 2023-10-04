@@ -523,8 +523,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     if (!initialEpochData) return
     let serverContracts = contracts || {}
     initialEpochData.forEach((data) => {
-      serverContracts[data.contractInfo.address] = {
-        ...data.contractInfo,
+      serverContracts[data.contractInfo?.address] = {
+        ...data?.contractInfo,
         owner: currentConfig.opfOwnerAddress
       }
     })

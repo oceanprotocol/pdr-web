@@ -81,7 +81,7 @@ export default function Subscription({
         if (!signer) return
         const receipt = await predictorInstance.buyAndStartSubscription(signer)
 
-        await sleep(2000)
+        await sleep(1000)
 
         if (!!receipt) {
           runCheckContracts()
