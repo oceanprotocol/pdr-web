@@ -59,17 +59,17 @@ function App({ Component, pageProps }: AppProps) {
           <>
             <WagmiConfig config={wagmiConfig}>
               <UserProvider>
-                <SocketProvider>
-                  <TimeFrameProvider
-                    defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
-                  >
+                <TimeFrameProvider
+                  defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
+                >
+                  <SocketProvider>
                     <PredictoorsProvider>
                       <MarketPriceProvider>
                         <Component {...pageProps} />
                       </MarketPriceProvider>
                     </PredictoorsProvider>
-                  </TimeFrameProvider>
-                </SocketProvider>
+                  </SocketProvider>
+                </TimeFrameProvider>
               </UserProvider>
             </WagmiConfig>
             <Web3Modal

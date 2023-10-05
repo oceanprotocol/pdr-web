@@ -532,10 +532,6 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   }, [initialEpochData])
 
   useEffect(() => {
-    setFetcingPredictions(true)
-  }, [timeFrameInterval])
-
-  useEffect(() => {
     previousSubscribedPredictoorsRef.current = previousSubscribedPredictoors
   }, [previousSubscribedPredictoors])
 
