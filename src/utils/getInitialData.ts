@@ -4,9 +4,7 @@ import { pdrwebInitialData } from './endpoints/pdrwebEndpoints'
 import { Maybe } from './utils'
 
 export const getInitialData = async (): Promise<Maybe<TSocketFeedData>> => {
-  return fetch(pdrwebInitialData(currentConfig.websocketURL), {
-    mode: 'no-cors'
-  })
+  return fetch(pdrwebInitialData(currentConfig.websocketURL))
     .then((response) => response.json())
     .then((response) => {
       // Response can return an error
