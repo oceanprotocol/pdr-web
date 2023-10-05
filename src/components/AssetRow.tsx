@@ -176,6 +176,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         price={tokenData.price}
         {...slotProps}
         subscription={subscription}
+        address={contract.address}
         epochStartTs={currentEpoch - secondsPerEpoch}
         secondsPerEpoch={secondsPerEpoch}
       />
@@ -184,6 +185,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         price={tokenData.price}
         {...slotProps}
         epochStartTs={currentEpoch}
+        address={contract.address}
         subscription={subscription}
         secondsPerEpoch={secondsPerEpoch}
       />
@@ -194,6 +196,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
           price={tokenData.price}
           {...slotProps}
           subscription={subscription}
+          address={contract.address}
           epochStartTs={currentEpoch + secondsPerEpoch}
           secondsPerEpoch={secondsPerEpoch}
         />

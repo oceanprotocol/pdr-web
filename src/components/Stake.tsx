@@ -9,11 +9,23 @@ export default function Stake({
   totalStakePreviousDay: number
 }) {
   let delta =
-    ((totalStake - totalStakePreviousDay) / totalStakePreviousDay) * 100
+    totalStakePreviousDay == 0
+      ? totalStake == 0
+        ? 0
+        : 100
+      : ((totalStake - totalStakePreviousDay) / totalStakePreviousDay) * 100
   const getDelta = (): string => {
     return `${
-      delta ? (delta > 0 && delta < 0.5 ? '' : delta > 0 ? '+' : '-') : '?'
-    }${delta ? Math.abs(delta).toFixed(0) : ''}%`
+      delta !== undefined && delta !== null
+        ? delta >= 0 && delta < 0.5
+          ? ''
+          : delta > 0
+          ? '+'
+          : '-'
+        : '?'
+    }${
+      delta !== undefined && delta !== null ? Math.abs(delta).toFixed(0) : ''
+    }%`
   }
 
   const deltaColorStyle = useMemo(
