@@ -26,7 +26,7 @@ type ASSET_TABLE_COLUMNS = TABLE_COLUMN[]
 
 export const assetTableColumns: ASSET_TABLE_COLUMNS = [
   {
-    Header: 'Asset (5m)',
+    Header: 'Asset',
     accessor: 'asset'
   },
   {
