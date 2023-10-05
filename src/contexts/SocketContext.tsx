@@ -63,7 +63,7 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
     // transform TInitialData to TSocketFeedData
     console.log(data)
     setInitialEpochData(data)
-    setEpochData(data)
+    handleEpochData(data)
   }, [])
 
   useEffect(() => {
@@ -79,20 +79,17 @@ export const SocketProvider: React.FC<TSocketProviderProps> = ({
 
     setSocket(newSocket)
 
-    newSocket.on(
-      `newEpoch-${timeFrameInterval}`,
-      (data: Maybe<TSocketFeedData>) => {
-        console.log(data)
-        if (!data) return
+    newSocket.on(`newEpoch`, (data: Maybe<TSocketFeedData>) => {
+      console.log(data)
+      if (!data) return
 
-        if (!isFirstDataEnter.current) {
-          setInitialData(data)
-          isFirstDataEnter.current = true
-        }
-
-        handleEpochData(data)
+      if (!isFirstDataEnter.current) {
+        setInitialData(data)
+        isFirstDataEnter.current = true
       }
-    )
+
+      handleEpochData(data)
+    })
 
     return () => {
       newSocket.close()
