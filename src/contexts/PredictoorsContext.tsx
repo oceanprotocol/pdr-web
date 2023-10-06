@@ -45,6 +45,7 @@ import {
 } from './PredictoorsContextHelper'
 import { useSocketContext } from './SocketContext'
 import { useTimeFrameContext } from './TimeFrameContext'
+import { useUserContext } from './UserContext'
 
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
@@ -61,6 +62,7 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   runCheckContracts: () => {},
   setCurrentEpoch: (data) => {},
   setIsNewContractsInitialized: (data) => {},
+  getUserSignature: () => {},
   subscribedPredictoors: [],
   contracts: undefined,
   secondsPerEpoch: 0,
@@ -85,6 +87,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   })
   const { isCorrectNetwork } = useIsCorrectChain()
   const { timeFrameInterval } = useTimeFrameContext()
+  const { setUserSignature } = useUserContext()
 
   const { handleEpochData, initialEpochData } = useSocketContext()
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
@@ -125,11 +128,16 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     async (signer: ethers.providers.JsonRpcSigner) => {
       const initialData = await authorizeWithWallet(signer, 86400)
 
-      if (!initialData) return
+      if (!initialData) {
+        setUserSignature(false)
+        return
+      }
+
       const authorizationData = new AuthorizationData<TAuthorization>({
         initialData,
         createCallback: async () => authorizeWithWallet(signer, 86400)
       })
+      setUserSignature(true)
       authorizationDataInstance.current = authorizationData
     },
     []
@@ -190,6 +198,11 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     if (!signer || subscribedPredictoors.length === 0) return undefined
     initializeAuthorizationData(signer)
   }, [signer, subscribedPredictoors.length, initializeAuthorizationData])
+
+  const getUserSignature = () => {
+    if (!signer || subscribedPredictoors.length === 0) return undefined
+    initializeAuthorizationData(signer)
+  }
 
   const checkIfContractIsSubscribed = useCallback(
     (contractAddress: string) => {
@@ -544,6 +557,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         getPredictorInstanceByAddress,
         setCurrentEpoch,
         setIsNewContractsInitialized,
+        getUserSignature,
         contracts,
         currentEpoch,
         secondsPerEpoch,
