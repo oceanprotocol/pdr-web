@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <div className={footerStyles.container}>
       <p className={footerStyles.message}>
-        Want to be notified when mainnet goes live? Follow us on Discord.
+        Want to be up to date or get support? Join our Discord channel.
       </p>
       <a
         href="https://discord.gg/kfrZ8wuTKc"
