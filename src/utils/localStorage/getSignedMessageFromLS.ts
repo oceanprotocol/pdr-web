@@ -15,7 +15,7 @@ export const getLocalStorageSignedMessage = (
   const lsSignedMessage = localStorage.getItem(
     getLocalStorageSignedMessageKey(address)
   )
-  console.log('lsSignedMessage', lsSignedMessage)
+  //console.log('lsSignedMessage', lsSignedMessage)
   if (lsSignedMessage) {
     return JSON.parse(lsSignedMessage) as TAuthorization
   }
