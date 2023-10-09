@@ -26,11 +26,11 @@ export type TRuntimeConfig = Record<
 
 export const config: TRuntimeConfig = {
   production: {
-    chainId: '23295',
-    oceanTokenAddress: '0x5b43cf84a63925201da55ea0048f76bd70bb6be5',
+    chainId: '23294',
+    oceanTokenAddress: '0x39d22b78a7651a76ffbde2aaab5fd92666aca520',
     websocketURL: 'https://websocket.predictoor.ai',
     subgraph:
-      'https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
+      'https://v4.subgraph.sapphire-mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
       {
         tokenName: 'ETH',
@@ -38,10 +38,13 @@ export const config: TRuntimeConfig = {
         market: 'univ3'
       }
     ],
-    opfProvidedPredictions: [],
+    opfProvidedPredictions: [
+      '0xe66421fd29fc2d27d0724f161f01b8cbdcd69690',
+      '0x8165caab33131a4ddbf7dc79f0a8a4920b0b2553'
+    ],
     allowedPredictions: null,
-    blacklistedPredictions: [],
-    opfOwnerAddress: ''
+    blacklistedPredictions: [''],
+    opfOwnerAddress: '0x4ac2e51f9b1b0ca9e000dfe6032b24639b172703'
   },
   staging: {
     chainId: '23295',
@@ -62,7 +65,6 @@ export const config: TRuntimeConfig = {
     ],
     allowedPredictions: null,
     blacklistedPredictions: [''],
-
     opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
   development: {

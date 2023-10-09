@@ -3,7 +3,12 @@ import { Chain } from 'wagmi'
 import networksData from '../metadata/networks.json'
 import { Maybe } from './utils'
 
-type NetworkNames = 'barge' | 'development' | 'staging' | 'mainnet'
+type NetworkNames =
+  | 'barge'
+  | 'development'
+  | 'staging'
+  | 'mainnet'
+  | 'production'
 
 type NetworkConfig = Record<NetworkNames, string>
 
@@ -12,6 +17,7 @@ const networkConfig: NetworkConfig = {
   barge: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://localhost:8545',
   development: 'https://development.oceandao.org',
   staging: 'https://testnet.sapphire.oasis.dev',
+  production: 'https://sapphire.oasis.io',
   mainnet: ''
 }
 
@@ -55,6 +61,12 @@ class NetworkProvider {
           symbol: 'ROSE',
           decimals: defaultDecimals
         }
+      case 23294:
+        return {
+          name: 'Oasis Network',
+          symbol: 'ROSE',
+          decimals: defaultDecimals
+        }
       default:
         return {
           name: 'Ether',
@@ -70,6 +82,8 @@ class NetworkProvider {
 
     if (this.provider.network?.chainId === 23295)
       return 'Oasis Sapphire Testnet'
+
+    if (this.provider.network?.chainId === 23294) return 'Oasis Sapphire'
 
     return `Chain ${this.provider.network?.chainId}`
   }
