@@ -64,7 +64,7 @@ export type ValueOfMap<T> = T extends Map<any, infer V> ? V : never
 export type ElementOf<T> = T extends Array<infer E> ? E : never
 
 export const isSapphireNetwork = (): boolean =>
-  currentConfig.chainId === '23295'
+  currentConfig.chainId === '23295' || currentConfig.chainId === '23294'
 
 export function handleTransactionError(error: any) {
   console.log(error.code)
