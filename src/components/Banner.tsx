@@ -36,7 +36,7 @@ export default function Banner() {
     if (!userSignature)
       setState({
         message:
-          'Signature not provided. Signature is needed to fetch private predicitons',
+          'Signature not provided. Signature is needed to authorize and fetch private predicitons',
         type: States.ERROR
       })
   }, [address, isCorrectNetwork, userSignature])
@@ -50,7 +50,7 @@ export default function Banner() {
     >
       <span className={styles.text}>{state.message}</span>
       {!userSignature && (
-        <Button onClick={() => getUserSignature()} text="Sign" />
+        <Button onClick={() => getUserSignature()} text="Provide Signature" />
       )}
       {chain && !isCorrectNetwork && (
         <Button

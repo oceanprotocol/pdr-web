@@ -5,7 +5,11 @@ import {
   PREDICTION_FETCH_EPOCHS_DELAY,
   currentConfig
 } from '@/utils/appconstants'
-import { TAuthorization, authorizeWithWallet } from '@/utils/authorize'
+import {
+  TAuthorization,
+  authorizeWithWallet,
+  getValidSignedMessageFromLS
+} from '@/utils/authorize'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor from '@/utils/contracts/Predictoor'
 import {
@@ -195,8 +199,20 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   }, [predictoorInstances])
 
   useEffect(() => {
-    if (!signer || subscribedPredictoors.length === 0) return undefined
-    initializeAuthorizationData(signer)
+    if (!signer || subscribedPredictoors.length === 0) return
+    getValidSignedMessageFromLS(signer).then((lsSignedMessage) => {
+      if (lsSignedMessage) {
+        const authorizationData = new AuthorizationData<TAuthorization>({
+          initialData: lsSignedMessage,
+          createCallback: async () => authorizeWithWallet(signer, 86400)
+        })
+        authorizationDataInstance.current = authorizationData
+        setUserSignature(true)
+        return
+      } else {
+        setUserSignature(false)
+      }
+    })
   }, [signer, subscribedPredictoors.length, initializeAuthorizationData])
 
   const getUserSignature = () => {
