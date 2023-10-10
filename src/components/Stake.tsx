@@ -28,6 +28,8 @@ export default function Stake({
     }%`
   }
 
+  console.log(totalStake, totalStakePreviousDay)
+
   const deltaColorStyle = useMemo(
     () =>
       delta
@@ -48,7 +50,7 @@ export default function Stake({
           src={'oceanToken.png'}
           alt="Coin symbol image"
         />
-        <span className={styles.accuracy}>{totalStake?.toFixed(0)}</span>
+        <span className={styles.accuracy}>{totalStake?.toFixed(1)}</span>
       </div>
       <span
         className={styles.delta}
