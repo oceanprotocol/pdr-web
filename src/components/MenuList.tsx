@@ -23,5 +23,19 @@ export const MenuList: React.FC = () => (
         About
       </a>
     </li>
+    <li>
+      <a
+        target="_blank"
+        href={
+          process.env.NEXT_PUBLIC_ENV === 'staging'
+            ? 'https://predictoor.ai'
+            : 'https://test.predictoor.ai'
+        }
+      >
+        {`Go to ${
+          process.env.NEXT_PUBLIC_ENV === 'staging' ? 'Mainnet' : 'Testnet'
+        }`}
+      </a>
+    </li>
   </ul>
 )
