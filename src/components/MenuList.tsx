@@ -5,7 +5,7 @@ export const MenuList: React.FC = () => (
     <li>
       <a
         target="_blank"
-        href="https://github.com/oceanprotocol/pdr-backend/blob/main/READMEs/testnet-faucet.md"
+        href="https://github.com/oceanprotocol/pdr-backend/blob/main/READMEs/get-tokens.md"
       >
         Get tokens
       </a>
