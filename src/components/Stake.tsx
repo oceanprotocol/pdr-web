@@ -28,8 +28,6 @@ export default function Stake({
     }%`
   }
 
-  console.log(totalStake, totalStakePreviousDay)
-
   const deltaColorStyle = useMemo(
     () =>
       delta
