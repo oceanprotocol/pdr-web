@@ -28,7 +28,7 @@ export const config: TRuntimeConfig = {
   production: {
     chainId: '23294',
     oceanTokenAddress: '0x39d22b78a7651a76ffbde2aaab5fd92666aca520',
-    websocketURL: 'https://test.websocket.predictoor.ai',
+    websocketURL: 'https://websocket.predictoor.ai',
     subgraph:
       'https://v4.subgraph.sapphire-mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [

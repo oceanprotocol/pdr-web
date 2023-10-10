@@ -20,7 +20,11 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
     <div className={styles.stekesContainer}>
       <div className={styles.stake}>
         <span className={styles.stakeAmount}>
-          {stakedUp ? parseFloat(stakedUp.toString()).toFixed(1) : 0}
+          {stakedUp && stakedUp > 0
+            ? stakedUp >= 0.01
+              ? stakedUp.toLocaleString()
+              : '<0.01'
+            : 0}
         </span>
         <img
           className={styles.stakeDirectionArrow}
@@ -30,8 +34,10 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
       </div>
       <div className={`${styles.stake} ${styles.stakeMarginLeft}`}>
         <span className={styles.stakeAmount}>
-          {totalStaked && stakedUp !== undefined
-            ? parseFloat((totalStaked - stakedUp).toString()).toFixed(1)
+          {totalStaked && stakedUp !== undefined && totalStaked - stakedUp > 0
+            ? totalStaked - stakedUp >= 0.01
+              ? (totalStaked - stakedUp).toLocaleString()
+              : '<0.01'
             : 0}
         </span>
         <img

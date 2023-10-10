@@ -122,15 +122,17 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   // Calculate accuracy and set state
   const loadAccuracy = useCallback(async () => {
     if (!currentEpoch) return
-    let [accuracy, totalTodayStake, totalStakeYesterdayBefore] =
+    let [accuracy, totalStakeYesterdayBefore, totalTodayStake] =
       await getAssetPairStatsForRow({
         contract: contract.address,
         lastSlotTS: currentEpoch,
         firstSlotTS: currentEpoch - 2 * SECONDS_IN_24_HOURS
       })
     setTokenAccuracy(accuracy)
-    setTokenTotalStake(totalTodayStake)
-    setTokenTotalStakePreviousDay(totalStakeYesterdayBefore)
+    setTokenTotalStake(totalTodayStake ? totalTodayStake : 0)
+    setTokenTotalStakePreviousDay(
+      totalStakeYesterdayBefore ? totalStakeYesterdayBefore : 0
+    )
   }, [getAssetPairStatsForRow, currentEpoch, contract.address])
 
   useEffect(() => {
