@@ -19,7 +19,7 @@ export default function Footer() {
         </a>
       </div>
       <div className={`${footerStyles.link}`}>
-        <Link href="/terms">Terms&Conditions</Link>
+        <Link href="/terms">Terms</Link>
         <Link href="/">Home</Link>
       </div>
     </div>
