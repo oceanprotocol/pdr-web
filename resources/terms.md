@@ -3,41 +3,41 @@ title: Terms and Conditions
 description: Thanks for using our product and services.
 ---
 
-Predictoor Terms and Conditions (this “**Agreement**”) is made and entered into by and between Ocean Protocol Foundation Ltd., with office at The Commerze @ Irving, 1 Irving Place, #08-11, Singapore, 369546 Singapore (“**Ocean**”) and the legal entity set forth in the Account Information (“**Customer**”). It governs Customer’s access to and use of the Predictoor Portal, Predictoor Feeds, and Predictoor Stack (as defined below) and takes effect on the date of its acceptance by Customer (the “**Effective Date**”). Customer represents being lawfully able to enter into contracts and having legal authority to bind Customer’s entity.
+Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and entered into by and between Ocean Protocol Foundation Ltd., with office at The Commerze @ Irving, 1 Irving Place, #08-11, Singapore, 369546 Singapore (“**Ocean**”) and the legal entity set forth in the Account Information (“**Customer**”). It governs Customer’s access to and use of the Predictoor Portal, Predictoor Feeds, and Predictoor Stack (as defined below) and takes effect on the date of its acceptance by Customer (the “**Effective Date**”). Customer represents being lawfully able to enter into contracts and having legal authority to bind Customer’s entity.
 
 **DEFINITIONS**
 
 “**API**” means an application program interface.
 
-“**Customer**” means any individual or entity that directly or indirectly through another user: (a) accesses or uses the Predictoor Portal; or (b) accesses or purchases published Predictoor Feeds; or (c) accesses or utilizes the Services provided.
+“**Customer**” means any individual or entity that directly or indirectly through another user: (a) accesses or uses the Predictoor Portal; or (b) accesses or purchases Predictoor Feeds; or (c) accesses or utilizes the Predictoor Stack.
 
 “**Trader**” means any Customer or legal entity and its employees that sources or intends to source external predictions, or utilize the Services provided.
 
 “**Predictoor**” means any Customer or legal entity and its employees that provides or intends to provide predictions, or utilize the Services provided.
 
-“**Documentation**” means the user guides (in each case exclusive of content referenced via hyperlink) for Predictoor, as such user guides may be updated by Ocean from time to time.
+“**Documentation**” means the user guides (in each case exclusive of content referenced via hyperlink) for the Predictoor Stack, as such user guides may be updated by Ocean from time to time.
 
-“**Predictoor Portal**” means the website at https://predictoor.ai or https://test.predictoor.ai (and any successor or related site designated by Ocean), as may be updated by Ocean from time to time.
+“**Predictoor Website**” means the website at https://predictoor.ai or https://test.predictoor.ai (and any successor or related sites designated by Ocean), as may be updated by Ocean from time to time.
 
-“**Predictoor Feeds**” means the prediction feeds that Customers may purchase through Predictoor Portal, Services (and any successor or related site designated by Ocean), as may be updated by Ocean from time to time.
+“**Predictoor Feeds**” means the prediction feeds that Customers may purchase through Predictoor Portal, or the Predictoor Stack (and any successor or distribution channels designated by Ocean), as may be updated by Ocean from time to time.
 
-“**Predictoor DF**” means the incentive emissions operated by Ocean to reward Predictoors for helping to provide accurate predictions.
+"**Predictoor Stack**" means the Predictoor Portal, Predictoor Feeds, Services, and Predictoor DF listed herein (and any successor or related technologies designated by Ocean) that the Customer can access and use in accordance with this Agreement.
 
-"**Predictoor Stack**" means the Documentation, Predictoor Portal, Predictoor Feeds, Predictoor DF, and Services listed herein that the Customer can access and use in accordance with this Agreement.
+“**Predictoor DF**” means the incentive emissions operated by Ocean to reward Predictoors for helping to provide accurate predictions, (and any successor or parameter updates designated by Ocean), as may be updated by Ocean from time to time.
 
 “**Modifications Effective Date**” will have the meaning as set out in Section 2.2.
 
-“**Policies**” means the Privacy Policy, the Platform Terms, the Service Terms, all restrictions described in the Ocean Website, Predictoor Portal, Predictoor Stack and any other policy or terms referenced in or incorporated into this Agreement, but does not include whitepapers or other marketing materials referenced on the Ocean Website.
+“**Policies**” means the Privacy Policy, the Platform Terms, the Service Terms, all restrictions described in the Predictoor Website, Predictoor Portal, Predictoor Stack and any other policy or terms referenced in or incorporated into this Agreement, but does not include whitepapers or other marketing materials referenced on the Predictoor Website.
 
 “**Privacy Policy**” means the privacy policy located at https://www.oceanprotocol.com (and any successor or related locations designated by Ocean), as it may be updated by Ocean from time to time.
 
-“**Allowlist**” means a state in which Ocean allows specific Predictoor Feeds to be visible in the Predictoor Portal and elligible for Predictoor DF rewards. The Allowlist is an artifact of Ocean deploying Predictoor Feeds that are considered official. The Predictoor Portal Allowlist can be accessed here: https://github.com/oceanprotocol/pdr-web/blob/main/src/utils/config.ts
+“**Allowlist**” means a state in which Ocean tags specific Predictoor Feeds to be visible in the Predictoor Portal and elligible for Predictoor DF rewards. The Allowlist is an artifact of Ocean deploying Predictoor Feeds which are considered officially supported. The Predictoor Portal Allowlist can be accessed here: https://github.com/oceanprotocol/pdr-web/blob/main/src/utils/config.ts
 
 “**Service**” means each of the websites, software and services made available by Ocean or its affiliates, including those web services described in the Service Terms. Services do not include Third-Party Content.
 
-“**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Portal, Ocean subgraphs [https://v4.subgraph.sapphire-mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph](https://v4.subgraph.sapphire-mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph), Ocean github repositories [https://github.com/oceanprotocol](https://github.com/oceanprotocol), (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
+“**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Portal, or the Predictoor Stack (and any service or related locations designated by Ocean), as may be updated by Ocean from time to time.
 
-“**Website Terms**” means the terms of use located at [https://predictoor.ai](https://predictoor.ai) or [https://test.predictoor.ai](https://test.predictoor.ai) (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
+“**Website Terms**” means the terms of use located at [https://www.oceanprotocol.com (](https://www.oceanprotocol.com) (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
 
 “**Term**” means the term of this Agreement described in Section 7.1.
 
@@ -47,9 +47,9 @@ Predictoor Terms and Conditions (this “**Agreement**”) is made and entered i
 
 **1.1**    The Customer can access and use Predictoor Portal, Predictoor Feeds, Ocean Subgraphs, and Services in accordance with this Agreement. Customer undertakes to comply with the terms of this Agreement and all laws, rules and regulations applicable to Customer’s use of the Predictoor Stack.
 
-**1.2**    To access Predictoor Feeds and to participate as a Predictoor, Customer must have a Web3 wallet (e.g. MetaMask) and must have Ocean tokens in their wallet.
+**1.2**    To access Predictoor Feeds and to participate as a Predictoor, the Customer must have a Web3 wallet (e.g. MetaMask) and must have Ocean tokens in their wallet.
 
-**1.3**    The Predictoor Stack connects Predictoors and Traders directly, without any 3rd party control via the Predictoor Portal. This means that while providing predictions as a Predictoor, Customers are responsible for their own activity. This also means that while purchasing Prediction Feeds as a Trader, Customers are responsible for their own activity. Customers must adhere to the laws in their own legal jurisdiction as well as their conscience. Ocean is not responsible for any malicious use of the Predictoor Stack or any losses associated with the use of the Predictoor Stack of any source.  
+**1.3**    The Predictoor Stack connects Predictoors and Traders directly, without any 3rd party control via the Predictoor Portal. This means that while providing predictions as a Predictoor, Customers are responsible for their own activity. This means that while purchasing Prediction Feeds as a Trader, Customers are responsible for their own activity. Customers must adhere to the laws in their own legal jurisdiction as well as their conscience. Ocean is not responsible for any malicious use of the Predictoor Stack or any losses associated with the use of the Predictoor Stack of any source.  
 
 **1.4**    By clicking any button or box marked “accept” or “agree” (or a similar term) in connection with this Agreement, or by accessing or using the Predictoor Stack, you agree to be bound by this Agreement, a current version of which is available at the Predictoor Portal, and which may be modified from time to time at our sole discretion. We are only providing our services if you accept all of these terms. By using the Predictoor Stack, the Customer confirms their understanding and agrees to be bound by all of these terms. If Customer accepts these terms on behalf of a company or other legal entity, Customer represents that they have the legal authority to accept these terms on that entity’s behalf, in which case Customer will mean that entity.  If Customer does not accept all of these terms, then you may not access or use the Predictoor Stack.  
 
@@ -95,7 +95,7 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 
 **6 SUSPENSION**
 
-**6.1**	Ocean may suspend Customer or any End User’s right to access or use any portion or all of the Predictoor Portal or Services immediately with no notice to Customer if Ocean determines that the Customer or an End User’s use of the Predictoor Stack:
+**6.1**    Ocean may suspend Customer or any End User’s right to access or use any portion or all of the Predictoor Stack, or immediately with no notice to Customer if Ocean determines that the Customer or an End User’s use of the Predictoor Stack:
 
 (b) poses a security risk to the Predictoor Stack or any third party,
 
@@ -109,22 +109,21 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 
 (g) Customer has ceased to operate in the ordinary course, made an assignment for the benefit of creditors or similar disposition of Customer assets, or become the subject of any bankruptcy, reorganization, liquidation, dissolution or similar proceeding.
 
-**6.2**	If Ocean, according to Section 6.1, suspends Customer’s right to access or use any portion or all of the Predictoor Stack:
+**6.2**    If Ocean, according to Section 6.1, suspends Customer’s right to access or use any portion or all of the Predictoor Stack:
 
 (a) Customer remains responsible for all fees and charges Customer incurs during the period of suspension; and
 
 (b) Customer will not be entitled to any service credits under the Service Level Agreements for any period of suspension.
 
-## TODO
-**7 PURGATORY & TERMINATION**
+**7 ALLOWLIST & TERMINATION**
 
-**7.1**	Purgatory is a state in which a publisher or data asset is tagged as "in purgatory". Being in purgatory has implications into how the asset is displayed in Ocean Market, and what actions are permitted to be performed on the asset. Once in purgatory, the asset or publisher may stay there or leave purgatory if certain conditions are fulfilled. 
+**7.1**    Allowlist is a state in which a Predictoor Feed is tagged as "allowed". Being allow has implications into how the asset is displayed in the Predictoor Portal, and whether the asset is incentivized by Predictoor DF.
 
-**7.2**	This agreement can be terminated at any time by discontinuing Customer access to and use of the Predictoor Stack. You will not receive any refunds, you agree that we, in our sole discretion and for any or no reason, may terminate these Terms and suspend and/or terminate the access to the Predictoor Stack and that we will not be liable to you or to any third party for any such suspension or termination.
+**7.2**    This agreement can be terminated at any time by discontinuing Customer access to and use of the Predictoor Stack. You will not receive any refunds, you agree that we, in our sole discretion and for any or no reason, may terminate these Terms and suspend and/or terminate the access to the Predictoor Stack and that we will not be liable to you or to any third party for any such suspension or termination.
 
 **8 INTELLECTUAL PROPERTY RIGHTS AND LICENSE**
 
-**8.1**    Except as provided in this Section 8, Ocean obtains no rights whatsoever under this Agreement from Customer (or Customer’s licensors) to published assets.
+**8.1**    Except as provided in this Section 8, Ocean obtains no rights whatsoever under this Agreement from Customer (or Customer’s licensors) to submitted predictions or Predictoor Feeds.
 
 **8.2**    Customer represents and warrants to Ocean that:
 
@@ -136,7 +135,7 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 
 **8.4**    Except as provided in Section 8.3, the Customer obtains no rights under this Agreement from Ocean, Ocean affiliates or Ocean licensors to the Predictoor Stack, including any related intellectual property rights.
 
-**8.5**	Ocean Content and Third-Party Content may be provided to the Customer under a separate agreement and/or a separate license. In the event of a conflict between this Agreement and any separate agreement and/or separate license, the separate agreement and/or separate license will prevail with respect to the Ocean Content or Third-Party Content that is the subject of such separate agreement and/or separate license.
+**8.5**    Ocean Content and Third-Party Content may be provided to the Customer under a separate agreement and/or a separate license. In the event of a conflict between this Agreement and any separate agreement and/or separate license, the separate agreement and/or separate license will prevail with respect to the Ocean Content or Third-Party Content that is the subject of such separate agreement and/or separate license.
 
 **9 WARRANTIES; LIMITATIONS OF LIABILITY**
 
