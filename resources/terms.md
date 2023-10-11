@@ -115,7 +115,7 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 
 **7 ALLOWLIST & TERMINATION**
 
-**7.1**    Allowlist is a state in which a Predictoor Feed is tagged as "allowed". Being allow has implications into how the asset is displayed in the Predictoor Portal, and whether the asset is incentivized by Predictoor DF.
+**7.1**    Allowlist is a state in which a Predictoor Feed is tagged as "allowed". Being allow has implications into how the asset is displayed in the Predictoor Portal, and whether the asset qualifies for Predictoor DF rewards.
 
 **7.2**    This agreement can be terminated at any time by discontinuing Customer access to and use of the Predictoor Portal. You will not receive any refunds, you agree that we, in our sole discretion and for any or no reason, may terminate these Terms and suspend and/or terminate the access to the Predictoor Portal and that we will not be liable to you or to any third party for any such suspension or termination.
 
