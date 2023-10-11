@@ -63,9 +63,9 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 
 **3 SECURITY – DATA PROTECTION**
 
-**3.1**     Without limiting Customer obligations under Section 4.2, Ocean has implemented reasonable and appropriate measures designed to help Predictoors submit predictions privately through the use of Oasis Sapphire, against accidental or unlawful loss, access or disclosure.
+**3.1**     Without limiting Customer obligations under Section 4.2, Ocean will implement reasonable and appropriate measures designed to help Predictoors and Traders to secure published assets against accidental or unlawful loss, access or disclosure.
 
-**3.2**    Predictions submitted are stored and computed privately on-chain. Ocean does not store any information.
+**3.2**    Predictions submitted are stored and computed privately on-chain. Ocean does not store or have privilege to any information.
 
 **3.3**    Transactions that take place on the Predictoor Portal are managed and confirmed via the Oasis blockchain. Your wallet public address will be made publicly visible whenever you engage in a transaction on the Predictoor Portal.
 
