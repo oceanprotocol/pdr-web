@@ -1,3 +1,5 @@
+import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
+import { useUserContext } from '@/contexts/UserContext'
 import Button from '@/elements/Button'
 import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { currentConfig } from '@/utils/appconstants'
@@ -22,14 +24,22 @@ export default function Banner() {
     message: undefined,
     type: States.WARNING
   })
+  const { userSignature } = useUserContext()
   const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
   const { address } = useAccount()
   const { chains } = useNetwork()
+  const { getUserSignature } = usePredictoorsContext()
   const { chain, isCorrectNetwork } = useIsCorrectChain()
 
   useEffect(() => {
     setState(checkForBannerMessage(address, isCorrectNetwork))
-  }, [address, isCorrectNetwork])
+    if (!userSignature)
+      setState({
+        message:
+          'Signature not provided. Signature is needed to authorize and fetch private predicitons',
+        type: States.ERROR
+      })
+  }, [address, isCorrectNetwork, userSignature])
 
   if (!state.message) return null
   return (
@@ -39,6 +49,9 @@ export default function Banner() {
       }`}
     >
       <span className={styles.text}>{state.message}</span>
+      {!userSignature && (
+        <Button onClick={() => getUserSignature()} text="Provide Signature" />
+      )}
       {chain && !isCorrectNetwork && (
         <Button
           disabled={!switchNetwork || isCorrectNetwork}

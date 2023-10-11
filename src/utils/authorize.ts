@@ -85,7 +85,6 @@ export const getValidSignedMessageFromLS = async (
   rpcSigner: ethers.providers.JsonRpcSigner
 ): Promise<Maybe<TAuthorization>> => {
   const signerAddress = await rpcSigner.getAddress()
-
   const signedMessage = getLocalStorageSignedMessage(signerAddress)
   if (signedMessage) {
     const now = Math.round(Date.now() / 1000)

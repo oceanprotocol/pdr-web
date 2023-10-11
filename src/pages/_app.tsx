@@ -29,7 +29,7 @@ if (
       api_host: 'https://eu.posthog.com',
       // Enable debug mode in development
       loaded: (posthog) => {
-        if (process.env.NODE_ENV === 'development') posthog.debug()
+        posthog.debug(false)
       },
       capture_pageview: true // Disable automatic pageview capture, as we capture manually
     }
