@@ -11,6 +11,7 @@ import { NotificationContainer } from 'react-notifications'
 import { WagmiConfig } from 'wagmi'
 
 import Banner from '@/components/Banner'
+import Footer from '@/components/Footer'
 import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
 import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
 import { useEthereumClient } from '@/hooks/useEthereumClient'
@@ -89,6 +90,7 @@ function App({ Component, pageProps }: AppProps) {
                           <main className={`${styles.main} ${inter.className}`}>
                             <Header />
                             <Component {...pageProps} />
+                            <Footer />
                           </main>
                         </>
                       </MarketPriceProvider>

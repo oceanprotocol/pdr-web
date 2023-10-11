@@ -18,8 +18,9 @@ export default function Footer() {
           Discord
         </a>
       </div>
-      <div className={footerStyles.container}>
+      <div className={`${footerStyles.link}`}>
         <Link href="/terms">Terms&Conditions</Link>
+        <Link href="/">Home</Link>
       </div>
     </div>
   )

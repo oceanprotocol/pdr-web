@@ -1,5 +1,4 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
-import Footer from '@/components/Footer'
 
 import { TimeFrameSwitch } from '@/components/TimeFrameSwitch'
 import styles from '@/styles/Home.module.css'
@@ -15,7 +14,6 @@ export default function Home() {
         <TimeFrameSwitch />
       </div>
       <AssetsContainer />
-      <Footer />
     </>
   )
 }
