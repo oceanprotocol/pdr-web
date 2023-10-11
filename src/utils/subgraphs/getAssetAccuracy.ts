@@ -107,6 +107,7 @@ export const calculateSlotStats = async (
         continue
       }
       totalStakeToday += parseFloat(slot.roundSumStakes)
+      if (slot.roundSumStakes == 0) continue;
       const prediction: PredictionResult = calculatePrediction(
         slot.roundSumStakesUp.toString(),
         slot.roundSumStakes.toString()
