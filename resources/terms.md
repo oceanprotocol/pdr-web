@@ -35,7 +35,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 
 “**Service**” means each of the websites, software and services made available by Ocean or its affiliates, including those web services described in the Service Terms. Services do not include Third-Party Content.
 
-“**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Website, or the Predictoor Stack (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
+“**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Website (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
 
 “**Website Terms**” means the terms of use located at [https://www.oceanprotocol.com (](https://www.oceanprotocol.com) (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
 
