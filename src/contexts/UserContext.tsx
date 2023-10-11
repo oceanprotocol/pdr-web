@@ -7,8 +7,10 @@ import { IERC20ABI } from '../metadata/abis/IERC20ABI'
 // Define the context type that will be used in the provider and consumer
 type UserContextType = {
   balance: number
+  userSignature: boolean
   isBuyingSubscription: string
   refetchBalance: () => void
+  setUserSignature: (value: boolean) => void
   setIsBuyingSubscription: (value: string) => void
 }
 
@@ -19,8 +21,10 @@ export type TUserContextProps = {
 // Create the initial context
 const initialContextValue: UserContextType = {
   balance: 0,
+  userSignature: false,
   isBuyingSubscription: '',
   refetchBalance: () => {},
+  setUserSignature: (value: boolean) => {},
   setIsBuyingSubscription: (value: string) => {}
 }
 
@@ -35,6 +39,7 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
   // Define the state to store the user data
   const [balance, setBalance] = useState<number>(0)
   const [isBuyingSubscription, setIsBuyingSubscription] = useState<string>('')
+  const [userSignature, setUserSignature] = useState<boolean>(true)
 
   const { address } = useAccount()
 
@@ -84,8 +89,10 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
     <UserContext.Provider
       value={{
         balance,
+        userSignature,
         isBuyingSubscription,
         refetchBalance,
+        setUserSignature,
         setIsBuyingSubscription
       }}
     >

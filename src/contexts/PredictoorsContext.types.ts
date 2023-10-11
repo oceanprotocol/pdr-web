@@ -7,6 +7,7 @@ export type TPredictoorsContext = {
   checkAndAddInstance: (data: Predictoor) => void
   getPredictorInstanceByAddress: (address: string) => Predictoor | undefined
   runCheckContracts: () => void
+  getUserSignature: () => void
   setCurrentEpoch: (data: number) => void
   setIsNewContractsInitialized: (data: boolean) => void
   contracts: Record<string, TPredictionContract> | undefined

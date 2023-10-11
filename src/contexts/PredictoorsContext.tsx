@@ -5,7 +5,11 @@ import {
   PREDICTION_FETCH_EPOCHS_DELAY,
   currentConfig
 } from '@/utils/appconstants'
-import { TAuthorization, authorizeWithWallet } from '@/utils/authorize'
+import {
+  TAuthorization,
+  authorizeWithWallet,
+  getValidSignedMessageFromLS
+} from '@/utils/authorize'
 import { TGetAggPredvalResult } from '@/utils/contracts/ContractReturnTypes'
 import Predictoor from '@/utils/contracts/Predictoor'
 import {
@@ -45,6 +49,7 @@ import {
 } from './PredictoorsContextHelper'
 import { useSocketContext } from './SocketContext'
 import { useTimeFrameContext } from './TimeFrameContext'
+import { useUserContext } from './UserContext'
 
 export type TPredictedEpochLogItem = TGetAggPredvalResult & {
   epoch: number
@@ -61,6 +66,7 @@ export const PredictoorsContext = createContext<TPredictoorsContext>({
   runCheckContracts: () => {},
   setCurrentEpoch: (data) => {},
   setIsNewContractsInitialized: (data) => {},
+  getUserSignature: () => {},
   subscribedPredictoors: [],
   contracts: undefined,
   secondsPerEpoch: 0,
@@ -85,6 +91,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   })
   const { isCorrectNetwork } = useIsCorrectChain()
   const { timeFrameInterval } = useTimeFrameContext()
+  const { setUserSignature } = useUserContext()
 
   const { handleEpochData, initialEpochData } = useSocketContext()
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
@@ -125,11 +132,16 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     async (signer: ethers.providers.JsonRpcSigner) => {
       const initialData = await authorizeWithWallet(signer, 86400)
 
-      if (!initialData) return
+      if (!initialData) {
+        setUserSignature(false)
+        return
+      }
+
       const authorizationData = new AuthorizationData<TAuthorization>({
         initialData,
         createCallback: async () => authorizeWithWallet(signer, 86400)
       })
+      setUserSignature(true)
       authorizationDataInstance.current = authorizationData
     },
     []
@@ -187,9 +199,26 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
   }, [predictoorInstances])
 
   useEffect(() => {
+    if (!signer || subscribedPredictoors.length === 0) return
+    getValidSignedMessageFromLS(signer).then((lsSignedMessage) => {
+      if (lsSignedMessage) {
+        const authorizationData = new AuthorizationData<TAuthorization>({
+          initialData: lsSignedMessage,
+          createCallback: async () => authorizeWithWallet(signer, 86400)
+        })
+        authorizationDataInstance.current = authorizationData
+        setUserSignature(true)
+        return
+      } else {
+        setUserSignature(false)
+      }
+    })
+  }, [signer, subscribedPredictoors.length, initializeAuthorizationData])
+
+  const getUserSignature = () => {
     if (!signer || subscribedPredictoors.length === 0) return undefined
     initializeAuthorizationData(signer)
-  }, [signer, subscribedPredictoors.length, initializeAuthorizationData])
+  }
 
   const checkIfContractIsSubscribed = useCallback(
     (contractAddress: string) => {
@@ -544,6 +573,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
         getPredictorInstanceByAddress,
         setCurrentEpoch,
         setIsNewContractsInitialized,
+        getUserSignature,
         contracts,
         currentEpoch,
         secondsPerEpoch,
