@@ -3,25 +3,23 @@ title: Terms and Conditions
 description: Thanks for using our product and services.
 ---
 
-Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and entered into by and between Ocean Protocol Foundation Ltd., with office at The Commerze @ Irving, 1 Irving Place, #08-11, Singapore, 369546 Singapore (“**Ocean**”) and the legal entity set forth in the Account Information (“**Customer**”). It governs Customer’s access to and use of the Predictoor Portal, Predictoor Feeds, and Predictoor Stack (as defined below) and takes effect on the date of its acceptance by Customer (the “**Effective Date**”). Customer represents being lawfully able to enter into contracts and having legal authority to bind Customer’s entity.
+Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and entered into by and between Ocean Protocol Foundation Ltd., with office at The Commerze @ Irving, 1 Irving Place, #08-11, Singapore, 369546 Singapore (“**Ocean**”) and the legal entity set forth in the Account Information (“**Customer**”). It governs Customer’s access to and use of the Predictoor Portal (as defined below) and takes effect on the date of its acceptance by Customer (the “**Effective Date**”). Customer represents being lawfully able to enter into contracts and having legal authority to bind Customer’s entity.
 
 **DEFINITIONS**
 
 “**API**” means an application program interface.
 
-“**Customer**” means any individual or entity that directly or indirectly through another user: (a) accesses or uses the Predictoor Portal; or (b) accesses or purchases Predictoor Feeds; or (c) accesses or utilizes the Predictoor Stack.
+“**Customer**” means any individual or entity that directly or indirectly through another user: (a) accesses or uses the Predictoor Portal; or (b) accesses or purchases Predictoor Feeds; or (c) accesses or utilizes the Services.
 
 “**Trader**” means any Customer or legal entity and its employees that sources or intends to source external predictions, or utilize the Services provided.
 
 “**Predictoor**” means any Customer or legal entity and its employees that provides or intends to provide predictions, or utilize the Services provided.
 
-“**Documentation**” means the user guides (in each case exclusive of content referenced via hyperlink) for the Predictoor Stack, as such user guides may be updated by Ocean from time to time.
+“**Documentation**” means the user guides (in each case exclusive of content referenced via hyperlink) for the Predictoor Portal, as such user guides may be updated by Ocean from time to time.
 
 “**Predictoor Website**” means the website at https://predictoor.ai or https://test.predictoor.ai (and any successor or related sites designated by Ocean), as may be updated by Ocean from time to time.
 
-“**Predictoor Feeds**” means the prediction feeds that Customers may purchase through Predictoor Portal, or the Predictoor Stack (and any successor or distribution channels designated by Ocean), as may be updated by Ocean from time to time.
-
-"**Predictoor Stack**" means the Predictoor Portal, Predictoor Feeds, Services, and Predictoor DF listed herein (and any successor or related technologies designated by Ocean) that the Customer can access and use in accordance with this Agreement.
+“**Predictoor Feeds**” means the prediction feeds that Customers may purchase through Predictoor Portal (and any successor or distribution channels designated by Ocean), as may be updated by Ocean from time to time.
 
 “**Predictoor DF**” means the incentive emissions operated by Ocean to reward Predictoors for helping to provide accurate predictions, (and any successor or parameter updates designated by Ocean), as may be updated by Ocean from time to time.
 
@@ -31,9 +29,9 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 
 “**Privacy Policy**” means the privacy policy located at https://www.oceanprotocol.com (and any successor or related locations designated by Ocean), as it may be updated by Ocean from time to time.
 
-“**Allowlist**” means a state in which Ocean tags specific Predictoor Feeds to be visible in the Predictoor Portal and elligible for Predictoor DF rewards. The Allowlist is an artifact of Ocean deploying Predictoor Feeds which are considered officially supported. The Predictoor Portal Allowlist can be accessed here: https://github.com/oceanprotocol/pdr-web/blob/main/src/utils/config.ts
+“**Allowlist**” means a state in which Ocean tags specific Predictoor Feeds to be visible in the Predictoor Portal and elligible for Predictoor DF rewards. The Allowlist is an artifact of deployed Predictoor Feeds that considered officially supported by Ocean. The Predictoor Portal Allowlist can be accessed here: https://github.com/oceanprotocol/pdr-web/blob/main/src/utils/config.ts
 
-“**Service**” means each of the websites, software and services made available by Ocean or its affiliates, including those web services described in the Service Terms. Services do not include Third-Party Content.
+“**Service**” means each of the websites, software, smart contracts, and services made available by Ocean or its affiliates, including those web services described in the Service Terms. Services do not include Third-Party Content.
 
 “**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Website (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
 
@@ -49,7 +47,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 
 **1.2**    To access Predictoor Feeds and to participate as a Predictoor, the Customer must have a Web3 wallet (e.g. MetaMask) and must have Ocean tokens in their wallet.
 
-**1.3**    The Predictoor Portal connects Predictoors and Traders directly, without any 3rd party control via the Predictoor Portal. This means that while providing predictions as a Predictoor, Customers are responsible for their own activity. This means that while purchasing Prediction Feeds as a Trader, Customers are responsible for their own activity. Customers must adhere to the laws in their own legal jurisdiction as well as their conscience. Ocean is not responsible for any malicious use of the Predictoor Stack or any losses associated with the use of the Predictoor Stack or any source.  
+**1.3**    The Predictoor Portal connects Predictoors and Traders directly, without any 3rd party control via the Predictoor Portal. This means that while providing predictions as a Predictoor, Customers are responsible for their own activity. This means that while purchasing Prediction Feeds as a Trader, Customers are responsible for their own activity. Customers must adhere to the laws in their own legal jurisdiction as well as their conscience. Ocean is not responsible for any malicious use of the Predictoor Portal or any losses associated with the use of the Predictoor Portal or any source.  
 
 **1.4**    By clicking any button or box marked “accept” or “agree” (or a similar term) in connection with this Agreement, or by accessing or using the Predictoor Portal, you agree to be bound by this Agreement, a current version of which is available at the Predictoor Portal, and which may be modified from time to time at our sole discretion. We are only providing our services if you accept all of these terms. By using the Predictoor Portal, the Customer confirms their understanding and agrees to be bound by all of these terms. If Customer accepts these terms on behalf of a company or other legal entity, Customer represents that they have the legal authority to accept these terms on that entity’s behalf, in which case Customer will mean that entity.  If Customer does not accept all of these terms, then you may not access or use the Predictoor Portal.  
 
@@ -69,7 +67,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 
 **3.3**    Transactions that take place on the Predictoor Portal are managed and confirmed via the Oasis blockchain. Your wallet public address will be made publicly visible whenever you engage in a transaction on the Predictoor Portal.
 
-**3.4**    We neither own nor control MetaMask, Coinbase, Celr, Google Chrome, the Oasis network, or any other third parties site, product, or service that you might access, visit, or use for the purpose of enabling you to use the various features of the Predictoor Stack. We will not be liable for the acts or omissions of any such third parties, nor will we be liable for any damage that you may suffer as a result of your transactions or any other interaction with any such third parties.
+**3.4**    We neither own nor control MetaMask, Coinbase, Celr, Google Chrome, the Oasis network, or any other third parties site, product, or service that you might access, visit, or use for the purpose of enabling you to use the various features of the Predictoor Portal. We will not be liable for the acts or omissions of any such third parties, nor will we be liable for any damage that you may suffer as a result of your transactions or any other interaction with any such third parties.
 
 **3.5**    We use the minimum amount of cookies and similar tracking technologies to track the activity on our websites and hold certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your device. Tracking technologies also used are beacons, tags, and scripts to collect and track information and to improve and analyze our services. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our services.
 
@@ -81,13 +79,13 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 
 **4.2**    Customer will ensure that published assets and Customer and End Users’ use of published assets or the Predictoor Portal will not violate any of the Policies or any applicable law. The Customer is solely responsible for the development, content, operation, maintenance, and use of published assets.
 
-**4.3**    Where Customer permits, assists or facilitates such action, Customer will be deemed to have taken any action by any person or entity related to this Agreement, published assets or use of the Predictoor Stack. Customer is responsible for End Users’ use of published assets and the Ocean Market. Customer will ensure that all End Users comply with obligations mirroring those of Customer under this Agreement and that the terms of Customer’s agreements with each End User are consistent with this Agreement. If Customer becomes aware of any violation of Customer’s obligations under this Agreement caused by an End User, Customer will immediately suspend access to published assets and the Predictoor Stack by such End User. Ocean does not provide any support or services to End Users, unless Ocean has a separate agreement with Customer or an End User obligating Ocean to provide such support or services.
+**4.3**    Where Customer permits, assists or facilitates such action, Customer will be deemed to have taken any action by any person or entity related to this Agreement, published assets or use of the Predictoor Portal. Customer is responsible for End Users’ use of published assets and the Ocean Market. Customer will ensure that all End Users comply with obligations mirroring those of Customer under this Agreement and that the terms of Customer’s agreements with each End User are consistent with this Agreement. If Customer becomes aware of any violation of Customer’s obligations under this Agreement caused by an End User, Customer will immediately suspend access to published assets and the Predictoor Portal by such End User. Ocean does not provide any support or services to End Users, unless Ocean has a separate agreement with Customer or an End User obligating Ocean to provide such support or services.
 
 **5 FEES, PAYMENT**
 
 **5.1**    If you elect to purchase, submit, or trade through the use of predictions on the Predictoor Portal, it will be conducted solely through the Oasis network via MetaMask (or other Oasis-compatible wallets, browsers, or software). We will have no insight into or control over these payments or transactions, nor do we have the ability to reverse any transactions. With that in mind, we will have no liability to you or to any third party for any claims or damages that may arise as a result of any transactions that you engage in via the App, or using the Smart Contracts, or any other transactions that you conduct via the Oasis network, MetaMask, or another service.
 
-**5.2**    Oasis requires the payment of a transaction fee (a “Gas Fee”) for every transaction that occurs on the Oasis network. The Gas Fee funds the network of computers that run the decentralized Oasis network. This means that you will need to pay a Gas Fee for each transaction that occurs via the Predictoor Stack. In addition to the Gas Fee, we have hardcoded 0.1% of the total value of the transaction for the Ocean Protocol community development fund.
+**5.2**    Oasis requires the payment of a transaction fee (a “Gas Fee”) for every transaction that occurs on the Oasis network. The Gas Fee funds the network of computers that run the decentralized Oasis network. This means that you will need to pay a Gas Fee for each transaction that occurs via the Predictoor Portal. In addition to the Gas Fee, we have hardcoded 0.1% of the total value of the transaction for the Ocean Protocol community development fund.
 
 Customer acknowledges and agrees that the Commission will be transferred directly to the Ocean Protocol community development fund through the Ethereum network as part of any transactions or payments. 
 
