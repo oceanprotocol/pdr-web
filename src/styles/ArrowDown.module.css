@@ -1,0 +1,4 @@
+.arrowDown path,
+.arrowUp path {
+  fill: var(--primary-color);
+}

@@ -1,4 +1,5 @@
 import styles from '@/styles/MenuList.module.css'
+import { DarkModeSwitch } from './DarkModeSwitch'
 
 export const MenuList: React.FC = () => (
   <ul className={styles.list}>
@@ -36,6 +37,9 @@ export const MenuList: React.FC = () => (
           process.env.NEXT_PUBLIC_ENV === 'staging' ? 'Mainnet' : 'Testnet'
         }`}
       </a>
+    </li>
+    <li>
+      <DarkModeSwitch />
     </li>
   </ul>
 )
