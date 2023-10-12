@@ -18,6 +18,10 @@
   object-fit: contain;
 }
 
+.logo:hover {
+  cursor: pointer;
+}
+
 @media screen and (max-width: 600px) {
   .logo {
     margin-bottom: calc(var(--spacer) / 10);
