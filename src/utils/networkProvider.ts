@@ -16,7 +16,7 @@ type NetworkConfig = Record<NetworkNames, string>
 const networkConfig: NetworkConfig = {
   barge: process.env.NEXT_PUBLIC_DEV_GANACHE_HOST || 'http://localhost:8545',
   development: 'https://development.oceandao.org',
-  staging: 'https://testnet.sapphire.oasis.dev',
+  staging: 'https://testnet.sapphire.oasi.dev',
   production: 'https://sapphire.oasis.io',
   mainnet: ''
 }
