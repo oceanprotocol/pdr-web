@@ -8,6 +8,7 @@ import { Inter } from 'next/font/google'
 import { NotificationContainer } from 'react-notifications'
 import { WagmiConfig } from 'wagmi'
 
+import MainWrapper from '@/components/MainWrapper'
 import { NotConnectedWarning } from '@/components/NotConnectedWarning'
 import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
 import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
@@ -16,7 +17,7 @@ import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractIn
 import { useRouter } from 'next/router'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -55,6 +56,7 @@ function App({ Component, pageProps }: AppProps) {
     }
   }, [])
 
+  const isHome = useMemo(() => router.pathname === '/', [router.pathname])
   return (
     <>
       <PostHogProvider client={posthog}>
@@ -69,7 +71,9 @@ function App({ Component, pageProps }: AppProps) {
                   <SocketProvider>
                     <PredictoorsProvider>
                       <MarketPriceProvider>
-                        <Component {...pageProps} />
+                        <MainWrapper>
+                          <Component {...pageProps} />
+                        </MainWrapper>
                       </MarketPriceProvider>
                     </PredictoorsProvider>
                   </SocketProvider>
@@ -82,7 +86,9 @@ function App({ Component, pageProps }: AppProps) {
             />
           </>
         ) : (
-          <NotConnectedWarning />
+          <MainWrapper withBanner={false} isWalletActive={false}>
+            {isHome ? <NotConnectedWarning /> : <Component {...pageProps} />}
+          </MainWrapper>
         )}
       </PostHogProvider>
     </>
