@@ -5,7 +5,7 @@ export const NotConnectedWarning = () => {
     <>
       <div className={styles.description}>
         <p className={styles.oneliner}>
-          {"Couldn't connect to the networks RPC"}
+          {"Couldn't connect to the networks RPC. Try again latter."}
         </p>
       </div>
     </>
