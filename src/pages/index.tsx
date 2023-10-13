@@ -1,5 +1,4 @@
 import { AssetsContainer } from '@/components/AssetsContainer'
-
 import { TimeFrameSwitch } from '@/components/TimeFrameSwitch'
 import styles from '@/styles/Home.module.css'
 import 'react-notifications/lib/notifications.css'
