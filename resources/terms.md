@@ -118,7 +118,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**1.4** By clicking any button or box marked “accept” or “agree” (or a similar term) in connection with this Agreement, or by accessing or using the Predictoor Portal, you agree to be bound by this Agreement, a current version of which is available at the Predictoor Portal, and which may be modified from time to time at our sole discretion. We are only providing our services if you accept all of these terms. By using the Predictoor Portal, the Customer confirms their understanding and agrees to be bound by all of these terms. If Customer accepts these terms on behalf of a company or other legal entity, Customer represents that they have the legal authority to accept these terms on that entity’s behalf, in which case Customer will mean that entity. If Customer does not accept all of these terms, then you may not access or use the Predictoor Portal.
+**1.4** By clicking any button or box marked "buy", “accept” or “agree” (or a similar term), or by accessing or using the Predictoor Portal, you agree to be bound by this Agreement, a current version of which is available at the Predictoor Portal, and which may be modified from time to time at our sole discretion. We are only providing our services if you accept all of these terms. By using the Predictoor Portal, the Customer confirms their understanding and agrees to be bound by all of these terms. If Customer accepts these terms on behalf of a company or other legal entity, Customer represents that they have the legal authority to accept these terms on that entity’s behalf, in which case Customer will mean that entity. If Customer does not accept all of these terms, then you may not access or use the Predictoor Portal.
 
 \
 &nbsp;
@@ -128,7 +128,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**2.1** OPF may modify this Agreement, change or discontinue any Service (including any policies and Service Level Agreements) at any time with no prior notification OPF will provide 15 days advance notice prior to the effective date of software modifications (“**Modifications Effective Date**”).
+**2.1** OPF may modify this Agreement, change or discontinue any Service (including any policies and Service Level Agreements) at any time with no prior notification.
 
 \
 &nbsp;
@@ -163,7 +163,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**3.4** We neither own nor control MetaMask, Coinbase, Celr, Google Chrome, the Oasis network, or any other third parties site, product, or service that you might access, visit, or use for the purpose of enabling you to use the various features of the Predictoor Portal. We will not be liable for the acts or omissions of any such third parties, nor will we be liable for any damage that you may suffer as a result of your transactions or any other interaction with any such third parties.
+**3.4** We neither own nor control MetaMask, Coinbase, Celer, Google Chrome, the Oasis network, or any other third parties site, product, or service that you might access, visit, or use for the purpose of enabling you to use the various features of the Predictoor Portal. We will not be liable for the acts or omissions of any such third parties, nor will we be liable for any damage that you may suffer as a result of your transactions or any other interaction with any such third parties.
 
 \
 &nbsp;
