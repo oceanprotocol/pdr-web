@@ -16,10 +16,7 @@ export const MenuList: React.FC = () => (
       </a>
     </li>
     <li>
-      <a
-        target="_blank"
-        href="https://blog.oceanprotocol.com/meet-predictoor-accountable-accurate-prediction-feeds-8b104d26a5d9"
-      >
+      <a target="_blank" href="https://docs.oceanprotocol.com/predictoor">
         About
       </a>
     </li>
