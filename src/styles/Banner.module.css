@@ -8,7 +8,7 @@
 
 .warning {
   background-color: var(--warning);
-  color: black;
+  color: var(--primary-color);
 }
 
 .error {

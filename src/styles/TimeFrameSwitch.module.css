@@ -1,3 +1,7 @@
 .leftIcon {
   height: 20px;
 }
+
+.leftIcon path {
+  stroke: var(--primary-color);
+}
