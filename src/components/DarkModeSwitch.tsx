@@ -10,9 +10,8 @@ export const DarkModeSwitch = () => {
   const getDefaultTheme = useCallback((): TThemeTypes => {
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme) return savedTheme as TThemeTypes
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light'
+
+    return 'light'
   }, [])
 
   /**
