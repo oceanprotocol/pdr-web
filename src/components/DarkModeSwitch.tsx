@@ -4,26 +4,27 @@ import { useCallback, useEffect, useState } from 'react'
 type TThemeTypes = 'light' | 'dark'
 
 export const DarkModeSwitch = () => {
+  /**
+   * Get the default theme based on the user's OS settings
+   */
   const getDefaultTheme = useCallback((): TThemeTypes => {
     const savedTheme = localStorage.getItem('theme')
-
     if (savedTheme) return savedTheme as TThemeTypes
-
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark'
-    }
-    return 'light'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light'
   }, [])
 
-  const [activeTheme, setActiveTheme] = useState<TThemeTypes>(() =>
-    getDefaultTheme()
-  )
+  /**
+   * Set the active theme
+   */
+  const [activeTheme, setActiveTheme] = useState<TThemeTypes>(getDefaultTheme)
 
-  const availableThemes: Array<{ value: TThemeTypes; label: string }> = [
-    { value: 'light', label: 'light' },
-    { value: 'dark', label: 'dark' }
-  ]
+  const availableThemes: TThemeTypes[] = ['light', 'dark']
 
+  /**
+   * Handle the active theme
+   */
   const handleActiveTheme = useCallback(
     ({
       theme,
@@ -33,33 +34,33 @@ export const DarkModeSwitch = () => {
       saveToStorage: boolean
     }) => {
       if (saveToStorage) localStorage.setItem('theme', theme)
-
       document.documentElement.setAttribute('data-theme', theme)
       setActiveTheme(theme)
     },
     []
   )
 
+  /**
+   * Set the default theme on first load
+   */
   useEffect(() => {
     const defaultTheme = getDefaultTheme()
     handleActiveTheme({ theme: defaultTheme, saveToStorage: false })
   }, [getDefaultTheme, handleActiveTheme])
 
+  /**
+   * Render the switcher
+   */
   return (
     <Switcher
-      activeIndex={availableThemes.findIndex(
-        (item) => item.value === activeTheme
-      )}
+      activeIndex={availableThemes.findIndex((theme) => theme === activeTheme)}
     >
-      {availableThemes.map((item, index) => (
+      {availableThemes.map((theme) => (
         <span
-          key={index}
-          onClick={() => {
-            handleActiveTheme({ theme: item.value, saveToStorage: true })
-            //setActiveTheme(item.value)
-          }}
+          key={theme}
+          onClick={() => handleActiveTheme({ theme, saveToStorage: true })}
         >
-          {item.label}
+          {theme}
         </span>
       ))}
     </Switcher>
