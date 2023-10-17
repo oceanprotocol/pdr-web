@@ -4,13 +4,15 @@ import { useCallback, useEffect, useState } from 'react'
 type TThemeTypes = 'light' | 'dark'
 
 export const DarkModeSwitch = () => {
+  const isLocalStorageAvailable = typeof localStorage !== 'undefined'
   /**
    * Get the default theme based on the user's OS settings
    */
   const getDefaultTheme = useCallback((): TThemeTypes => {
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme) return savedTheme as TThemeTypes
-
+    if (isLocalStorageAvailable) {
+      const savedTheme = localStorage?.getItem('theme')
+      if (savedTheme) return savedTheme as TThemeTypes
+    }
     return 'light'
   }, [])
 
