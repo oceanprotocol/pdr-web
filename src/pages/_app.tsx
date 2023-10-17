@@ -58,7 +58,7 @@ function App({ Component, pageProps }: AppProps) {
 
   const isHome = useMemo(() => router.pathname === '/', [router.pathname])
   return (
-    <>
+    <div className={inter.className}>
       <PostHogProvider client={posthog}>
         <NotificationContainer />
         {wagmiConfig && ethereumClient && w3mProjectId ? (
@@ -91,7 +91,7 @@ function App({ Component, pageProps }: AppProps) {
           </MainWrapper>
         )}
       </PostHogProvider>
-    </>
+    </div>
   )
 }
 

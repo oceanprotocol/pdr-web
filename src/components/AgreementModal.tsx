@@ -1,9 +1,12 @@
 import Button from '@/elements/Button'
+import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import styles from '../styles/AgreementModal.module.css'
+
+const inter = Inter({ subsets: ['latin'] })
 
 Modal.setAppElement('#__next')
 
@@ -24,7 +27,7 @@ export default function AgreementModal() {
     <Modal
       isOpen={isOpen}
       contentLabel="Example Modal"
-      className={styles.modal}
+      className={`${styles.modal} ${inter.className}`}
     >
       <div className={styles.content}>
         <h2>Welcome!</h2>

@@ -18,6 +18,7 @@
 
 .text {
   margin: 0 calc(var(--spacer) / 4);
+  font-size: var(--font-size-small);
 }
 
 @media screen and (max-width: 600px) {
