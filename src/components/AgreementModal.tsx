@@ -14,7 +14,6 @@ export default function AgreementModal() {
   const pathname = usePathname()
   const onContinue = () => {
     localStorage.setItem('termsOfUse', 'agreed')
-    console.log(pathname)
     if (pathname == '/terms') router.push('/')
     setIsOpen(false)
   }
