@@ -8,9 +8,7 @@ import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { currentConfig } from '@/utils/appconstants'
-import { calculateSlotStats } from '@/utils/subgraphs/getAssetAccuracy'
-import { SECONDS_IN_24_HOURS } from '@/utils/subgraphs/queries/getPredictSlots'
+import { Maybe } from '@/utils/utils'
 import Accuracy from './Accuracy'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
@@ -24,20 +22,27 @@ export type TAssetFetchedInfo = {
   price: string
 }
 
+export type TAccuracyDataForAsset = {
+  accuracy: number
+  totalStakeToday: number
+  totalStakeYesterday: number
+}
+
 export type TAssetRowProps = {
   assetData: TAssetData
+  accuracyData: Maybe<TAccuracyDataForAsset>
 }
 
 export type TAssetRowState = {
   FetchedInfo: TAssetFetchedInfo | undefined
 }
 
-export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
+export const AssetRow: React.FC<TAssetRowProps> = ({
+  assetData,
+  accuracyData
+}) => {
   const { epochData } = useSocketContext()
-  const [tokenAccuracy, setTokenAccuracy] = useState<number>(0.0)
-  const [tokenTotalStake, setTokenTotalStake] = useState<number>(0.0)
-  const [tokenTotalStakePreviousDay, setTokenTotalStakePreviousDay] =
-    useState<number>(0.0)
+
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
@@ -82,28 +87,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     [baseToken, market, quoteToken]
   )
 
-  const getAssetPairStatsForRow = useCallback<
-    (args: {
-      contract: string
-      lastSlotTS: number
-      firstSlotTS: number
-    }) => Promise<[number, number, number]>
-  >(async ({ contract, lastSlotTS, firstSlotTS }) => {
-    if (!lastSlotTS) return Promise.resolve([0, 0, 0])
-    const [accuracyRecord, totalStakeYesterdayRecord, totalStakedTodayRecord] =
-      await calculateSlotStats(
-        currentConfig.subgraph,
-        [contract],
-        lastSlotTS,
-        firstSlotTS
-      )
-    return [
-      accuracyRecord[contract],
-      totalStakeYesterdayRecord[contract],
-      totalStakedTodayRecord[contract]
-    ]
-  }, [])
-
   const renewPrice = useCallback<() => Promise<void>>(async () => {
     if (!allPairsData) return
     loadData(allPairsData)
@@ -118,26 +101,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
       clearInterval(priceInterval)
     }
   }, [epochData, renewPrice])
-
-  // Calculate accuracy and set state
-  const loadAccuracy = useCallback(async () => {
-    if (!currentEpoch) return
-    let [accuracy, totalStakeYesterdayBefore, totalTodayStake] =
-      await getAssetPairStatsForRow({
-        contract: contract.address,
-        lastSlotTS: currentEpoch,
-        firstSlotTS: currentEpoch - 2 * SECONDS_IN_24_HOURS
-      })
-    setTokenAccuracy(accuracy)
-    setTokenTotalStake(totalTodayStake ? totalTodayStake : 0)
-    setTokenTotalStakePreviousDay(
-      totalStakeYesterdayBefore ? totalStakeYesterdayBefore : 0
-    )
-  }, [getAssetPairStatsForRow, currentEpoch, contract.address])
-
-  useEffect(() => {
-    loadAccuracy()
-  }, [loadAccuracy, currentEpoch])
 
   const slotProps = useMemo(
     () =>
@@ -156,7 +119,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     if (!allPairsData) return
     //loadAccuracy()
     loadData(allPairsData)
-  }, [allPairsData, loadData, loadAccuracy])
+  }, [allPairsData, loadData])
 
   if (!tokenData || !slotProps) return null
 
@@ -212,10 +175,10 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
           contractAddress={contract.address}
         />
       )}
-      <Accuracy accuracy={tokenAccuracy} />
+      <Accuracy accuracy={accuracyData?.accuracy ?? null} />
       <Stake
-        totalStake={tokenTotalStake}
-        totalStakePreviousDay={tokenTotalStakePreviousDay}
+        totalStake={accuracyData?.totalStakeToday ?? 0}
+        totalStakePreviousDay={accuracyData?.totalStakeYesterday ?? 0}
       />
     </TableRowWrapper>
   )

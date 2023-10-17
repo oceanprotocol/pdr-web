@@ -1,4 +1,5 @@
 export const SECONDS_IN_24_HOURS = 86400
+export const SECONDS_IN_1_WEEK = 604800
 
 export const GET_PREDICT_CONTRACTS = `
   query getContracts($assetIds: [String!]!) {
@@ -40,10 +41,14 @@ export const GET_PREDICT_SLOTS = `
       where: {
         slot_gte: $initialSlot
         predictContract_in: $assetIds
+        roundSumStakes_gt: "0"
       }
     ) {
       id
       slot
+      predictContract {
+        id
+      }
       trueValues {
         id
         trueValue
@@ -62,6 +67,9 @@ type TPredictSlotsTrueValue = {
 export type TPredictSlots = {
   id: string
   slot: number
+  predictContract: {
+    id: string
+  }
   trueValues: Array<TPredictSlotsTrueValue>
   roundSumStakesUp: string
   roundSumStakes: string

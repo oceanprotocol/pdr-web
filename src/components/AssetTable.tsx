@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
 
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
+import { useTimeFrameContext } from '@/contexts/TimeFrameContext'
 import LiveTime from '@/elements/LiveTime'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import Tooltip from '@/elements/Tooltip'
@@ -14,7 +15,14 @@ import {
 } from '@/utils/appconstants'
 import { splitContractName } from '@/utils/splitContractName'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
-import { AssetRow } from './AssetRow'
+import {
+  TCalculateSlotStatsArgs,
+  calculateSlotStats,
+  getSecondsOfTimeFrame
+} from '@/utils/subgraphs/getAssetAccuracy'
+import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
+import { Maybe } from '@/utils/utils'
+import { AssetRow, TAccuracyDataForAsset } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
 
 export type TAssetData = {
@@ -35,8 +43,15 @@ export type TAssetTableProps = {
   contracts: Record<string, TPredictionContract>
 }
 
+export type TAccuracyData = {
+  accuracy: Record<string, number>
+  totalStakeToday: Record<string, number>
+  totalStakeYesterday: Record<string, number>
+}
+
 export type TAssetTableState = {
   AssetsData: Array<TAssetData>
+  AccuracyData: Maybe<TAccuracyData>
 }
 
 export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
@@ -44,11 +59,28 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     usePredictoorsContext()
 
   const { fetchAndCacheAllPairs } = useMarketPriceContext()
+  const { timeFrameInterval } = useTimeFrameContext()
 
   const [tableColumns, setTableColumns] = useState<any>(assetTableColumns)
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
     []
   )
+
+  const timeFrameIntervalRef = useRef(timeFrameInterval)
+  const assetsDataRef = useRef(assetsData)
+
+  useEffect(() => {
+    timeFrameIntervalRef.current = timeFrameInterval
+  }, [timeFrameInterval])
+
+  useEffect(() => {
+    assetsDataRef.current = assetsData
+  }, [assetsData])
+
+  const [accuracyData, setAccuracyData] =
+    useState<TAssetTableState['AccuracyData']>(null)
+
+  const slotStatsArgsRef = useRef<TCalculateSlotStatsArgs | null>(null)
 
   const subscribedContractAddresses = useMemo(
     () => subscribedPredictoors.map((contract) => contract.address),
@@ -131,6 +163,59 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
   }
 
+  const loadAllAccuracyRates = useCallback(async () => {
+    if (!currentEpoch) return
+
+    const args = {
+      subgraphURL: currentConfig.subgraph,
+      assets: assetsDataRef.current.map((item) => item.contract.address),
+      lastSlotTS: currentEpoch,
+      firstSlotTS:
+        currentEpoch - getSecondsOfTimeFrame(timeFrameIntervalRef.current)
+    }
+
+    if (
+      slotStatsArgsRef.current &&
+      JSON.stringify(slotStatsArgsRef.current) === JSON.stringify(args)
+    ) {
+      return
+    }
+
+    slotStatsArgsRef.current = args
+
+    setAccuracyData(null)
+
+    const [
+      contractAccuracy,
+      contractTotalStakeYesterday,
+      contractTotalStakeToday
+    ] = await calculateSlotStats(args)
+
+    setAccuracyData({
+      accuracy: contractAccuracy,
+      totalStakeToday: contractTotalStakeToday,
+      totalStakeYesterday: contractTotalStakeYesterday
+    })
+  }, [currentEpoch])
+
+  const getAccuracyDataForAsset = useCallback<
+    (contract: TPredictionContract) => Maybe<TAccuracyDataForAsset>
+  >(
+    (contract) => {
+      if (!accuracyData) return null
+      return {
+        accuracy: accuracyData.accuracy[contract.address],
+        totalStakeToday: accuracyData.totalStakeToday[contract.address],
+        totalStakeYesterday: accuracyData.totalStakeYesterday[contract.address]
+      }
+    },
+    [accuracyData]
+  )
+
+  useEffect(() => {
+    loadAllAccuracyRates()
+  }, [loadAllAccuracyRates, currentEpoch])
+
   useEffect(() => {
     if (!contracts || !prepareAssetData) return
     prepareAssetData(contracts)
@@ -138,6 +223,10 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
   useEffect(() => {
     if (!currentEpoch) return
+
+    /**
+     * TODO: We have to fix this part of the code
+     */
     let newAssetTableColumns = JSON.parse(JSON.stringify(assetTableColumns))
     newAssetTableColumns[1].Header = formatTime(
       new Date((currentEpoch - secondsPerEpoch) * 1000)
@@ -150,7 +239,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
     newAssetTableColumns[5].Header = getThowLinesHeader(
       newAssetTableColumns[5].Header,
-      '24h'
+      timeFrameInterval === EPredictoorContractInterval.e_1H ? '7d' : '24h'
     )
     newAssetTableColumns[6].Header = getThowLinesHeader(
       newAssetTableColumns[6].Header,
@@ -158,7 +247,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
 
     setTableColumns(newAssetTableColumns)
-  }, [currentEpoch])
+  }, [currentEpoch, timeFrameInterval])
 
   useEffect(() => {
     fetchAndCacheAllPairs()
@@ -202,6 +291,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
               <AssetRow
                 key={`assetRow${item.contract.address}`}
                 assetData={item}
+                accuracyData={getAccuracyDataForAsset(item.contract)}
               />
             ))}
           </tbody>

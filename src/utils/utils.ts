@@ -91,3 +91,5 @@ export const sleep = async (milliseconds: number) => {
     return setTimeout(resolve, milliseconds)
   })
 }
+
+export const isServerSide = () => typeof window === 'undefined'

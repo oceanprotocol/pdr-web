@@ -14,6 +14,7 @@ import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
 import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
 import { useEthereumClient } from '@/hooks/useEthereumClient'
 import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
+import { isServerSide } from '@/utils/utils'
 import { useRouter } from 'next/router'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
@@ -22,10 +23,7 @@ import { useEffect, useMemo } from 'react'
 const inter = Inter({ subsets: ['latin'] })
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
-if (
-  typeof window !== 'undefined' &&
-  process.env.NEXT_PUBLIC_POSTHOG == 'enabled'
-) {
+if (!isServerSide() && process.env.NEXT_PUBLIC_POSTHOG == 'enabled') {
   posthog.init(
     process.env.NEXT_PUBLIC_POSTHOG_KEY
       ? process.env.NEXT_PUBLIC_POSTHOG_KEY
