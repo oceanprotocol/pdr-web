@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import styles from '../styles/AgreementModal.module.css'
 
-//Modal.setAppElement('#agreementModal')
+Modal.setAppElement('#__next')
 
 export default function AgreementModal() {
   const [isOpen, setIsOpen] = useState<boolean>(true)
