@@ -1,4 +1,5 @@
 import Button from '@/elements/Button'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import styles from '../styles/AgreementModal.module.css'
@@ -33,7 +34,11 @@ export default function AgreementModal() {
             }}
           />
           <label htmlFor="checkbox">
-            I have read and I agree to the Terms of use of this website
+            I have read and I agree to the{' '}
+            <Link href="/terms" className={styles.link}>
+              Terms of use
+            </Link>{' '}
+            of this website
           </label>
         </div>
         <Button
