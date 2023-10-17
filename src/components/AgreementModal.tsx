@@ -1,5 +1,6 @@
 import Button from '@/elements/Button'
 import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import styles from '../styles/AgreementModal.module.css'
@@ -9,8 +10,12 @@ import styles from '../styles/AgreementModal.module.css'
 export default function AgreementModal() {
   const [isOpen, setIsOpen] = useState<boolean>(true)
   const [agreed, setAgreed] = useState<boolean>(false)
+  const router = useRouter()
+  const pathname = usePathname()
   const onContinue = () => {
     localStorage.setItem('termsOfUse', 'agreed')
+    console.log(pathname)
+    if (pathname == '/terms') router.push('/')
     setIsOpen(false)
   }
   useEffect(() => {
