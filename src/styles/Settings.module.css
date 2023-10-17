@@ -24,7 +24,7 @@
   position: absolute;
   z-index: 2;
   border-radius: var(--small-border-radius);
-  color: black;
+  color: var(--primary-color);
   background-color: white;
   padding: 10px;
   margin: auto;

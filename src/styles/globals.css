@@ -1,4 +1,5 @@
-:root {
+:root,
+html[data-theme='light'] {
   --max-width: 1100px;
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
@@ -17,7 +18,7 @@
   --red: #e40f16;
   --green: #3ad315;
 
-  --font-size-mini: 0.5rem;
+  --font-size-mini: 0.6rem;
   --font-size-small: 0.7rem;
   --font-size-base: 1rem;
   --font-size-large: 1.3rem;
@@ -33,19 +34,31 @@
   --warning: #f6ae38;
 }
 
-/*@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #fff;
-    --background-color: #000;
-    --primary-pink: #ff4292;
-    --border-color: #555555;
-    --shadow-grey: #3e3e3e;
-    --dark-grey: #727272;
-
-    --big-border-radius: 12px;
-    --regular-font-size: 14px;
+    --background-color: #121212;
+    --primary-pink: #ff6ba9;
+    --border-color: #444;
+    --shadow-grey: #2e2e2e;
+    --dark-grey: #828282;
+    --prediction-background-green: #4d4d4d;
+    --prediction-background-red: #ff6b6b;
+    --prediction-background-grey: #3e3e3e;
   }
-}*/
+}
+
+html[data-theme='dark'] {
+  --primary-color: #fff;
+  --background-color: #121212;
+  --primary-pink: #ff6ba9;
+  --border-color: #444;
+  --shadow-grey: #2e2e2e;
+  --dark-grey: #828282;
+  --prediction-background-green: #4d4d4d;
+  --prediction-background-red: #ff6b6b;
+  --prediction-background-grey: #3e3e3e;
+}
 
 * {
   box-sizing: border-box;
