@@ -3,6 +3,7 @@ import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import 'react-notifications/lib/notifications.css'
+import AgreementModal from './AgreementModal'
 import Footer from './Footer'
 import Header from './Header'
 
@@ -29,6 +30,7 @@ export default function MainWrapper({
       </Head>
       {withBanner && <Banner />}
       <main className={`${styles.main} ${inter.className}`}>
+        <AgreementModal />
         <Header isWalletActive={isWalletActive} />
         {children}
         <Footer />

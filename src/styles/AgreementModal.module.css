@@ -1,0 +1,43 @@
+.modal {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  width: 450px;
+  background-color: var(--background-color);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius-box);
+  padding: calc(var(--spacer));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--spacer) / 3);
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-small);
+}
+
+.inputContainer input {
+  margin-right: 5px;
+}
+
+.content p {
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  .content {
+    width: 100%;
+  }
+}
