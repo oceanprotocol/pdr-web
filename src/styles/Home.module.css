@@ -8,11 +8,6 @@
   margin: auto;
 }
 
-.code {
-  font-weight: 700;
-  font-family: var(--font-mono);
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(25%, auto));
@@ -55,16 +50,27 @@
   }
 }
 
-.description {
+.description,
+.errorDescription {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.errorDescription {
+  height: 55vh;
+  text-align: center;
+  color: var(--red);
+}
+
 .oneliner {
   width: 100%;
   font-size: var(--font-size-large);
+}
+
+.textAlignCenter {
+  text-align: center;
 }
 
 @media screen and (max-width: 600px) {

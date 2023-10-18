@@ -1,4 +1,6 @@
 import styles from '../../styles/Epoch.module.css'
+import { ArrowDown } from '../ArrowDown'
+import { ArrowUp } from '../ArrowUp'
 import { SubscriptionStatus } from '../Subscription'
 
 export type TEpochStakedTokensProps = {
@@ -15,7 +17,6 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
   direction,
   showLabel
 }) => {
-  const prefersDarkMode = false //useMediaQuery('(prefers-color-scheme: dark)')
   return !showLabel ? (
     <div className={styles.stekesContainer}>
       <div className={styles.stake}>
@@ -26,11 +27,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
               : '<0.01'
             : 0}
         </span>
-        <img
-          className={styles.stakeDirectionArrow}
-          alt="stakedArrow"
-          src={`/assets/icons/arrowUp${prefersDarkMode ? 'White' : ''}.png`}
-        ></img>
+        <ArrowUp width={8} height={8} />
       </div>
       <div className={`${styles.stake} ${styles.stakeMarginLeft}`}>
         <span className={styles.stakeAmount}>
@@ -40,11 +37,7 @@ export const EpochStakedTokens: React.FC<TEpochStakedTokensProps> = ({
               : '<0.01'
             : 0}
         </span>
-        <img
-          className={styles.stakeDirectionArrow}
-          alt="stakedArrow"
-          src={`/assets/icons/arrowDown${prefersDarkMode ? 'White' : ''}.png`}
-        ></img>
+        <ArrowDown width={8} height={8} />
       </div>
     </div>
   ) : (

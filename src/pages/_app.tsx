@@ -4,17 +4,25 @@ import { UserProvider } from '@/contexts/UserContext'
 import '@/styles/globals.css'
 import { Web3Modal } from '@web3modal/react'
 import type { AppProps } from 'next/app'
+import { Inter } from 'next/font/google'
 import { NotificationContainer } from 'react-notifications'
 import { WagmiConfig } from 'wagmi'
 
+import MainWrapper from '@/components/MainWrapper'
+import { NotConnectedWarning } from '@/components/NotConnectedWarning'
 import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
 import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
-import { useEthereumClient } from '@/hooks/useEthereumClient'
+import {
+  EEthereumClientStatus,
+  useEthereumClient
+} from '@/hooks/useEthereumClient'
 import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import { useRouter } from 'next/router'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+
+const inter = Inter({ subsets: ['latin'] })
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
 if (
@@ -39,7 +47,10 @@ if (
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
-  const { wagmiConfig, ethereumClient, w3mProjectId } = useEthereumClient()
+  const { wagmiConfig, ethereumClient, w3mProjectId, clientStatus } =
+    useEthereumClient()
+
+  const configsStatus = wagmiConfig && ethereumClient && w3mProjectId
 
   useEffect(() => {
     // Track page views
@@ -51,11 +62,12 @@ function App({ Component, pageProps }: AppProps) {
     }
   }, [])
 
+  const isHome = useMemo(() => router.pathname === '/', [router.pathname])
   return (
-    <>
+    <div className={inter.className}>
       <PostHogProvider client={posthog}>
         <NotificationContainer />
-        {wagmiConfig && ethereumClient && w3mProjectId && (
+        {configsStatus && clientStatus === EEthereumClientStatus.CONNECTED && (
           <>
             <WagmiConfig config={wagmiConfig}>
               <UserProvider>
@@ -65,7 +77,9 @@ function App({ Component, pageProps }: AppProps) {
                   <SocketProvider>
                     <PredictoorsProvider>
                       <MarketPriceProvider>
-                        <Component {...pageProps} />
+                        <MainWrapper>
+                          <Component {...pageProps} />
+                        </MainWrapper>
                       </MarketPriceProvider>
                     </PredictoorsProvider>
                   </SocketProvider>
@@ -78,8 +92,17 @@ function App({ Component, pageProps }: AppProps) {
             />
           </>
         )}
+        {clientStatus !== EEthereumClientStatus.CONNECTED && (
+          <MainWrapper withBanner={false} isWalletActive={false}>
+            {isHome ? (
+              <NotConnectedWarning clientStatus={clientStatus} />
+            ) : (
+              <Component {...pageProps} />
+            )}
+          </MainWrapper>
+        )}
       </PostHogProvider>
-    </>
+    </div>
   )
 }
 

@@ -25,10 +25,10 @@
 .secondary {
   background-color: transparent;
   border: 1px solid var(--primary-pink);
-  color: black;
+  color: var(--primary-color);
   font-size: var(--font-size-mini);
 }
 
 .secondary:disabled {
-  color: black;
+  color: var(--primary-color);
 }

@@ -12,6 +12,16 @@
   margin-bottom: 8px;
 }
 
+.link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--dark-grey);
+  font-size: var(--font-size-small);
+  gap: calc(var(--spacer) / 4);
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 600px) {
   .container {
     flex-direction: column;
