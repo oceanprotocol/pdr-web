@@ -1,6 +1,5 @@
 import Button from '@/elements/Button'
 import { Inter } from 'next/font/google'
-import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
@@ -11,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 Modal.setAppElement('#__next')
 
 export default function AgreementModal() {
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [agreed, setAgreed] = useState<boolean>(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -21,8 +20,18 @@ export default function AgreementModal() {
     setIsOpen(false)
   }
   useEffect(() => {
-    setIsOpen(localStorage.getItem('termsOfUse') ? false : true)
+    setIsOpen(
+      localStorage.getItem('termsOfUse')
+        ? false
+        : pathname == '/terms'
+        ? false
+        : true
+    )
   }, [])
+  useEffect(() => {
+    if (!localStorage.getItem('termsOfUse'))
+      pathname == '/terms' ? setIsOpen(false) : setIsOpen(true)
+  }, [pathname])
   return (
     <Modal
       isOpen={isOpen}
@@ -42,9 +51,9 @@ export default function AgreementModal() {
           />
           <label htmlFor="checkbox">
             I have read and I agree to the{' '}
-            <Link href="/terms" className={styles.link}>
+            <a href="/terms" className={styles.link} target="_blank">
               Terms of use
-            </Link>{' '}
+            </a>{' '}
             of this website
           </label>
         </div>
