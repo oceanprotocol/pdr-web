@@ -3,7 +3,7 @@
 \
 &nbsp;
 
-Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and entered into by and between Ocean Protocol Foundation Ltd., with office at The Commerze @ Irving, 1 Irving Place, #08-11, Singapore, 369546 Singapore (“**Ocean**”) and the legal entity set forth in the Account Information (“**Customer**”). It governs Customer’s access to and use of the Predictoor Portal (as defined below) and takes effect on the date of its acceptance by Customer (the “**Effective Date**”). Customer represents being lawfully able to enter into contracts and having legal authority to bind Customer’s entity.
+Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and entered into by and between OPF Ltd., with office at The Commerze @ Irving, 1 Irving Place, #08-11, Singapore, 369546 Singapore (“**Ocean**”) and the legal entity set forth in the Account Information (“**Customer**”). It governs Customer’s access to and use of the Predictoor Portal (as defined below) and takes effect on the date of its acceptance by Customer (the “**Effective Date**”). Customer represents being lawfully able to enter into contracts and having legal authority to bind Customer’s entity.
 
 \
 &nbsp;
@@ -33,22 +33,22 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-“**Documentation**” means the user guides (in each case exclusive of content referenced via hyperlink) for the Predictoor Portal, as such user guides may be updated by Ocean from time to time.
+“**Documentation**” means the user guides (in each case exclusive of content referenced via hyperlink) for the Predictoor Portal, as such user guides may be updated by OPF from time to time.
 
 \
 &nbsp;
 
-“**Predictoor Website**” means the website at https://predictoor.ai or https://test.predictoor.ai (and any successor or related sites designated by Ocean), as may be updated by Ocean from time to time.
+“**Predictoor Website**” means the website at https://predictoor.ai or https://test.predictoor.ai (and any successor or related sites designated by OPF), as may be updated by OPF from time to time.
 
 \
 &nbsp;
 
-“**Predictoor Feeds**” means the prediction feeds that Customers may purchase through Predictoor Portal (and any successor or distribution channels designated by Ocean), as may be updated by Ocean from time to time.
+“**Predictoor Feeds**” means the prediction feeds that Customers may purchase through Predictoor Portal (and any successor or distribution channels designated by OPF), as may be updated by OPF from time to time.
 
 \
 &nbsp;
 
-“**Predictoor DF**” means the incentive emissions operated by Ocean to reward Predictoors for helping to provide accurate predictions, (and any successor or parameter updates designated by Ocean), as may be updated by Ocean from time to time.
+“**Predictoor DF**” means the incentive emissions operated by OPF to reward Predictoors for helping to provide accurate predictions, (and any successor or parameter updates designated by OPF), as may be updated by OPF from time to time.
 
 \
 &nbsp;
@@ -63,27 +63,27 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-“**Privacy Policy**” means the privacy policy located at https://www.oceanprotocol.com (and any successor or related locations designated by Ocean), as it may be updated by Ocean from time to time.
+“**Privacy Policy**” means the privacy policy located at https://www.oceanprotocol.com (and any successor or related locations designated by OPF), as it may be updated by OPF from time to time.
 
 \
 &nbsp;
 
-“**Allowlist**” means a state in which Ocean tags specific Predictoor Feeds to be visible in the Predictoor Portal and elligible for Predictoor DF rewards. The Allowlist is an artifact of deployed Predictoor Feeds that considered officially supported by Ocean. The Predictoor Portal Allowlist can be accessed here: https://github.com/oceanprotocol/pdr-web/blob/main/src/utils/config.ts
+“**Allowlist**” means a state in which OPF tags specific Predictoor Feeds to be visible in the Predictoor Portal and elligible for Predictoor DF rewards. The Allowlist is an artifact of deployed Predictoor Feeds that considered officially supported by OPF. The Predictoor Portal Allowlist can be accessed here: https://github.com/oceanprotocol/pdr-web/blob/main/src/utils/config.ts
 
 \
 &nbsp;
 
-“**Service**” means each of the websites, software, smart contracts, and services made available by Ocean or its affiliates, including those web services described in the Service Terms. Services do not include Third-Party Content.
+“**Service**” means each of the websites, software, smart contracts, and services made available by OPF or its affiliates, including those web services described in the Service Terms. Services do not include Third-Party Content.
 
 \
 &nbsp;
 
-“**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Website (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
+“**Service Terms**” means the rights and restrictions for particular Services located on the Predictoor Website (and any successor or related locations designated by OPF), as may be updated by OPF from time to time.
 
 \
 &nbsp;
 
-“**Website Terms**” means the terms of use located at [https://www.oceanprotocol.com (](https://www.oceanprotocol.com) (and any successor or related locations designated by Ocean), as may be updated by Ocean from time to time.
+“**Website Terms**” means the terms of use located at [https://www.oceanprotocol.com (](https://www.oceanprotocol.com) (and any successor or related locations designated by OPF), as may be updated by OPF from time to time.
 
 \
 &nbsp;
@@ -113,12 +113,12 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**1.3** The Predictoor Portal connects Predictoors and Traders directly, without any 3rd party control via the Predictoor Portal. This means that while providing predictions as a Predictoor, Customers are responsible for their own activity. This means that while purchasing Prediction Feeds as a Trader, Customers are responsible for their own activity. Customers must adhere to the laws in their own legal jurisdiction as well as their conscience. Ocean is not responsible for any malicious use of the Predictoor Portal or any losses associated with the use of the Predictoor Portal or any source.
+**1.3** The Predictoor Portal connects Predictoors and Traders directly, without any 3rd party control via the Predictoor Portal. This means that while providing predictions as a Predictoor, Customers are responsible for their own activity. This means that while purchasing Prediction Feeds as a Trader, Customers are responsible for their own activity. Customers must adhere to the laws in their own legal jurisdiction as well as their conscience. OPF is not responsible for any malicious use of the Predictoor Portal or any losses associated with the use of the Predictoor Portal or any source.
 
 \
 &nbsp;
 
-**1.4** By clicking any button or box marked “accept” or “agree” (or a similar term) in connection with this Agreement, or by accessing or using the Predictoor Portal, you agree to be bound by this Agreement, a current version of which is available at the Predictoor Portal, and which may be modified from time to time at our sole discretion. We are only providing our services if you accept all of these terms. By using the Predictoor Portal, the Customer confirms their understanding and agrees to be bound by all of these terms. If Customer accepts these terms on behalf of a company or other legal entity, Customer represents that they have the legal authority to accept these terms on that entity’s behalf, in which case Customer will mean that entity. If Customer does not accept all of these terms, then you may not access or use the Predictoor Portal.
+**1.4** By clicking any button or box marked "buy", “accept” or “agree” (or a similar term), or by accessing or using the Predictoor Portal, you agree to be bound by this Agreement, a current version of which is available at the Predictoor Portal, and which may be modified from time to time at our sole discretion. We are only providing our services if you accept all of these terms. By using the Predictoor Portal, the Customer confirms their understanding and agrees to be bound by all of these terms. If Customer accepts these terms on behalf of a company or other legal entity, Customer represents that they have the legal authority to accept these terms on that entity’s behalf, in which case Customer will mean that entity. If Customer does not accept all of these terms, then you may not access or use the Predictoor Portal.
 
 \
 &nbsp;
@@ -128,7 +128,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**2.1** Ocean may modify this Agreement, change or discontinue any Service (including any policies and Service Level Agreements) at any time with no prior notification Ocean will provide 15 days advance notice prior to the effective date of software modifications (“**Modifications Effective Date**”).
+**2.1** OPF may modify this Agreement, change or discontinue any Service (including any policies and Service Level Agreements) at any time with no prior notification.
 
 \
 &nbsp;
@@ -148,12 +148,12 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**3.1** Without limiting Customer obligations under Section 4.2, Ocean will implement reasonable and appropriate measures designed to help Predictoors and Traders to secure published assets against accidental or unlawful loss, access or disclosure.
+**3.1** Without limiting Customer obligations under Section 4.2, OPF will implement reasonable and appropriate measures designed to help Predictoors and Traders to secure published assets against accidental or unlawful loss, access or disclosure.
 
 \
 &nbsp;
 
-**3.2** Predictions submitted are stored and computed privately on-chain. Ocean does not store or have privilege to any information.
+**3.2** Predictions submitted are stored and computed privately on-chain. OPF does not store or have privilege to any information.
 
 \
 &nbsp;
@@ -163,7 +163,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**3.4** We neither own nor control MetaMask, Coinbase, Celr, Google Chrome, the Oasis network, or any other third parties site, product, or service that you might access, visit, or use for the purpose of enabling you to use the various features of the Predictoor Portal. We will not be liable for the acts or omissions of any such third parties, nor will we be liable for any damage that you may suffer as a result of your transactions or any other interaction with any such third parties.
+**3.4** We neither own nor control MetaMask, Coinbase, Celer, Google Chrome, the Oasis network, or any other third parties site, product, or service that you might access, visit, or use for the purpose of enabling you to use the various features of the Predictoor Portal. We will not be liable for the acts or omissions of any such third parties, nor will we be liable for any damage that you may suffer as a result of your transactions or any other interaction with any such third parties.
 
 \
 &nbsp;
@@ -183,7 +183,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**4.1** Customer is responsible for all activities, regardless of whether the activities are authorized by Customer or undertaken by Customer, Customer’s employees or a third party (including Customer’s contractors, agents or End Users). Ocean and its affiliates are not responsible for unauthorized access to Customer Account.
+**4.1** Customer is responsible for all activities, regardless of whether the activities are authorized by Customer or undertaken by Customer, Customer’s employees or a third party (including Customer’s contractors, agents or End Users). OPF and its affiliates are not responsible for unauthorized access to Customer Account.
 
 \
 &nbsp;
@@ -193,7 +193,7 @@ Predictoor Portal Terms and Conditions (this “**Agreement**”) is made and en
 \
 &nbsp;
 
-**4.3** Where Customer permits, assists or facilitates such action, Customer will be deemed to have taken any action by any person or entity related to this Agreement, published assets or use of the Predictoor Portal. Customer is responsible for End Users’ use of published assets and the Ocean Market. Customer will ensure that all End Users comply with obligations mirroring those of Customer under this Agreement and that the terms of Customer’s agreements with each End User are consistent with this Agreement. If Customer becomes aware of any violation of Customer’s obligations under this Agreement caused by an End User, Customer will immediately suspend access to published assets and the Predictoor Portal by such End User. Ocean does not provide any support or services to End Users, unless Ocean has a separate agreement with Customer or an End User obligating Ocean to provide such support or services.
+**4.3** Where Customer permits, assists or facilitates such action, Customer will be deemed to have taken any action by any person or entity related to this Agreement, published assets or use of the Predictoor Portal. Customer is responsible for End Users’ use of published assets and the Ocean Market. Customer will ensure that all End Users comply with obligations mirroring those of Customer under this Agreement and that the terms of Customer’s agreements with each End User are consistent with this Agreement. If Customer becomes aware of any violation of Customer’s obligations under this Agreement caused by an End User, Customer will immediately suspend access to published assets and the Predictoor Portal by such End User. OPF does not provide any support or services to End Users, unless OPF has a separate agreement with Customer or an End User obligating OPF to provide such support or services.
 
 \
 &nbsp;
@@ -225,16 +225,16 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**6.1** Ocean may suspend Customer or any End User’s right to access or use any portion or all of the Predictoor Portal, or immediately with no notice to Customer if Ocean determines that the Customer or an End User’s use of the Predictoor Portal:
+**6.1** OPF may suspend Customer or any End User’s right to access or use any portion or all of the Predictoor Portal, or immediately with no notice to Customer if OPF determines that the Customer or an End User’s use of the Predictoor Portal:
 
 \
 &nbsp;
 
 (b) poses a security risk to the Predictoor Portal or any third party,
 
-(c) could adversely impact Ocean systems, the Predictoor Portal, or the systems or Content of any other Ocean customer,
+(c) could adversely impact OPF systems, the Predictoor Portal, or the systems or Content of any other OPF customer,
 
-(d) could subject Ocean, Ocean affiliates, or any third party to liability, and/or
+(d) could subject OPF, OPF affiliates, or any third party to liability, and/or
 
 (e) could be fraudulent;
 
@@ -245,7 +245,7 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**6.2** If Ocean, according to Section 6.1, suspends Customer’s right to access or use any portion or all of the Predictoor Portal:
+**6.2** If OPF, according to Section 6.1, suspends Customer’s right to access or use any portion or all of the Predictoor Portal:
 
 (a) Customer remains responsible for all fees and charges Customer incurs during the period of suspension; and
 
@@ -274,12 +274,12 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**8.1** Except as provided in this Section 8, Ocean obtains no rights whatsoever under this Agreement from Customer (or Customer’s licensors) to submitted predictions or Predictoor Feeds.
+**8.1** Except as provided in this Section 8, OPF obtains no rights whatsoever under this Agreement from Customer (or Customer’s licensors) to submitted predictions or Predictoor Feeds.
 
 \
 &nbsp;
 
-**8.2** Customer represents and warrants to Ocean that:
+**8.2** Customer represents and warrants to OPF that:
 
 (a) Customer or Customer’s licensors own all right, title, and interest in and of the published assets and
 
@@ -288,17 +288,17 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**8.3** Subject to the terms of this Agreement, Ocean grants Customer a limited, revocable, non-exclusive, non-sublicensable, non-transferable license to access and use the Predictoor Portal solely in accordance with this Agreement.
+**8.3** Subject to the terms of this Agreement, OPF grants Customer a limited, revocable, non-exclusive, non-sublicensable, non-transferable license to access and use the Predictoor Portal solely in accordance with this Agreement.
 
 \
 &nbsp;
 
-**8.4** Except as provided in Section 8.3, the Customer obtains no rights under this Agreement from Ocean, Ocean affiliates or Ocean licensors to the Predictoor Portal, including any related intellectual property rights.
+**8.4** Except as provided in Section 8.3, the Customer obtains no rights under this Agreement from OPF, OPF affiliates or OPF licensors to the Predictoor Portal, including any related intellectual property rights.
 
 \
 &nbsp;
 
-**8.5** Ocean Content and Third-Party Content may be provided to the Customer under a separate agreement and/or a separate license. In the event of a conflict between this Agreement and any separate agreement and/or separate license, the separate agreement and/or separate license will prevail with respect to the Ocean Content or Third-Party Content that is the subject of such separate agreement and/or separate license.
+**8.5** OPF Content and Third-Party Content may be provided to the Customer under a separate agreement and/or a separate license. In the event of a conflict between this Agreement and any separate agreement and/or separate license, the separate agreement and/or separate license will prevail with respect to the OPF Content or Third-Party Content that is the subject of such separate agreement and/or separate license.
 
 \
 &nbsp;
@@ -308,7 +308,7 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**9.1** Warranties. The Predictoor Portal is provided “as is”. Except to the extent prohibited by law, or to the extent any statutory rights apply that cannot be excluded, limited or waived, Ocean its affiliates and licensors:
+**9.1** Warranties. The Predictoor Portal is provided “as is”. Except to the extent prohibited by law, or to the extent any statutory rights apply that cannot be excluded, limited or waived, OPF its affiliates and licensors:
 
 (a) make no representations or warranties of any kind, whether express, implied, statutory or otherwise regarding the service offerings or the Third-Party Content, and
 
@@ -328,7 +328,7 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**10.1** The laws of Singapore, without reference to conflict of law rules, govern this Agreement and any dispute of any sort that might arise between Customer and Ocean. The United Nations Convention for the International Sale of Goods does not apply to this Agreement.
+**10.1** The laws of Singapore, without reference to conflict of law rules, govern this Agreement and any dispute of any sort that might arise between Customer and OPF. The United Nations Convention for the International Sale of Goods does not apply to this Agreement.
 
 \
 &nbsp;
@@ -338,4 +338,4 @@ Customer acknowledges and agrees that the Commission will be transferred directl
 \
 &nbsp;
 
-**10.3** Notwithstanding the foregoing Ocean and Customer both agree that Ocean may bring suit against Customer before the court at any of Customer’s business seats and/or at the court where any breach of this Agreement or infringement of Ocean rights occurred.
+**10.3** Notwithstanding the foregoing OPF and Customer both agree that OPF may bring suit against Customer before the court at any of Customer’s business seats and/or at the court where any breach of this Agreement or infringement of OPF rights occurred.
