@@ -6,19 +6,31 @@ import { Chain, configureChains, createConfig } from 'wagmi'
 
 const w3mProjectId = process.env.NEXT_PUBLIC_WC2_PROJECT_ID || ''
 
+export enum EEthereumClientStatus {
+  'LOADING',
+  'CONNECTED',
+  'DISCONNECTED'
+}
+
 type TWagmiConfig = ReturnType<typeof createConfig>
 
 function useEthereumClient() {
   const [ethereumClient, setEthereumClient] =
     useState<Maybe<EthereumClient>>(null)
   const [wagmiConfig, setWagmiConfig] = useState<Maybe<TWagmiConfig>>(null)
+  const [status, setStatus] = useState<EEthereumClientStatus>(
+    EEthereumClientStatus.LOADING
+  )
 
   useEffect(() => {
     async function initializeEthereumClient() {
       await networkProvider.init()
       const chainInfo = networkProvider.getChainInfo()
 
-      if (!chainInfo) return
+      if (!chainInfo) {
+        setStatus(EEthereumClientStatus.DISCONNECTED)
+        return
+      }
 
       const chains: Array<Chain> = [chainInfo]
 
@@ -34,12 +46,13 @@ function useEthereumClient() {
 
       setWagmiConfig(config as TWagmiConfig)
       setEthereumClient(new EthereumClient(config, chains))
+      setStatus(EEthereumClientStatus.CONNECTED)
     }
 
     initializeEthereumClient()
   }, [])
 
-  return { ethereumClient, w3mProjectId, wagmiConfig }
+  return { ethereumClient, w3mProjectId, wagmiConfig, clientStatus: status }
 }
 
 export { useEthereumClient }
