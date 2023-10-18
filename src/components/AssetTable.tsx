@@ -32,7 +32,7 @@ export type TAssetData = {
 
 export type TAssetTableProps = {
   //contracts: TPredictionContract[]
-  contracts: Record<string, TPredictionContract>
+  contracts: Record<string, TPredictionContract> | undefined
 }
 
 export type TAssetTableState = {

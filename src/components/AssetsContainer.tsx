@@ -32,7 +32,7 @@ export const AssetsContainer: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {contracts ? <AssetTable contracts={contracts} /> : <div>Loading</div>}
+      <AssetTable contracts={contracts} />
     </div>
   )
 }
