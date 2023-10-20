@@ -61,7 +61,7 @@ export const config: TRuntimeConfig = {
     ],
     opfProvidedPredictions: [
       '0xda1e3c0ac74f2f10bb0c7635c9dc68bd3da0c95b',
-      '0x0f39784c50868bf8efca6516e735d309f34d9c79'
+      '0xc2c5c790b411a835742ed0d517df68fea958058d'
     ],
     allowedPredictions: null,
     blacklistedPredictions: [
