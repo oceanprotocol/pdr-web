@@ -32,3 +32,9 @@
 .secondary:disabled {
   color: var(--primary-color);
 }
+
+.buttonContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
