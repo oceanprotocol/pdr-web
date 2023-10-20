@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styles from '../styles/Button.module.css'
 
 export const enum ButtonType {
@@ -11,6 +12,7 @@ interface ButtonProps {
   type?: ButtonType
   disabled?: boolean
   className?: string
+  children?: ReactNode
   onClick: () => void
 }
 
@@ -19,7 +21,8 @@ export default function Button({
   type,
   disabled,
   onClick,
-  className
+  className,
+  children
 }: ButtonProps) {
   return (
     <button
@@ -33,7 +36,10 @@ export default function Button({
       }`}
       disabled={disabled}
     >
-      {text}
+      <div className={styles.buttonContent}>
+        {children}
+        {text}
+      </div>
     </button>
   )
 }
