@@ -9,22 +9,32 @@ import {
   TPredictSlots
 } from './queries/getPredictSlots'
 
-export const getSlots = async (
-  subgraphURL: string,
-  address: string,
-  firstSlotTS: number,
-  lastSlotTS: number,
-  skip: number = 0,
-  slots: Array<TPredictSlots> = []
-): Promise<Array<TPredictSlots>> => {
-  const records_per_page = 578
+export type TGetSlotsArgs = {
+  subgraphURL: string
+  address: string
+  firstSlotTS: number
+  lastSlotTS: number
+  skip?: number
+  slots?: Array<TPredictSlots>
+}
+
+export const getSlots = async ({
+  subgraphURL,
+  address,
+  firstSlotTS,
+  lastSlotTS,
+  skip = 0,
+  slots = []
+}: TGetSlotsArgs): Promise<Array<TPredictSlots>> => {
+  const recordsPerPage = 1000
   const { data, errors } =
     await graphqlClientInstance.query<TGetPredictSlotsQuery>(
       GET_PREDICT_SLOTS,
       {
         assetIds: [address],
         initialSlot: firstSlotTS,
-        first: records_per_page,
+        lastSlot: lastSlotTS,
+        first: recordsPerPage,
         skip: skip
       },
       subgraphURL
@@ -36,21 +46,21 @@ export const getSlots = async (
   }
 
   // Append new slots to existing ones
-  slots.push(...predictSlots)
+  const tempSlots = [...slots, ...predictSlots]
 
-  if (predictSlots.length === records_per_page) {
+  if (predictSlots.length === recordsPerPage) {
     // If we returned max results, resively get remaining data
-    return getSlots(
+    return getSlots({
       subgraphURL,
       address,
-      firstSlotTS,
-      skip + records_per_page,
+      firstSlotTS: firstSlotTS,
+      skip: skip + recordsPerPage,
       lastSlotTS,
-      slots
-    )
+      slots: tempSlots
+    })
   } else {
     // All data retrieved
-    return slots
+    return tempSlots
   }
 }
 
@@ -62,7 +72,12 @@ export const fetchSlots = async (
 ): Promise<Record<string, Array<TPredictSlots>>> => {
   return Promise.all(
     assets.map(async (assetId) => {
-      const slots = await getSlots(subgraphURL, assetId, firstSlot, lastSlotTS)
+      const slots = await getSlots({
+        subgraphURL,
+        address: assetId,
+        firstSlotTS: firstSlot,
+        lastSlotTS
+      })
 
       return { [assetId]: slots || [] }
     })
@@ -89,12 +104,12 @@ export const calculateSlotStats = async (
   const contractAccuracy: Record<string, number> = {}
   const contractTotalStakeYesterday: Record<string, number> = {}
   const contractTotalStakeToday: Record<string, number> = {}
-  let totalStakeToday: number = 0
-  let totalStakedYesterday: number = 0
 
   for (const assetId in slotsData) {
     let totalSlots = 0
     let correctPredictions = 0
+    let totalStakeToday: number = 0
+    let totalStakedYesterday: number = 0
 
     if (!slotsData[assetId] || slotsData[assetId].length === 0) {
       contractAccuracy[assetId] = 0
