@@ -1,22 +1,16 @@
-import { PredictoorsProvider } from '@/contexts/PredictoorsContext'
-import { SocketProvider } from '@/contexts/SocketContext'
-import { UserProvider } from '@/contexts/UserContext'
 import '@/styles/globals.css'
 import { Web3Modal } from '@web3modal/react'
 import type { AppProps } from 'next/app'
 import { Inter } from 'next/font/google'
 import { NotificationContainer } from 'react-notifications'
-import { WagmiConfig } from 'wagmi'
 
 import MainWrapper from '@/components/MainWrapper'
 import { NotConnectedWarning } from '@/components/NotConnectedWarning'
-import { MarketPriceProvider } from '@/contexts/MarketPriceContext'
-import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
+import { EnhancedProvider } from '@/contexts/EnhancedProvider'
 import {
   EEthereumClientStatus,
   useEthereumClient
 } from '@/hooks/useEthereumClient'
-import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import { useRouter } from 'next/router'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
@@ -70,23 +64,12 @@ function App({ Component, pageProps }: AppProps) {
         {configsStatus &&
           clientStatus !== EEthereumClientStatus.DISCONNECTED && (
             <>
-              <WagmiConfig config={wagmiConfig}>
-                <UserProvider>
-                  <TimeFrameProvider
-                    defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
-                  >
-                    <SocketProvider>
-                      <PredictoorsProvider>
-                        <MarketPriceProvider>
-                          <MainWrapper>
-                            <Component {...pageProps} />
-                          </MainWrapper>
-                        </MarketPriceProvider>
-                      </PredictoorsProvider>
-                    </SocketProvider>
-                  </TimeFrameProvider>
-                </UserProvider>
-              </WagmiConfig>
+              <EnhancedProvider wagmiConfig={wagmiConfig}>
+                <MainWrapper>
+                  <Component {...pageProps} />
+                </MainWrapper>
+              </EnhancedProvider>
+
               <Web3Modal
                 projectId={w3mProjectId}
                 ethereumClient={ethereumClient}
