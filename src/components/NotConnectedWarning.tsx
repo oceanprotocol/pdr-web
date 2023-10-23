@@ -29,7 +29,7 @@ export const NotConnectedWarning: React.FC<TNotConnectedWarningProps> = ({
       {isClientDisconnected && (
         <div className={styles.errorDescription}>
           <p className={styles.oneliner}>
-            "Couldn't connect to the networks RPC. Try again latter."
+            Couldn't connect to the networks RPC. Try again latter.
           </p>
         </div>
       )}

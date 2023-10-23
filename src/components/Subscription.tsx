@@ -128,7 +128,16 @@ export default function Subscription({
             disabled={
               !isConnected || isBuyingSubscription !== '' || !isCorrectNetwork
             }
-          />
+          >
+            {isBuyingSubscription == contractAddress && (
+              <ClipLoader
+                size={8}
+                color="var(--dark-grey)"
+                loading={true}
+                className={styles.loader}
+              />
+            )}
+          </Button>
         </>
       ) : (
         <ClipLoader size={12} color="var(--dark-grey)" loading={true} />

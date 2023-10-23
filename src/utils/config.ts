@@ -64,7 +64,18 @@ export const config: TRuntimeConfig = {
       '0xc2c5c790b411a835742ed0d517df68fea958058d'
     ],
     allowedPredictions: null,
-    blacklistedPredictions: [''],
+    blacklistedPredictions: [
+      '0x9dccb0fe8e7313141833b9ed96d5a90e3aa20bba',
+      '0xfe588188c1021e5feeb5d5870e2ba222e07791c0',
+      '0x388d104da5b8578e4e65cda016461692681257d5',
+      '0x71a255e05a3f501e1a3bfc6dfe1c05e3e79213c3',
+      '0x676170bf86926261a3021449bddbe438efebcd26',
+      '0x6d434011fe93c4338925ad676a726d47b9e9305c',
+      '0x6c5b4324a08ecc6a4414879e276430751c6bd700',
+      '0x0423ac88aedb41343ff94cfb9cf60325b4fd07f8',
+      '0xa792936b708418a9ea57b1ee18f65c71e988279a',
+      '0xb35f6fbf1a8190b4baf9292dba31f17ca7ae772e'
+    ],
     opfOwnerAddress: '0xe02a421dfc549336d47efee85699bd0a3da7d6ff'
   },
   development: {
