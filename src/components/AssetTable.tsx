@@ -32,7 +32,7 @@ export type TAssetData = {
 
 export type TAssetTableProps = {
   //contracts: TPredictionContract[]
-  contracts: Record<string, TPredictionContract>
+  contracts: Record<string, TPredictionContract> | undefined
 }
 
 export type TAssetTableState = {
@@ -46,9 +46,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
   const { fetchAndCacheAllPairs } = useMarketPriceContext()
 
   const [tableColumns, setTableColumns] = useState<any>(assetTableColumns)
-  const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>(
-    []
-  )
+  const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>()
 
   const subscribedContractAddresses = useMemo(
     () => subscribedPredictoors.map((contract) => contract.address),
@@ -196,19 +194,27 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
             ))}
           </TableRowWrapper>
         </thead>
-        {assetsData.length > 0 ? (
-          <tbody>
-            {assetsData.map((item) => (
-              <AssetRow
-                key={`assetRow${item.contract.address}`}
-                assetData={item}
-              />
-            ))}
-          </tbody>
+        {assetsData ? (
+          assetsData.length > 0 ? (
+            <tbody>
+              {assetsData.map((item) => (
+                <AssetRow
+                  key={`assetRow${item.contract.address}`}
+                  assetData={item}
+                />
+              ))}
+            </tbody>
+          ) : (
+            <tbody className={styles.message}>
+              <tr>
+                <td>No contracts found</td>
+              </tr>
+            </tbody>
+          )
         ) : (
           <tbody className={styles.message}>
             <tr>
-              <td>No contracts found</td>
+              <td>Loading</td>
             </tr>
           </tbody>
         )}

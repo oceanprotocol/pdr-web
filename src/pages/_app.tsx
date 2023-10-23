@@ -67,32 +67,33 @@ function App({ Component, pageProps }: AppProps) {
     <div className={inter.className}>
       <PostHogProvider client={posthog}>
         <NotificationContainer />
-        {configsStatus && clientStatus === EEthereumClientStatus.CONNECTED && (
-          <>
-            <WagmiConfig config={wagmiConfig}>
-              <UserProvider>
-                <TimeFrameProvider
-                  defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
-                >
-                  <SocketProvider>
-                    <PredictoorsProvider>
-                      <MarketPriceProvider>
-                        <MainWrapper>
-                          <Component {...pageProps} />
-                        </MainWrapper>
-                      </MarketPriceProvider>
-                    </PredictoorsProvider>
-                  </SocketProvider>
-                </TimeFrameProvider>
-              </UserProvider>
-            </WagmiConfig>
-            <Web3Modal
-              projectId={w3mProjectId}
-              ethereumClient={ethereumClient}
-            />
-          </>
-        )}
-        {clientStatus !== EEthereumClientStatus.CONNECTED && (
+        {configsStatus &&
+          clientStatus !== EEthereumClientStatus.DISCONNECTED && (
+            <>
+              <WagmiConfig config={wagmiConfig}>
+                <UserProvider>
+                  <TimeFrameProvider
+                    defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
+                  >
+                    <SocketProvider>
+                      <PredictoorsProvider>
+                        <MarketPriceProvider>
+                          <MainWrapper>
+                            <Component {...pageProps} />
+                          </MainWrapper>
+                        </MarketPriceProvider>
+                      </PredictoorsProvider>
+                    </SocketProvider>
+                  </TimeFrameProvider>
+                </UserProvider>
+              </WagmiConfig>
+              <Web3Modal
+                projectId={w3mProjectId}
+                ethereumClient={ethereumClient}
+              />
+            </>
+          )}
+        {clientStatus === EEthereumClientStatus.DISCONNECTED && (
           <MainWrapper withBanner={false} isWalletActive={false}>
             {isHome ? (
               <NotConnectedWarning clientStatus={clientStatus} />
