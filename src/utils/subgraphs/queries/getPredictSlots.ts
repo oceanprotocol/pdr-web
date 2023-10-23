@@ -33,12 +33,13 @@ export type TGetPredictContractsQuery = {
 }
 
 export const GET_PREDICT_SLOTS = `
-  query	getPredictSlots($assetIds: [String!]!, $initialSlot: Int!, $first: Int!, $skip: Int!) {
+  query	getPredictSlots($assetIds: [String!]!, $initialSlot: Int!, $lastSlot: Int!, $first: Int!, $skip: Int!) {
     predictSlots (
       first: $first
       skip: $skip
       where: {
         slot_gte: $initialSlot
+        slot_lte: $lastSlot
         predictContract_in: $assetIds
       }
     ) {
