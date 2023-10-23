@@ -6,7 +6,7 @@ import { NotificationContainer } from 'react-notifications'
 
 import MainWrapper from '@/components/MainWrapper'
 import { NotConnectedWarning } from '@/components/NotConnectedWarning'
-import { EnhancedProvider } from '@/contexts/EnhancedProvider'
+import AppProvider from '@/contexts/AppProvider'
 import {
   EEthereumClientStatus,
   useEthereumClient
@@ -64,11 +64,11 @@ function App({ Component, pageProps }: AppProps) {
         {configsStatus &&
           clientStatus !== EEthereumClientStatus.DISCONNECTED && (
             <>
-              <EnhancedProvider wagmiConfig={wagmiConfig}>
+              <AppProvider wagmiConfig={wagmiConfig}>
                 <MainWrapper>
                   <Component {...pageProps} />
                 </MainWrapper>
-              </EnhancedProvider>
+              </AppProvider>
 
               <Web3Modal
                 projectId={w3mProjectId}
