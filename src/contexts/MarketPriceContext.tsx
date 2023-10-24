@@ -45,7 +45,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
    * @returns {Promise<void>}
    */
   const fetchAllPairs = useCallback(async () => {
-    const response = await fetch('https://api.binance.com/api/v3/ticker/price')
+    const response = await fetch('https://price-data.predictoor.ai/api/v3/ticker/price')
     const data: Pair[] = await response.json()
 
     lastFetchTimestampRef.current = Date.now()
@@ -120,7 +120,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
       }
 
       const response = await fetch(
-        `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${timeFrameInterval}&limit=5&startTime=${
+        `https://price-data.predictoor.ai/api/v3/klines?symbol=${symbol}&interval=${timeFrameInterval}&limit=5&startTime=${
           timestamp * 1000
         }`
       )
