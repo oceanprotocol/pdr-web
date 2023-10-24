@@ -95,6 +95,8 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
   const { handleEpochData, initialEpochData } = useSocketContext()
   const [currentEpoch, setCurrentEpoch] = useState<number>(0)
+  const currentEpochRef = useRef(currentEpoch)
+
   const [secondsPerEpoch, setSecondsPerEpoch] = useState<number>(0)
   const [fetchingPredictions, setFetcingPredictions] = useState<boolean>(false)
 
@@ -127,6 +129,13 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
     useRef<Record<string, Array<TPredictedEpochLogItem>>>()
 
   const authorizationDataInstance = useRef<AuthorizationData<TAuthorization>>()
+
+  const checkAndSetCurrentEpoch = useCallback((epoch: number) => {
+    if (currentEpochRef.current === epoch) return
+    console.log('current epoch changed', epoch)
+    setCurrentEpoch(epoch)
+    currentEpochRef.current = epoch
+  }, [])
 
   const initializeAuthorizationData = useCallback(
     async (signer: ethers.providers.JsonRpcSigner) => {
@@ -312,7 +321,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
           if (key == 0) {
             cEpoch = await predictoor.getCurrentEpoch()
             sPerEpoch = await predictoor.getSecondsPerEpoch()
-            setCurrentEpoch(cEpoch)
+            checkAndSetCurrentEpoch(cEpoch)
             setSecondsPerEpoch(sPerEpoch)
           }
           return predictoor
@@ -409,7 +418,7 @@ export const PredictoorsProvider: React.FC<TPredictoorsContextProps> = ({
 
         if (currentTs > cEpoch + SPE) {
           cEpoch = newCurrentEpoch * SPE
-          setCurrentEpoch(cEpoch)
+          checkAndSetCurrentEpoch(cEpoch)
         }
 
         const authorizationData =
