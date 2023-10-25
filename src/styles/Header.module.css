@@ -32,7 +32,12 @@
     height: 110px;
   }
   .connections {
-    width: auto;
-    overflow-y: scroll;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    width: inherit;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }

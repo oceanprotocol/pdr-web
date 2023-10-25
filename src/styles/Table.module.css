@@ -61,4 +61,14 @@
   .table {
     width: auto;
   }
+
+  .tableHeaderCell:nth-child(1),
+  .tableRowCell:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 1; /* ensures the fixed column is above other content */
+    background: var(--background-color);
+    border-right: 1px solid;
+    border-color: var(--dark-grey);
+  }
 }
