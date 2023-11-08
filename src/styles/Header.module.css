@@ -22,7 +22,15 @@
   cursor: pointer;
 }
 
+.headerBurgerMenu {
+  display: none;
+}
+
 @media screen and (max-width: 600px) {
+  .headerBurgerMenu {
+    display: block;
+  }
+
   .logo {
     margin-bottom: calc(var(--spacer) / 10);
   }

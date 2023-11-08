@@ -30,6 +30,7 @@ export default function Header({ isWalletActive = true }: THeaderProps) {
           onClick={() => {
             setIsMenuActive(true)
           }}
+          className={styles.headerBurgerMenu}
         />
         <MenuList
           isActive={isMenuActive}

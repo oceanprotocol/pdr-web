@@ -2,12 +2,14 @@ import s from '../styles/BurgerMenuButton.module.css'
 
 export type TBurgerMenuButtonProps = {
   onClick: () => void
+  className?: string
 }
 export const BurgerMenuButton: React.FC<TBurgerMenuButtonProps> = ({
-  onClick
+  onClick,
+  className
 }) => {
   return (
-    <div onClick={() => onClick()}>
+    <div onClick={() => onClick()} className={className}>
       <div className={s.burgerLine}></div>
       <div className={s.burgerLine}></div>
       <div className={s.burgerLine}></div>
