@@ -59,7 +59,7 @@
 
 @media screen and (max-width: 1000px) {
   .table {
-    width: auto;
+    width: 100%;
   }
 
   .tableHeaderCell:nth-child(1),

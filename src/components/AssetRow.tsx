@@ -11,6 +11,7 @@ import styles from '@/styles/Table.module.css'
 import { currentConfig } from '@/utils/appconstants'
 import { calculateSlotStats } from '@/utils/subgraphs/getAssetAccuracy'
 import { SECONDS_IN_24_HOURS } from '@/utils/subgraphs/queries/getPredictSlots'
+import { Maybe } from '@/utils/utils'
 import Accuracy from './Accuracy'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
@@ -26,6 +27,7 @@ export type TAssetFetchedInfo = {
 
 export type TAssetRowProps = {
   assetData: TAssetData
+  scrollContainerTo?: (x: number) => void
 }
 
 export type TAssetRowState = {
@@ -37,7 +39,10 @@ export type TAssetRowState = {
   }
 }
 
-export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
+export const AssetRow: React.FC<TAssetRowProps> = ({
+  assetData,
+  scrollContainerTo
+}) => {
   const { epochData } = useSocketContext()
   const [tokenAccuracyStake, setTokenAccuracyStake] = useState<
     TAssetRowState['tokenAccuracyStake']
@@ -60,7 +65,8 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     market: ''
   })
   const { allPairsData } = useMarketPriceContext()
-
+  const subscriptionDivRef = useRef<Maybe<HTMLDivElement>>(null)
+  const isScrolled = useRef<boolean>(false)
   const {
     tokenName,
     pairName,
@@ -232,6 +238,7 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
         />
       ) : (
         <Subscription
+          ref={subscriptionDivRef}
           subscriptionData={{
             price: parseInt(subscriptionPrice),
             status: subscription,
