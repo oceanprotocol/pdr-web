@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .connections {
@@ -30,13 +30,8 @@
   .headerBurgerMenu {
     display: block;
   }
-
-  .logo {
-    margin-bottom: calc(var(--spacer) / 10);
-  }
   .container {
-    flex-direction: column;
-    padding: calc(var(--spacer) / 10) 0;
+    flex-direction: column-reverse;
     height: 110px;
   }
   .connections {
@@ -45,7 +40,8 @@
     flex-direction: row;
     justify-content: space-between;
     width: inherit;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: calc(var(--spacer) / 6) 0;
   }
 }
