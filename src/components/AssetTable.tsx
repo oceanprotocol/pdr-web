@@ -166,59 +166,70 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     return () => clearInterval(interval)
   }, [fetchAndCacheAllPairs])
 
+  const calculatedCSS = `
+    @media screen and (max-width: 1000px) {
+      .${styles.tableHeaderCell}, .${styles.tableRowCell} {
+        width: ${window.innerWidth / 3}px !important;
+      }
+    }
+  `
+
   return (
     tableColumns && (
-      <table className={styles.table}>
-        <thead>
-          <TableRowWrapper
-            className={styles.tableRow}
-            cellProps={{
-              className: styles.tableHeaderCell
-            }}
-            cellType="th"
-          >
-            {tableColumns.map((item: any) => (
-              <div
-                className={styles.assetHeaderContainer}
-                key={`assetHeader${item.accessor}`}
-                id={item.accessor}
-              >
-                <span>{item.Header}</span>
-                <Tooltip
-                  selector={`${item.accessor}Tooltip`}
-                  text={
-                    tooltipsText[item.accessor as keyof typeof tooltipOptions]
-                  }
-                />
-              </div>
-            ))}
-          </TableRowWrapper>
-        </thead>
-        {assetsData ? (
-          assetsData.length > 0 ? (
-            <tbody>
-              {assetsData.map((item) => (
-                <AssetRow
-                  key={`assetRow${item.contract.address}`}
-                  assetData={item}
-                />
+      <>
+        <style>{calculatedCSS}</style>
+        <table className={styles.table}>
+          <thead>
+            <TableRowWrapper
+              className={styles.tableRow}
+              cellProps={{
+                className: styles.tableHeaderCell
+              }}
+              cellType="th"
+            >
+              {tableColumns.map((item: any, index: number) => (
+                <div
+                  className={styles.assetHeaderContainer}
+                  key={`assetHeader${item.accessor}`}
+                  id={item.accessor}
+                >
+                  <span>{item.Header}</span>
+                  <Tooltip
+                    selector={`${item.accessor}Tooltip`}
+                    text={
+                      tooltipsText[item.accessor as keyof typeof tooltipOptions]
+                    }
+                  />
+                </div>
               ))}
-            </tbody>
+            </TableRowWrapper>
+          </thead>
+          {assetsData ? (
+            assetsData.length > 0 ? (
+              <tbody>
+                {assetsData.map((item, index) => (
+                  <AssetRow
+                    key={`assetRow${item.contract.address}`}
+                    assetData={item}
+                  />
+                ))}
+              </tbody>
+            ) : (
+              <tbody className={styles.message}>
+                <tr>
+                  <td>No contracts found</td>
+                </tr>
+              </tbody>
+            )
           ) : (
             <tbody className={styles.message}>
               <tr>
-                <td>No contracts found</td>
+                <td>Loading</td>
               </tr>
             </tbody>
-          )
-        ) : (
-          <tbody className={styles.message}>
-            <tr>
-              <td>Loading</td>
-            </tr>
-          </tbody>
-        )}
-      </table>
+          )}
+        </table>
+      </>
     )
   )
 }

@@ -1,0 +1,7 @@
+.burgerLine {
+  width: 25px;
+  height: 3px;
+  background-color: var(--primary-pink);
+  margin: 4px 0;
+  transition: all 0.3s ease;
+}

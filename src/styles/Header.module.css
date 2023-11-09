@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .connections {
@@ -22,17 +22,26 @@
   cursor: pointer;
 }
 
+.headerBurgerMenu {
+  display: none;
+}
+
 @media screen and (max-width: 600px) {
-  .logo {
-    margin-bottom: calc(var(--spacer) / 10);
+  .headerBurgerMenu {
+    display: block;
   }
   .container {
-    flex-direction: column;
-    padding: calc(var(--spacer) / 10) 0;
+    flex-direction: column-reverse;
     height: 110px;
   }
   .connections {
-    width: auto;
-    overflow-y: scroll;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    width: inherit;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: calc(var(--spacer) / 6) 0;
   }
 }
