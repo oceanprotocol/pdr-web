@@ -36,6 +36,7 @@ export default function AgreementModal() {
     <Modal
       isOpen={isOpen}
       contentLabel="Example Modal"
+      overlayClassName={styles.overlay}
       className={`${styles.modal} ${inter.className}`}
     >
       <div className={styles.content}>
