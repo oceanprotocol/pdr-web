@@ -35,3 +35,11 @@
   background: transparent;
   padding: 12px 15px 12px 15px;
 }
+
+@media screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    /* FLEX: 1; */
+    margin: 0px;
+  }
+}

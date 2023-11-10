@@ -1,5 +1,7 @@
+import { BurgerMenuButton } from '@/elements/BurgerMenuButton'
 import styles from '@/styles/Header.module.css'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { MenuList } from './MenuList'
 import Wallet from './Wallet'
 
@@ -8,6 +10,7 @@ export type THeaderProps = {
 }
 
 export default function Header({ isWalletActive = true }: THeaderProps) {
+  const [isMenuActive, setIsMenuActive] = useState(false)
   const router = useRouter()
   const navigateToHomePage = () => {
     router.push('/')
@@ -23,7 +26,16 @@ export default function Header({ isWalletActive = true }: THeaderProps) {
       />
       <div className={styles.connections}>
         {isWalletActive && <Wallet />}
-        <MenuList />
+        <BurgerMenuButton
+          onClick={() => {
+            setIsMenuActive(true)
+          }}
+          className={styles.headerBurgerMenu}
+        />
+        <MenuList
+          isActive={isMenuActive}
+          closeAction={() => setIsMenuActive(false)}
+        />
       </div>
     </div>
   )

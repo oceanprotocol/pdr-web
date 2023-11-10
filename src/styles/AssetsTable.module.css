@@ -5,4 +5,10 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 20px;
+  -ms-overflow-style: none; /* for Internet Explorer and Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+.container::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and newer versions of Opera */
 }
