@@ -41,8 +41,21 @@
   color: var(--dark-grey);
 }
 
-@media screen and (max-width: 600px) {
+.overlay {
+  position: fixed;
+  inset: 0px;
+  background-color: rgba(255, 255, 255, 0.75);
+  z-index: 3;
+}
+
+@media screen and (max-width: 720px) {
   .content {
-    width: 100%;
+    width: 90%;
+  }
+  .overlay {
+    position: fixed;
+    inset: 0px;
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 3;
   }
 }
