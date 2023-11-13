@@ -5,6 +5,7 @@ import { TimeFrameProvider } from '@/contexts/TimeFrameContext'
 import { UserProvider } from '@/contexts/UserContext'
 import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import { WagmiConfig } from 'wagmi'
+import { AccuracyProvider } from './AccuracyContext'
 
 interface AppProviderProps {
   wagmiConfig: any
@@ -18,11 +19,13 @@ const AppProvider: React.FC<AppProviderProps> = ({ wagmiConfig, children }) => {
         <TimeFrameProvider
           defaultTimeFrameInterval={EPredictoorContractInterval.e_5M}
         >
-          <SocketProvider>
-            <PredictoorsProvider>
-              <MarketPriceProvider>{children}</MarketPriceProvider>
-            </PredictoorsProvider>
-          </SocketProvider>
+          <AccuracyProvider>
+            <SocketProvider>
+              <PredictoorsProvider>
+                <MarketPriceProvider>{children}</MarketPriceProvider>
+              </PredictoorsProvider>
+            </SocketProvider>
+          </AccuracyProvider>
         </TimeFrameProvider>
       </UserProvider>
     </WagmiConfig>
