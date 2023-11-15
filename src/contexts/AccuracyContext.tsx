@@ -34,10 +34,8 @@ export const AccuracyProvider: React.FC<TAccuracyContextProps> = ({
       })
     }
 
-    let timeframe = 300000
-    if (timeFrameInterval === EPredictoorContractInterval.e_1H) {
-      timeframe = 3600000 // 1 hour
-    }
+    const timeframe =
+      timeFrameInterval === EPredictoorContractInterval.e_1H ? 3600000 : 300000
 
     setIsFetching(true)
     fetchData()
