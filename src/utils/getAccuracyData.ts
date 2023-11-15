@@ -4,7 +4,7 @@ import { accuracyStatisticsEndpoint } from './endpoints/accuracyEndpoints'
 import { Maybe } from './utils'
 
 export const getAccuracyData = async (): Promise<Maybe<TAccuracyStatistics>> =>
-  fetch(accuracyStatisticsEndpoint(currentConfig.websocketURL))
+  fetch(accuracyStatisticsEndpoint(currentConfig.statisticsURL))
     .then((response) => response.json())
     .then((response) => {
       // Response can return an error

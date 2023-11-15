@@ -5,11 +5,6 @@ export const getAccuracyStatisticsByTokenName: TGetAccuracyStatisticsByTokenName
     if (!accuracyData) {
       return null
     }
-    const s = accuracyData.find(
-      (data) => data.alias === timeFrameInterval
-    )?.statistics
-
-    console.log('eeee', s)
 
     return (
       accuracyData.find((data) => data.alias === timeFrameInterval)?.statistics[
