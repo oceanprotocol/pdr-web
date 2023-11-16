@@ -1,6 +1,6 @@
 import { TAccuracyStatistics } from '@/contexts/AccuracyContext.types'
 import { currentConfig } from './appconstants'
-import { accuracyStatisticsEndpoint } from './endpoints/accuracyEndpoints'
+import { accuracyStatisticsEndpoint } from './endpoints/pdrBackendEndpoints'
 import { Maybe } from './utils'
 
 export const getAccuracyData = async (): Promise<Maybe<TAccuracyStatistics>> =>

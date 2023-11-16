@@ -1,4 +1,4 @@
-import { getAccuracyData } from '@/utils/getAccuracyData'
+import { getAccuracyData } from '@/utils/getPdrBackendData'
 import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import { Maybe } from '@/utils/utils'
 import { createContext, useContext, useEffect, useState } from 'react'
