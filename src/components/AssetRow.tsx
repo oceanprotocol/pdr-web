@@ -1,16 +1,16 @@
 import { TokenData } from '@/utils/asset'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useAccuracyContext } from '@/contexts/AccuracyContext'
+import { getAccuracyStatisticsByTokenName } from '@/contexts/AccuracyContextHelpers'
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { Pair } from '@/contexts/MarketPriceContext.types'
 import { getSpecificPairFromContextData } from '@/contexts/MarketPriceContextHelpers'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
 import { useSocketContext } from '@/contexts/SocketContext'
+import { useTimeFrameContext } from '@/contexts/TimeFrameContext'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import styles from '@/styles/Table.module.css'
-import { currentConfig } from '@/utils/appconstants'
-import { calculateSlotStats } from '@/utils/subgraphs/getAssetAccuracy'
-import { SECONDS_IN_24_HOURS } from '@/utils/subgraphs/queries/getPredictSlots'
 import Accuracy from './Accuracy'
 import Asset from './Asset'
 import { TAssetData } from './AssetTable'
@@ -48,9 +48,11 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   })
 
   const { currentEpoch, secondsPerEpoch } = usePredictoorsContext()
-  const currentEpochRef = useRef<number>(currentEpoch)
-  const loadAccuracyArgsRef = useRef<string | undefined>(undefined)
+
   //const testLoadCountRef = useRef<number>(0)
+  const { accuracyStatistics } = useAccuracyContext()
+
+  const { timeFrameInterval } = useTimeFrameContext()
 
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
@@ -95,28 +97,6 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
     [baseToken, market, quoteToken]
   )
 
-  const getAssetPairStatsForRow = useCallback<
-    (args: {
-      contract: string
-      lastSlotTS: number
-      firstSlotTS: number
-    }) => Promise<[number, number, number]>
-  >(async ({ contract, lastSlotTS, firstSlotTS }) => {
-    if (!lastSlotTS) return Promise.resolve([0, 0, 0])
-    const [accuracyRecord, totalStakeYesterdayRecord, totalStakedTodayRecord] =
-      await calculateSlotStats(
-        currentConfig.subgraph,
-        [contract],
-        lastSlotTS,
-        firstSlotTS
-      )
-    return [
-      accuracyRecord[contract],
-      totalStakeYesterdayRecord[contract],
-      totalStakedTodayRecord[contract]
-    ]
-  }, [])
-
   const renewPrice = useCallback<() => Promise<void>>(async () => {
     if (!allPairsData) return
     loadData(allPairsData)
@@ -133,39 +113,24 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
   }, [epochData, renewPrice])
 
   // Calculate accuracy and set state
-  const loadAccuracy = useCallback<(args: { currentEpoch: number }) => void>(
-    async ({ currentEpoch }) => {
-      if (!currentEpoch) return
+  const loadAccuracy = useCallback<() => void>(() => {
+    if (!contract || !getAccuracyStatisticsByTokenName) return
 
-      const args = {
-        contract: contract.address,
-        lastSlotTS: currentEpoch,
-        firstSlotTS: currentEpoch - 2 * SECONDS_IN_24_HOURS
-      }
+    const data = getAccuracyStatisticsByTokenName({
+      contractAddress: contract.address,
+      accuracyData: accuracyStatistics,
+      timeFrameInterval: timeFrameInterval
+    })
 
-      if (loadAccuracyArgsRef.current === JSON.stringify(args)) return
-
-      loadAccuracyArgsRef.current = JSON.stringify(args)
-      //testLoadCountRef.current += 1
-
-      const [accuracy, totalStakeYesterdayBefore, totalTodayStake] =
-        await getAssetPairStatsForRow(args)
-
-      setTokenAccuracyStake({
-        accuracy,
-        totalStake: totalTodayStake || 0,
-        totalStakePreviousDay: totalStakeYesterdayBefore || 0
-      })
-    },
-    [getAssetPairStatsForRow, contract.address]
-  )
-
-  useEffect(() => {
-    if (currentEpochRef.current === currentEpoch) return
-
-    currentEpochRef.current = currentEpoch
-    loadAccuracy({ currentEpoch })
-  }, [loadAccuracy, currentEpoch])
+    if (!data) return
+    const { average_accuracy, total_staked_today, total_staked_yesterday } =
+      data
+    setTokenAccuracyStake({
+      accuracy: average_accuracy,
+      totalStake: total_staked_today,
+      totalStakePreviousDay: total_staked_yesterday
+    })
+  }, [contract, timeFrameInterval, accuracyStatistics])
 
   const slotProps = useMemo(
     () =>
@@ -182,9 +147,13 @@ export const AssetRow: React.FC<TAssetRowProps> = ({ assetData }) => {
 
   useEffect(() => {
     if (!allPairsData) return
-    //loadAccuracy()
     loadData(allPairsData)
-  }, [allPairsData, loadData, loadAccuracy])
+  }, [allPairsData, loadData])
+
+  useEffect(() => {
+    if (!contract) return
+    loadAccuracy()
+  }, [contract, loadAccuracy])
 
   if (!tokenData || !slotProps) return null
 

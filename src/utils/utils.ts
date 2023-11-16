@@ -62,6 +62,7 @@ export type ValueOf<T> = T[keyof T]
 export type NonError<T> = Exclude<T, Error>
 export type ValueOfMap<T> = T extends Map<any, infer V> ? V : never
 export type ElementOf<T> = T extends Array<infer E> ? E : never
+export type ValueOfRecord<T> = T extends Record<any, infer V> ? V : never
 
 export const isSapphireNetwork = (): boolean =>
   currentConfig.chainId === '23295' || currentConfig.chainId === '23294'
