@@ -11,6 +11,7 @@ export type TRuntimeConfig = Record<
     chainId: string
     subgraph: string
     websocketURL: string
+    statisticsURL: string
     oceanTokenAddress: `0x${string}`
     tokenPredictions: Array<{
       tokenName: string
@@ -29,6 +30,7 @@ export const config: TRuntimeConfig = {
     chainId: '23294',
     oceanTokenAddress: '0x39d22b78a7651a76ffbde2aaab5fd92666aca520',
     websocketURL: 'https://websocket.predictoor.ai',
+    statisticsURL: 'https://websocket.predictoor.ai',
     subgraph:
       'https://v4.subgraph.sapphire-mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
@@ -51,6 +53,7 @@ export const config: TRuntimeConfig = {
     subgraph:
       'https://v4.subgraph.sapphire-testnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     websocketURL: 'https://test.websocket.predictoor.ai',
+    statisticsURL: 'https://test.websocket.predictoor.ai',
     oceanTokenAddress: '0x973e69303259b0c2543a38665122b773d28405fb',
     tokenPredictions: [
       {
@@ -81,6 +84,7 @@ export const config: TRuntimeConfig = {
   development: {
     chainId: '8996',
     websocketURL: 'http://development.oceandao.org',
+    statisticsURL: 'localhost:5000',
     subgraph:
       'https://development.oceandao.org/subgraphs/name/oceanprotocol/ocean-subgraph',
     oceanTokenAddress: '0x2473f4f7bf40ed9310838edfca6262c17a59df64',
@@ -114,6 +118,7 @@ export const config: TRuntimeConfig = {
     subgraph: process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST
       ? `${process.env.NEXT_PUBLIC_DEV_GRAPHQL_HOST}/subgraphs/name/oceanprotocol/ocean-subgraph`
       : 'http://127.0.0.1:9000/subgraphs/name/oceanprotocol/ocean-subgraph',
+    statisticsURL: 'localhost:5000',
     oceanTokenAddress: '0x2473f4f7bf40ed9310838edfca6262c17a59df64',
     tokenPredictions: [
       {
