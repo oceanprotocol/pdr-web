@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { tooltipOptions, tooltipsText } from '../metadata/tootltips'
+import { tooltipsText } from '../metadata/tootltips'
 
 import { useMarketPriceContext } from '@/contexts/MarketPriceContext'
 import { usePredictoorsContext } from '@/contexts/PredictoorsContext'
+import { useTimeFrameContext } from '@/contexts/TimeFrameContext'
 import LiveTime from '@/elements/LiveTime'
 import { TableRowWrapper } from '@/elements/TableRowWrapper'
 import Tooltip from '@/elements/Tooltip'
@@ -14,6 +15,7 @@ import {
 } from '@/utils/appconstants'
 import { splitContractName } from '@/utils/splitContractName'
 import { TPredictionContract } from '@/utils/subgraphs/getAllInterestingPredictionContracts'
+import { EPredictoorContractInterval } from '@/utils/types/EPredictoorContractInterval'
 import { AssetRow } from './AssetRow'
 import { SubscriptionStatus } from './Subscription'
 
@@ -47,7 +49,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
 
   const [tableColumns, setTableColumns] = useState<any>(assetTableColumns)
   const [assetsData, setAssetsData] = useState<TAssetTableState['AssetsData']>()
-
+  const { timeFrameInterval } = useTimeFrameContext()
   const subscribedContractAddresses = useMemo(
     () => subscribedPredictoors.map((contract) => contract.address),
     [subscribedPredictoors]
@@ -148,7 +150,9 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
     newAssetTableColumns[5].Header = getThowLinesHeader(
       newAssetTableColumns[5].Header,
-      '24h'
+      timeFrameInterval === EPredictoorContractInterval.e_5M
+        ? '1 week'
+        : '4 weeks'
     )
     newAssetTableColumns[6].Header = getThowLinesHeader(
       newAssetTableColumns[6].Header,
@@ -156,7 +160,7 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
     )
 
     setTableColumns(newAssetTableColumns)
-  }, [currentEpoch])
+  }, [currentEpoch, timeFrameInterval])
 
   useEffect(() => {
     fetchAndCacheAllPairs()
@@ -196,9 +200,18 @@ export const AssetTable: React.FC<TAssetTableProps> = ({ contracts }) => {
                   <span>{item.Header}</span>
                   <Tooltip
                     selector={`${item.accessor}Tooltip`}
-                    text={
-                      tooltipsText[item.accessor as keyof typeof tooltipOptions]
-                    }
+                    text={(() => {
+                      if (item.accessor !== 'accuracy')
+                        return tooltipsText[
+                          item.accessor as keyof typeof tooltipsText
+                        ]
+
+                      const tempKey =
+                        timeFrameInterval === EPredictoorContractInterval.e_5M
+                          ? 'accuracy_5m'
+                          : 'accuracy_1h'
+                      return tooltipsText[tempKey]
+                    })()}
                   />
                 </div>
               ))}
