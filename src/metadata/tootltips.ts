@@ -19,7 +19,8 @@ export const tooltipsText = {
   
   Check OCEAN staked and stake directions for a higher confidence.
   `,
-  accuracy: `Percentage of accurate predicitons over the last 24 hours.`,
+  accuracy_5m: `Percentage of accurate predictions over the last 1 week.`,
+  accuracy_1h: `Percentage of accurate predictions over the last 4 weeks.`,
   stake: `Total OCEAN tokens staked in the last 24 hours and the percentage difference compared to the previous day.`
 }
 
