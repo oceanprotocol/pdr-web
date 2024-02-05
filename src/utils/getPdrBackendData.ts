@@ -11,8 +11,14 @@ export const getAccuracyData = async (): Promise<Maybe<TAccuracyStatistics>> =>
       const errorMessage = response?.message
 
       // check if "No data available" is inside message so it can be handled correctly
-      if (errorMessage && errorMessage.includes('No data available'))
+      if (
+        response?.error ||
+        errorMessage ||
+        errorMessage.includes('No data available')
+      ) {
+        console.error(errorMessage)
         return null
+      }
 
       return response
     })
