@@ -2,7 +2,6 @@ import * as sapphire from '@oasisprotocol/sapphire-paratime'
 import { BigNumber, ethers } from 'ethers'
 import { ERC20Template3ABI } from '../../metadata/abis/ERC20Template3ABI'
 import { TAuthorization } from '../authorize'
-import { networkProvider } from '../networkProvider'
 import { signHashWithUser } from '../signHash'
 import { TPredictionContract } from '../subgraphs/getAllInterestingPredictionContracts'
 import { Maybe, handleTransactionError } from '../utils'
@@ -173,10 +172,10 @@ class Predictoor {
         marketFeeAddress: ethers.constants.AddressZero
       }
       // Get gas price and limit
-      //const gasPrice = await this.provider.getGasPrice()
-      //let gasLimit = await this.instance
-      //  .connect(user)
-      //  .estimateGas.buyFromFreAndOrder(orderParams, freParams)
+      const gasPrice = await this.provider.getGasPrice()
+      let gasLimit = await this.instanceWrite
+        .connect(user)
+        .estimateGas.buyFromFreAndOrder(orderParams, freParams)
       // Check if gas limit is below minimum and adjust if necessary
 
       //console.log('gasLimit', gasLimit)
@@ -184,8 +183,8 @@ class Predictoor {
       //  const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE))
       //  if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit
       //}
-      const gasLimit = (await networkProvider.getProvider().getBlock('latest'))
-        .gasLimit
+      //const gasLimit = (await networkProvider.getProvider().getBlock('latest'))
+      //  .gasLimit
 
       const currentNonce = await user.getTransactionCount()
 
@@ -193,8 +192,8 @@ class Predictoor {
       const tx = await this.instanceWrite
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
-          gasLimit,
-          nonce: currentNonce + 1
+          gasLimit: gasLimit,
+          gasPrice: gasPrice
         })
 
       const receipt = await tx.wait()
