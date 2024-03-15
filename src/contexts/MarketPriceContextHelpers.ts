@@ -49,8 +49,8 @@ export const getClosestHistoricalPairsCache = ({
   historicalPair,
   timestamp
 }: TGetClosestHistoricalPairsCacheArgs) => {
-  let closestHistoricalPair
-  if (historicalPair.length > 0) {
+  let closestHistoricalPair = null
+  if (historicalPair?.length > 0) {
     closestHistoricalPair = historicalPair?.reduce((prev, curr) => {
       return Math.abs(curr.openTime - timestamp) <
         Math.abs(prev.openTime - timestamp)
