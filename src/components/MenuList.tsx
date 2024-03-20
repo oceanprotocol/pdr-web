@@ -47,7 +47,7 @@ export const MenuList: React.FC<TMenuListProps> = ({
         </a>
       </li>
       <li>
-        <a target="_blank" href="https://docs.oceanprotocol.com/predictoor">
+        <a target="_blank" href="https://docs.predictoor.ai">
           About
         </a>
       </li>
