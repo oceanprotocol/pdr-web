@@ -54,7 +54,18 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
         'Binance API failed, falling back to custom API:',
         e.message
       )
-      response = await fetch(`https://price-data.predictoor.ai/api/v3/${path}`)
+      try {
+        response = await fetch(
+          `https://price-data.predictoor.ai/api/v3/${path}`
+        )
+        if (!response?.ok) {
+          // If response is not okay from the fallback API, throw an error
+          throw new Error('Fallback API failed')
+        }
+      } catch (fallbackError: any) {
+        // Handle errors from the fallback API
+        console.error('Fallback API failed:', fallbackError.message)
+      }
     }
     return response
   }
@@ -66,8 +77,8 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
    */
   const fetchAllPairs = useCallback(async () => {
     const response = await usePriceApi('ticker/price')
-    if (response.ok) {
-      const data: Pair[] = await response.json()
+    if (response?.ok) {
+      const data: Pair[] = await response?.json()
       lastFetchTimestampRef.current = Date.now()
       setAllPairsData(data)
     } else {
@@ -148,23 +159,23 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
         }`
       )
 
-      const data: Array<Array<string | number>> = await response.json()
+      let retrievedData: any
+      if (response) {
+        const data: Array<Array<string | number>> = await response.json()
+        retrievedData = data.map((item) => convertArrayToHistoricalPair(item))
 
-      const retrievedData = data.map((item) =>
-        convertArrayToHistoricalPair(item)
-      )
+        setHistoricalPairsCache((prev) =>
+          new Map(prev).set(cacheKey, retrievedData)
+        )
 
-      setHistoricalPairsCache((prev) =>
-        new Map(prev).set(cacheKey, retrievedData)
-      )
+        historicalTimestampsRef.current.push(timestamp)
 
-      historicalTimestampsRef.current.push(timestamp)
-
-      setTimeout(() => {
-        clearOldCache()
-        setIsLoading(false)
-      }, 1000)
-      return retrievedData
+        setTimeout(() => {
+          clearOldCache()
+          setIsLoading(false)
+        }, 1000)
+      }
+      return retrievedData || []
     },
     [
       historicalPairsCache,
