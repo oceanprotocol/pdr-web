@@ -38,6 +38,26 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
   const { timeFrameInterval } = useTimeFrameContext()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { isNewContractsInitialized } = usePredictoorsContext()
+
+  const usePriceApi = async (path: string) => {
+    let response
+    try {
+      //try to fetch from the Binance API
+      response = await fetch(`https://api.binance.com/api/v3/${path}`)
+      if (!response.ok) {
+        // If response is not okay, throw an error to trigger fallback
+        throw new Error('Binance API failed')
+      }
+    } catch (e: any) {
+      //fall back to custom proxy API if Binance API fails
+      console.error(
+        'Binance API failed, falling back to custom API:',
+        e.message
+      )
+      response = await fetch(`https://price-data.predictoor.ai/api/v3/${path}`)
+    }
+    return response
+  }
   /**
    * Fetches all pairs from Binance API and stores them in the state.
    * @function
@@ -45,11 +65,14 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
    * @returns {Promise<void>}
    */
   const fetchAllPairs = useCallback(async () => {
-    const response = await fetch('https://price-data.predictoor.ai/api/v3/ticker/price')
-    const data: Pair[] = await response.json()
-
-    lastFetchTimestampRef.current = Date.now()
-    setAllPairsData(data)
+    const response = await usePriceApi('ticker/price')
+    if (response.ok) {
+      const data: Pair[] = await response.json()
+      lastFetchTimestampRef.current = Date.now()
+      setAllPairsData(data)
+    } else {
+      console.error('Both APIs failed to fetch price data')
+    }
   }, [])
 
   /**
@@ -119,11 +142,12 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
         return cachedValue
       }
 
-      const response = await fetch(
-        `https://price-data.predictoor.ai/api/v3/klines?symbol=${symbol}&interval=${timeFrameInterval}&limit=5&startTime=${
+      const response = await usePriceApi(
+        `klines?symbol=${symbol}&interval=${timeFrameInterval}&limit=5&startTime=${
           timestamp * 1000
         }`
       )
+
       const data: Array<Array<string | number>> = await response.json()
 
       const retrievedData = data.map((item) =>
