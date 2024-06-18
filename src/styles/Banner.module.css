@@ -11,6 +11,22 @@
   color: var(--primary-color);
 }
 
+.pink {
+  background-color: var(--primary-pink);
+  color: var(--primary-color);
+}
+
+.light-pink {
+  background-color: rgb(255, 66, 146, 0.1);
+  color: var(--primary-color);
+}
+
+.white-with-border {
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+}
+
 .error {
   background-color: red;
   color: white;
@@ -18,8 +34,21 @@
 
 .text {
   margin: 0 calc(var(--spacer) / 4);
-  font-size: var(--font-size-small);
-  color: black;
+  font-size: var(--font-size-small-medium);
+  color: var(--primary-color);
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.fw600 {
+  font-weight: 600;
+}
+
+.link {
+  color: var(--primary-color);
+  text-decoration: underline;
 }
 
 @media screen and (max-width: 600px) {
