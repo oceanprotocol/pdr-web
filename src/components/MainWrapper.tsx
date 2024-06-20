@@ -33,14 +33,14 @@ export default function MainWrapper({
             {withBanner && <Banner />}
             <CustomBanner bannerType="white-with-border">
                 <span className={`${bannerStyles.text} ${bannerStyles.fw600}`}>
-                    Do you love AI, Python, and competitive games? The Predictoor team is hiring.
+                    {'Do you love AI, Python, and competitive games? The Predictoor team is hiring. '}
                     <a
                         target="_blank"
                         href="https://github.com/oceanprotocol/jobs/blob/main/datascience.md"
                         className={bannerStyles.link}
                     >
                         Learn more
-                    </a>.
+                    </a> {' 📥'}
                 </span>
             </CustomBanner>
             <main className={`${styles.main} ${inter.className}`}>
