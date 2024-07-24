@@ -59,17 +59,11 @@ export const getAllInterestingPredictionContracts = async (
       let baseToken: string = ''
       let quoteToken: string = ''
       let interval: string = ''
-      item.token.nft.nftData.forEach((i: TNft) => {
-        if (i.key == NftKeys.MARKET) {
-          market = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
-        } else if (i.key == NftKeys.BASE) {
-          baseToken = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
-        } else if (i.key == NftKeys.QUOTE) {
-          quoteToken = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
-        } else if (i.key == NftKeys.INTERVAL) {
-          interval = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
-        }
-      })
+      market = "binance"
+      let qbtks = item.token.name.split("/")
+      baseToken = qbtks[0]
+      quoteToken = qbtks[1]
+      interval = item.secondsPerEpoch == "300" ? "5m" : "1h"
 
       contracts[item.id] = {
         name: item.token.name,
