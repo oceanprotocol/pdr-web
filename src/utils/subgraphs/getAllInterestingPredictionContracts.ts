@@ -1,9 +1,7 @@
 import { graphqlClientInstance } from '../graphqlClient'
 import { Maybe } from '../utils'
 import {
-  NftKeys,
   TGetPredictContractsQueryResult,
-  TNft,
   getPredictContracts
 } from './queries/getPredictContracts'
 
@@ -59,16 +57,16 @@ export const getAllInterestingPredictionContracts = async (
       let baseToken: string = ''
       let quoteToken: string = ''
       let interval: string = ''
-      market = "binance"
-      let qbtks = item.token.name.split("/")
+      market = 'binance'
+      let qbtks = item.token.name.split('/')
       baseToken = qbtks[0]
       quoteToken = qbtks[1]
-      interval = item.secondsPerEpoch == "300" ? "5m" : "1h"
+      interval = item.secondsPerEpoch == '300' ? '5m' : '1h'
 
       contracts[item.id] = {
         name: item.token.name,
         address: item.id,
-        owner: "",
+        owner: item.token.nft ? item.token.nft.owner.id : '',
         market: market,
         baseToken: baseToken,
         quoteToken: quoteToken,
