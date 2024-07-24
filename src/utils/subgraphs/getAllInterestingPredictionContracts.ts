@@ -68,7 +68,7 @@ export const getAllInterestingPredictionContracts = async (
       contracts[item.id] = {
         name: item.token.name,
         address: item.id,
-        owner: item.token.nft.owner.id,
+        owner: "",
         market: market,
         baseToken: baseToken,
         quoteToken: quoteToken,
