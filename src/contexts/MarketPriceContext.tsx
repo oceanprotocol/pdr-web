@@ -39,7 +39,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { isNewContractsInitialized } = usePredictoorsContext()
 
-  const usePriceApi = async (path: string) => {
+  const fetchPriceApi = async (path: string) => {
     let response
     try {
       //try to fetch from the Binance API
@@ -76,7 +76,7 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
    * @returns {Promise<void>}
    */
   const fetchAllPairs = useCallback(async () => {
-    const response = await usePriceApi('ticker/price')
+    const response = await fetchPriceApi('ticker/price')
     if (response?.ok) {
       const data: Pair[] = await response?.json()
       lastFetchTimestampRef.current = Date.now()
@@ -147,13 +147,11 @@ export const MarketPriceProvider: React.FC<TMarketPriceContextProps> = ({
       const cacheKey = `${symbol}_${timestamp}`
       const cachedValue = historicalPairsCache.get(cacheKey)
 
-      if (!isNewContractsInitialized) return
-
       if (cachedValue) {
         return cachedValue
       }
 
-      const response = await usePriceApi(
+      const response = await fetchPriceApi(
         `klines?symbol=${symbol}&interval=${timeFrameInterval}&limit=5&startTime=${
           timestamp * 1000
         }`
