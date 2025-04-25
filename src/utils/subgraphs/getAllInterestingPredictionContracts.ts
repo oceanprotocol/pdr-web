@@ -72,7 +72,10 @@ export const getAllInterestingPredictionContracts = async (
         quoteToken: quoteToken,
         interval: interval,
         symbol: item.token.symbol,
-        price: item.token.lastPriceValue,
+        price:
+          parseInt(item.token.lastPriceValue) > 0
+            ? item.token.lastPriceValue
+            : '3',
         secondsPerEpoch: item.secondsPerEpoch,
         secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,

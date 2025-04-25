@@ -48,7 +48,7 @@ export default function Subscription({
 
   const contractPriceInfo: TContractPriceInfo = useMemo(() => {
     const loadingResult = {
-      price: 0,
+      price: subscriptionData?.price || 0,
       alternativeText: 'Loading...'
     }
 
