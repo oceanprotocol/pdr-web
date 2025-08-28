@@ -1,4 +1,5 @@
 import Banner from '@/components/Banner'
+import TechnicalIssuesBanner from '@/components/TechnicalIssuesBanner'
 import styles from '@/styles/Home.module.css'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -28,6 +29,7 @@ export default function MainWrapper({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo-thumbnail.png" />
       </Head>
+      <TechnicalIssuesBanner />
       {withBanner && <Banner />}
       <main className={`${styles.main} ${inter.className}`}>
         <AgreementModal />
