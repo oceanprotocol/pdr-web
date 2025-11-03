@@ -1,22 +1,21 @@
 import { currentConfig } from '@/utils/appconstants'
-import { useEffect, useState } from 'react'
-import { useNetwork } from 'wagmi'
+import { useAccount, useChainId, useConfig } from 'wagmi'
 
 type TUseIsCorrectChain = {
   isCorrectNetwork: boolean
-  chain: ReturnType<typeof useNetwork>['chain']
+  chain: any | undefined
 }
 
 export const useIsCorrectChain = (): TUseIsCorrectChain => {
   const { chainId } = currentConfig
-  const { chain } = useNetwork()
-  const [isCorrectNetwork, setIsCorrecttNetwork] = useState<boolean>(false)
+  const chainIdFromHook = useChainId()
+  const { chainId: chainIdFromAccount } = useAccount()
+  const config = useConfig()
 
-  useEffect(() => {
-    if (chain) {
-      setIsCorrecttNetwork(parseInt(chainId) === chain.id)
-    }
-  }, [chain, chainId])
+  const chainIdNum = chainIdFromAccount ?? chainIdFromHook
+  const chain = config.chains?.find((c: any) => c.id === chainIdNum)
+
+  const isCorrectNetwork = chainIdNum ? parseInt(chainId) === chainIdNum : false
 
   return {
     isCorrectNetwork,

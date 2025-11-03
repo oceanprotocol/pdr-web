@@ -1,9 +1,7 @@
 import styles from '@/styles/Wallet.module.css'
-import { currentConfig } from '@/utils/appconstants'
-import { networkProvider } from '@/utils/networkProvider'
-import { useWeb3Modal } from '@web3modal/react'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useChainId, useChains } from 'wagmi'
 import Button from '../elements/Button'
 
 export default function Wallet() {
@@ -13,28 +11,36 @@ export default function Wallet() {
   const [buttonText, setButtonText] = useState<string>('Connect Wallet')
 
   // Custom Hooks
-  const { chain } = useNetwork()
-  const { open } = useWeb3Modal()
+  const chainId = useChainId()
+  const chains = useChains()
+  const { openConnectModal } = useConnectModal()
+
   const { address, isConnected } = useAccount()
-  const { chainId } = currentConfig
 
   // Function to save network name
-  const saveNetworkName = useCallback<
-    (
-      chain: NonNullable<ReturnType<typeof useNetwork>['chain']>
-    ) => Promise<void>
-  >(async (chain) => {
-    const name = networkProvider.getNetworkName(chain.id)
-    setNetworkName(name)
+  const saveNetworkName = useCallback(async (chainIdNum: number) => {
+    try {
+      const name = chains.find((c: any) => c.id === chainIdNum)?.name
+      setNetworkName(name || `Chain ${chainIdNum}`)
+      setLoading(false)
+    } catch (error) {
+      console.warn('Failed to get network name for chain:', chainIdNum, error)
+      setNetworkName(`Chain ${chainIdNum}`)
+      setLoading(false)
+    }
   }, [])
 
   // useEffect to save network name and set loading state
+  // This should react to chain changes from the wallet
   useEffect(() => {
-    if (chain) {
-      saveNetworkName(chain)
-      setLoading(false)
+    // Only show network name when wallet is connected
+    if (isConnected && address && chainId && chainId > 0) {
+      saveNetworkName(chainId)
+    } else {
+      setLoading(true)
+      setNetworkName(undefined)
     }
-  }, [chain, saveNetworkName])
+  }, [chainId, isConnected, address, saveNetworkName])
 
   // useEffect to set button text based on address and connection status
   useEffect(() => {
@@ -49,12 +55,12 @@ export default function Wallet() {
   return (
     <div className={styles.container}>
       <div className={styles.walletInfoContainer}>
-        {!loading && chain && networkName && (
+        {!loading && isConnected && address && chainId && networkName && (
           <span className={styles.chainName}>{networkName}</span>
         )}
         <Button
           className={styles.button}
-          onClick={() => open()}
+          onClick={() => openConnectModal?.()}
           text={buttonText}
         />
       </div>

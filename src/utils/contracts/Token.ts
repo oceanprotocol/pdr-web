@@ -13,6 +13,15 @@ class Token {
     public signer: ethers.providers.JsonRpcSigner,
     public isSapphire: boolean = false
   ) {
+    // Validate address before creating contract
+    if (!address || address === '0x0' || address === ethers.constants.AddressZero) {
+      throw new Error(`Token: Invalid address provided: ${address}`)
+    }
+
+    if (!signer) {
+      throw new Error('Token: Signer is required')
+    }
+
     this.contractInstance = new ethers.Contract(
       address,
       IERC20ABI,
@@ -25,12 +34,23 @@ class Token {
   }
 
   async allowance(account: string, spender: string): Promise<string> {
+    // Validate addresses before making contract calls
+    if (!account || account === '0x0' || account === ethers.constants.AddressZero) {
+      throw new Error(`Token.allowance: Invalid account address: ${account}`)
+    }
+    if (!spender || spender === '0x0' || spender === ethers.constants.AddressZero) {
+      throw new Error(`Token.allowance: Invalid spender address: ${spender}`)
+    }
     const result = await this.contractInstance.allowance(account, spender)
 
     return result.toString()
   }
 
   async balanceOf(account: string): Promise<string> {
+    // Validate address before making contract call
+    if (!account || account === '0x0' || account === ethers.constants.AddressZero) {
+      throw new Error(`Token.balanceOf: Invalid account address: ${account}`)
+    }
     return await this.contractInstance.balanceOf(account)
   }
 
@@ -41,6 +61,10 @@ class Token {
     provider: ethers.providers.JsonRpcProvider
   ): Promise<ethers.providers.TransactionReceipt | null> {
     try {
+      // Validate spender address before approving
+      if (!spender || spender === '0x0' || spender === ethers.constants.AddressZero) {
+        throw new Error(`Token.approve: Invalid spender address: ${spender}`)
+      }
       // TODO - Gas estimation
       const gasPrice = await this.provider.getGasPrice()
       const gasLimit = await this.contractInstance

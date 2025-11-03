@@ -35,10 +35,29 @@ class NetworkProvider {
 
   async init() {
     try {
+      // Try to get network info without waiting for full network detection
       await this.provider.send('eth_accounts', [])
-      await this.provider._networkPromise
+      
+      // Wait for network promise with timeout
+      try {
+        await Promise.race([
+          this.provider._networkPromise,
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Network detection timeout')), 5000)
+          )
+        ])
+      } catch (networkError) {
+        // If network detection fails, try to get network explicitly
+        try {
+          await this.provider.getNetwork()
+        } catch (getNetworkError) {
+          console.warn('Network detection failed, but continuing with RPC URL:', getNetworkError)
+          // Continue anyway - we can still use the RPC URL
+        }
+      }
     } catch (e) {
-      console.log('Network Provider cannot be initialized', e)
+      console.warn('Network Provider initialization warning:', e)
+      // Don't throw - allow the app to continue
     }
   }
 
@@ -91,15 +110,39 @@ class NetworkProvider {
   getChainInfo(): Maybe<Chain> {
     if (!this.provider.network) return null
 
+    const chainId = this.provider.network.chainId
+    const rpcUrl = this.provider.connection.url
+
+    // Configure block explorers based on chain ID
+    let blockExplorers: Chain['blockExplorers'] = undefined
+    if (chainId === 23295) {
+      // Oasis Sapphire Testnet
+      blockExplorers = {
+        default: {
+          name: 'Oasis Sapphire Testnet Explorer',
+          url: 'https://testnet.explorer.sapphire.oasis.dev'
+        }
+      }
+    } else if (chainId === 23294) {
+      // Oasis Sapphire Mainnet
+      blockExplorers = {
+        default: {
+          name: 'Oasis Sapphire Explorer',
+          url: 'https://explorer.sapphire.oasis.io'
+        }
+      }
+    }
+
     return {
-      id: this.provider.network?.chainId,
+      id: chainId,
       name: this.getChainName(),
-      network: this.getChainName(),
+      network: this.getChainName().toLowerCase().replace(/\s+/g, '-'),
       nativeCurrency: this.getNativeCurrencyInfo(),
       rpcUrls: {
-        public: { http: [this.provider.connection.url] },
-        default: { http: [this.provider.connection.url] }
-      }
+        public: { http: [rpcUrl] },
+        default: { http: [rpcUrl] }
+      },
+      blockExplorers
     }
   }
 
