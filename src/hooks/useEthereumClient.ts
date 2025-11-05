@@ -105,7 +105,6 @@ function useEthereumClient() {
           {
             id: 23294,
             name: 'Oasis Sapphire',
-            network: 'sapphire',
             nativeCurrency: {
               name: 'Oasis Network',
               symbol: 'ROSE',
@@ -126,7 +125,6 @@ function useEthereumClient() {
           {
             id: 23295,
             name: 'Oasis Sapphire Testnet',
-            network: 'sapphire-testnet',
             nativeCurrency: {
               name: 'Oasis Network',
               symbol: 'ROSE',
@@ -147,7 +145,6 @@ function useEthereumClient() {
           {
             id: 8996,
             name: 'Ganache',
-            network: 'ganache',
             nativeCurrency: {
               name: 'Ganache Token',
               symbol: 'GNTK',

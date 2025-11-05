@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { Chain } from 'wagmi'
+import type { Chain } from 'wagmi/chains'
 import networksData from '../metadata/networks.json'
 import { Maybe } from './utils'
 
@@ -136,14 +136,13 @@ class NetworkProvider {
     return {
       id: chainId,
       name: this.getChainName(),
-      network: this.getChainName().toLowerCase().replace(/\s+/g, '-'),
       nativeCurrency: this.getNativeCurrencyInfo(),
       rpcUrls: {
         public: { http: [rpcUrl] },
         default: { http: [rpcUrl] }
       },
       blockExplorers
-    }
+    } as Chain
   }
 
   getNetworkName(chainId: number): string | undefined {

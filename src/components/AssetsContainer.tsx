@@ -48,7 +48,9 @@ export const AssetsContainer: React.FC = () => {
   return (
     <div
       className={styles.container}
-      ref={(ref) => (containerRef.current = ref)}
+      ref={(ref) => {
+        containerRef.current = ref
+      }}
     >
       <AssetTable contracts={contracts} />
     </div>

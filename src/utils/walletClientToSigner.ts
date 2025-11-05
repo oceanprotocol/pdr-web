@@ -1,10 +1,15 @@
 import { providers } from 'ethers'
-import { WalletClient } from 'wagmi'
+import type { WalletClient } from 'viem'
 
 export const walletClientToSigner = (
   walletClient: WalletClient
 ): providers.JsonRpcSigner => {
   const { account, chain, transport } = walletClient
+  
+  if (!chain || !account) {
+    throw new Error('WalletClient must have chain and account')
+  }
+  
   const network = {
     chainId: chain.id,
     name: chain.name,

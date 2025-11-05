@@ -58,16 +58,17 @@ export const UserProvider: React.FC<TUserContextProps> = ({ children }) => {
     ethers.utils.isAddress(oceanTokenAddress)
 
   const balanceResponse = useContractRead({
-    address: isValidOceanTokenAddress
-      ? (oceanTokenAddress as `0x${string}`)
-      : undefined,
+    ...(isValidOceanTokenAddress && isValidAddress
+      ? {
+          address: oceanTokenAddress as `0x${string}`,
+          args: [address as `0x${string}`] as const
+        }
+      : {}),
     abi: IERC20ABI,
     functionName: 'balanceOf',
-    args: isValidAddress ? [address as `0x${string}`] : undefined,
     chainId: parseInt(chainId),
-    enabled: isValidAddress && isValidOceanTokenAddress, // Only enable if both addresses are valid
-    onError(error) {
-      console.log('Error', error)
+    query: {
+      enabled: isValidAddress && isValidOceanTokenAddress
     }
   })
 
