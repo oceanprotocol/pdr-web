@@ -71,7 +71,11 @@ function App({ Component, pageProps }: AppProps) {
             <>
               <QueryClientProvider client={queryClient}>
                 <AppProvider wagmiConfig={wagmiConfig}>
-                  <RainbowKitProvider>
+                  <RainbowKitProvider
+                    modalSize="compact"
+                    initialChain={chains[0]}
+                    // Prevent auto-connection by not specifying any auto-connect settings
+                  >
                     <MainWrapper>
                       <Component {...pageProps} />
                     </MainWrapper>

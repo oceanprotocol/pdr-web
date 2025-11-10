@@ -1,6 +1,36 @@
 import { networkProvider } from '@/utils/networkProvider'
 import { Maybe } from '@/utils/utils'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import {
+  argentWallet,
+  backpackWallet,
+  binanceWallet,
+  bitgetWallet,
+  braveWallet,
+  coin98Wallet,
+  coreWallet,
+  enkryptWallet,
+  frameWallet,
+  frontierWallet,
+  imTokenWallet,
+  ledgerWallet,
+  metaMaskWallet,
+  mewWallet,
+  okxWallet,
+  omniWallet,
+  oneInchWallet,
+  oneKeyWallet,
+  phantomWallet,
+  rabbyWallet,
+  safeWallet,
+  safepalWallet,
+  tahoWallet,
+  talismanWallet,
+  tokenPocketWallet,
+  trustWallet,
+  xdefiWallet,
+  zerionWallet
+} from '@rainbow-me/rainbowkit/wallets'
 import { useEffect, useState } from 'react'
 import { http } from 'viem'
 import type { Chain } from 'wagmi/chains'
@@ -30,53 +60,82 @@ function useEthereumClient() {
       try {
         await networkProvider.init()
 
-        // Get network info - try multiple approaches
+        // Get network info - networkProvider.init() should have set it
         const provider = networkProvider.getProvider()
         let network = provider.network
 
-        // If network is not set, try to get it
+        // If network is still not set, try to get it with error handling
         if (!network) {
           try {
-            // Wait for network promise if available
-            if (provider._networkPromise) {
-              try {
-                await Promise.race([
-                  provider._networkPromise,
-                  new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Timeout')), 3000)
-                  )
-                ])
-                network = provider.network
-              } catch (timeoutError) {
-                // Continue without waiting
-              }
-            }
-
-            // If still no network, try explicit call
-            if (!network) {
-              try {
-                network = await provider.getNetwork()
-              } catch (getNetworkError) {
-                // If this fails, we'll use the RPC URL directly
-                console.warn(
-                  'Could not auto-detect network, using configured RPC URL'
+            // Try to get network, but don't fail if it doesn't work
+            network = (await Promise.race([
+              provider.getNetwork(),
+              new Promise((_, reject) =>
+                setTimeout(
+                  () => reject(new Error('Network detection timeout')),
+                  2000
                 )
-              }
-            }
+              )
+            ])) as any
           } catch (networkError) {
+            // Network detection failed - this is OK, we'll use chainInfo from env
             console.warn(
-              'Network detection issue, continuing with RPC URL:',
+              'Network auto-detection failed, using configured chain info:',
               networkError
             )
           }
         }
 
-        const chainInfo = networkProvider.getChainInfo()
+        // Get chain info - this should work even if network detection failed
+        let chainInfo = networkProvider.getChainInfo()
 
+        // If chainInfo is null, try to create it from environment
         if (!chainInfo) {
-          setStatus(EEthereumClientStatus.DISCONNECTED)
-          return
+          const env = process.env.NEXT_PUBLIC_ENV || 'barge'
+          let fallbackChainId: number
+          let fallbackRpcUrl: string
+
+          switch (env) {
+            case 'production':
+              fallbackChainId = 23294
+              fallbackRpcUrl = 'https://sapphire.oasis.io'
+              break
+            case 'staging':
+              fallbackChainId = 23295
+              fallbackRpcUrl = 'https://testnet.sapphire.oasis.dev'
+              break
+            case 'barge':
+            case 'development':
+            default:
+              fallbackChainId = 8996
+              fallbackRpcUrl =
+                process.env.NEXT_PUBLIC_DEV_GANACHE_HOST ||
+                'http://localhost:8545'
+          }
+
+          // Create fallback chain info
+          chainInfo = {
+            id: fallbackChainId,
+            name:
+              env === 'production'
+                ? 'Oasis Sapphire'
+                : env === 'staging'
+                ? 'Oasis Sapphire Testnet'
+                : 'Ganache',
+            nativeCurrency: {
+              name: 'Oasis Network',
+              symbol: 'ROSE',
+              decimals: 18
+            },
+            rpcUrls: {
+              default: { http: [fallbackRpcUrl] },
+              public: { http: [fallbackRpcUrl] }
+            }
+          } as Chain
         }
+
+        // Set chains with the chain info (either detected or fallback)
+        setChains([chainInfo])
 
         // Get RPC URL from chain info
         const rpcUrl = chainInfo.rpcUrls.default.http[0]
@@ -167,8 +226,9 @@ function useEthereumClient() {
           } as Chain
         ].filter((chain) => {
           // Include current chain and other supported chains
+          // chainInfo is guaranteed to be non-null at this point due to fallback logic above
           return (
-            chain.id === chainInfo.id ||
+            chain.id === chainInfo!.id ||
             chain.id === 23294 ||
             chain.id === 23295
           )
@@ -186,13 +246,98 @@ function useEthereumClient() {
         }, {} as Record<number, ReturnType<typeof http>>)
 
         try {
-          // Create config with ALL supported chains - this allows wagmi to detect network switches
+          // Get the current origin for proper deep link generation on mobile
+          // Ensure URL is properly formatted to avoid Safari "invalid address" errors
+          let appUrl: string | undefined
+          if (typeof window !== 'undefined') {
+            try {
+              // Use the full URL including protocol to ensure proper deep link generation
+              appUrl = window.location.origin
+              // Ensure the URL doesn't have trailing slashes or special characters that could break deep links
+              appUrl = appUrl.replace(/\/+$/, '')
+            } catch (e) {
+              console.warn('Failed to get app URL for deep links:', e)
+            }
+          }
+
+          // Build wallet list from scratch - DO NOT use getDefaultWallets
+          // We include only the wallets we explicitly want
+          // MetaMask is included but won't auto-connect since we're not using getDefaultWallets
+          const walletList = [
+            {
+              groupName: 'Popular',
+              wallets: [
+                () => metaMaskWallet({ projectId }),
+                () => tahoWallet() // Put Taho as second option
+              ]
+            },
+            {
+              groupName: 'DeFi Wallets',
+              wallets: [
+                () => rabbyWallet(),
+                () => zerionWallet({ projectId }),
+                () => oneInchWallet({ projectId }),
+                () => argentWallet({ projectId }),
+                () => xdefiWallet()
+              ]
+            },
+            {
+              groupName: 'Hardware Wallets',
+              wallets: [() => ledgerWallet({ projectId }), () => oneKeyWallet()]
+            },
+            {
+              groupName: 'Browser Wallets',
+              wallets: [
+                () => braveWallet(),
+                () => frameWallet(),
+                () => coreWallet({ projectId }),
+                () => enkryptWallet(),
+                () => frontierWallet({ projectId }),
+                () => talismanWallet()
+              ]
+            },
+            {
+              groupName: 'Mobile Wallets',
+              wallets: [
+                () => trustWallet({ projectId }),
+                () => imTokenWallet({ projectId }),
+                () => omniWallet({ projectId }),
+                () => okxWallet({ projectId }),
+                () => tokenPocketWallet({ projectId }),
+                () => safepalWallet({ projectId }),
+                () => coin98Wallet({ projectId })
+              ]
+            },
+            {
+              groupName: 'Exchange Wallets',
+              wallets: [
+                () => binanceWallet({ projectId }),
+                () => bitgetWallet({ projectId })
+              ]
+            },
+            {
+              groupName: 'Other Wallets',
+              wallets: [
+                () => mewWallet({ projectId }),
+                () => safeWallet(),
+                () => phantomWallet(),
+                () => backpackWallet()
+              ]
+            }
+          ]
+
+          // Use getDefaultConfig with our custom wallet list (NO MetaMask)
+          // This prevents any auto-connection to MetaMask
           const config = getDefaultConfig({
             appName: 'Predictoor',
             projectId,
             chains: supportedChains as [Chain, ...Chain[]],
             transports,
-            ssr: false
+            ssr: false,
+            appUrl,
+            appDescription: 'Predictoor - Decentralized Prediction Markets',
+            appIcon: appUrl ? `${appUrl}/favicon.ico` : undefined,
+            wallets: walletList as any
           }) as TWagmiConfig
 
           setWagmiConfig(config)

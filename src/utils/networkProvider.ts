@@ -30,30 +30,48 @@ class NetworkProvider {
     const networkURL =
       networkConfig[env as NetworkNames] || networkConfig['barge']
 
-    this.provider = new ethers.providers.JsonRpcProvider(networkURL)
+    // Create provider with skipFetchSetup to prevent automatic network detection
+    // We'll handle network detection manually in init()
+    this.provider = new ethers.providers.JsonRpcProvider(networkURL, {
+      name: 'custom',
+      chainId: this.getChainIdFromEnv(env)
+    })
+  }
+
+  private getChainIdFromEnv(env: string): number {
+    switch (env) {
+      case 'production':
+        return 23294 // Oasis Sapphire Mainnet
+      case 'staging':
+        return 23295 // Oasis Sapphire Testnet
+      case 'barge':
+      case 'development':
+        return 8996 // Ganache
+      default:
+        return 23295 // Default to testnet
+    }
   }
 
   async init() {
     try {
-      // Try to get network info without waiting for full network detection
-      await this.provider.send('eth_accounts', [])
-      
-      // Wait for network promise with timeout
+      // Try to detect network, but don't fail if it doesn't work
+      // The network will be set manually in getChainInfo() if detection fails
       try {
         await Promise.race([
-          this.provider._networkPromise,
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Network detection timeout')), 5000)
+          this.provider.getNetwork(),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Network detection timeout')),
+              3000
+            )
           )
         ])
-      } catch (networkError) {
-        // If network detection fails, try to get network explicitly
-        try {
-          await this.provider.getNetwork()
-        } catch (getNetworkError) {
-          console.warn('Network detection failed, but continuing with RPC URL:', getNetworkError)
-          // Continue anyway - we can still use the RPC URL
-        }
+      } catch (detectionError) {
+        // Network detection failed - this is OK, we'll use fallback in getChainInfo()
+        console.warn(
+          'Network auto-detection failed, will use fallback chain info:',
+          detectionError
+        )
       }
     } catch (e) {
       console.warn('Network Provider initialization warning:', e)
