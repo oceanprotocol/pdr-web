@@ -35,7 +35,9 @@ export default function SubscriptionDot({
     if (!address || !contractPrices) return
     const predictorInstance = getPredictorInstanceByAddress(contractAddress)
     predictorInstance?.getSubscriptions(address).then((resp) => {
-      setExpiryTimestamp(parseInt(ethers.utils.formatUnits(resp.expires, 0)))
+      if (resp) {
+        setExpiryTimestamp(parseInt(ethers.utils.formatUnits(resp.expires, 0)))
+      }
     })
   }
 

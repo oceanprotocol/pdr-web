@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { Chain } from 'wagmi'
+import type { Chain } from 'wagmi/chains'
 import networksData from '../metadata/networks.json'
 import { Maybe } from './utils'
 
@@ -30,15 +30,52 @@ class NetworkProvider {
     const networkURL =
       networkConfig[env as NetworkNames] || networkConfig['barge']
 
-    this.provider = new ethers.providers.JsonRpcProvider(networkURL)
+    // Create provider with skipFetchSetup to prevent automatic network detection
+    // We'll handle network detection manually in init()
+    this.provider = new ethers.providers.JsonRpcProvider(networkURL, {
+      name: 'custom',
+      chainId: this.getChainIdFromEnv(env)
+    })
+  }
+
+  private getChainIdFromEnv(env: string): number {
+    switch (env) {
+      case 'production':
+        return 23294 // Oasis Sapphire Mainnet
+      case 'staging':
+        return 23295 // Oasis Sapphire Testnet
+      case 'barge':
+      case 'development':
+        return 8996 // Ganache
+      default:
+        return 23295 // Default to testnet
+    }
   }
 
   async init() {
     try {
-      await this.provider.send('eth_accounts', [])
-      await this.provider._networkPromise
+      // Try to detect network, but don't fail if it doesn't work
+      // The network will be set manually in getChainInfo() if detection fails
+      try {
+        await Promise.race([
+          this.provider.getNetwork(),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Network detection timeout')),
+              3000
+            )
+          )
+        ])
+      } catch (detectionError) {
+        // Network detection failed - this is OK, we'll use fallback in getChainInfo()
+        console.warn(
+          'Network auto-detection failed, will use fallback chain info:',
+          detectionError
+        )
+      }
     } catch (e) {
-      console.log('Network Provider cannot be initialized', e)
+      console.warn('Network Provider initialization warning:', e)
+      // Don't throw - allow the app to continue
     }
   }
 
@@ -91,16 +128,39 @@ class NetworkProvider {
   getChainInfo(): Maybe<Chain> {
     if (!this.provider.network) return null
 
-    return {
-      id: this.provider.network?.chainId,
-      name: this.getChainName(),
-      network: this.getChainName(),
-      nativeCurrency: this.getNativeCurrencyInfo(),
-      rpcUrls: {
-        public: { http: [this.provider.connection.url] },
-        default: { http: [this.provider.connection.url] }
+    const chainId = this.provider.network.chainId
+    const rpcUrl = this.provider.connection.url
+
+    // Configure block explorers based on chain ID
+    let blockExplorers: Chain['blockExplorers'] = undefined
+    if (chainId === 23295) {
+      // Oasis Sapphire Testnet
+      blockExplorers = {
+        default: {
+          name: 'Oasis Sapphire Testnet Explorer',
+          url: 'https://testnet.explorer.sapphire.oasis.dev'
+        }
+      }
+    } else if (chainId === 23294) {
+      // Oasis Sapphire Mainnet
+      blockExplorers = {
+        default: {
+          name: 'Oasis Sapphire Explorer',
+          url: 'https://explorer.sapphire.oasis.io'
+        }
       }
     }
+
+    return {
+      id: chainId,
+      name: this.getChainName(),
+      nativeCurrency: this.getNativeCurrencyInfo(),
+      rpcUrls: {
+        public: { http: [rpcUrl] },
+        default: { http: [rpcUrl] }
+      },
+      blockExplorers
+    } as Chain
   }
 
   getNetworkName(chainId: number): string | undefined {

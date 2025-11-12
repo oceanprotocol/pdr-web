@@ -4,8 +4,9 @@ import Button from '@/elements/Button'
 import { useIsCorrectChain } from '@/hooks/useIsCorrectChain'
 import { currentConfig } from '@/utils/appconstants'
 import { checkForBannerMessage } from '@/utils/utils'
+import { useChainModal } from '@rainbow-me/rainbowkit'
 import { useEffect, useState } from 'react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useChains, useSwitchChain } from 'wagmi'
 import styles from '../styles/Banner.module.css'
 const chainId = currentConfig.chainId
 
@@ -25,21 +26,43 @@ export default function Banner() {
     type: States.WARNING
   })
   const { userSignature } = useUserContext()
-  const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
+  const { openChainModal } = useChainModal()
   const { address } = useAccount()
-  const { chains } = useNetwork()
   const { getUserSignature } = usePredictoorsContext()
-  const { chain, isCorrectNetwork } = useIsCorrectChain()
+  const { isCorrectNetwork } = useIsCorrectChain()
+  const chains = useChains()
+  const { isPending: isLoading, variables } = useSwitchChain()
+  const pendingChainId = variables?.chainId
 
   useEffect(() => {
-    setState(checkForBannerMessage(address, isCorrectNetwork))
-    if (!userSignature)
+    // Check for wrong network first (has higher priority than signature)
+    if (address && !isCorrectNetwork) {
+      const expectedChain = chains.find((c) => c.id === parseInt(chainId))
+      const chainName = expectedChain?.name
+      const message = chainName
+        ? `Connected to wrong network! Please switch to ${chainName}`
+        : `Connected to wrong network! Please switch to chain ID ${chainId}`
+      setState({
+        message,
+        type: States.WARNING
+      })
+      return
+    }
+
+    // Then check for missing signature
+    if (!userSignature && address) {
       setState({
         message:
           'Signature not provided. Signature is needed to authorize and fetch private predicitons',
         type: States.ERROR
       })
-  }, [address, isCorrectNetwork, userSignature])
+      return
+    }
+
+    // Default check
+    const bannerState = checkForBannerMessage(address, isCorrectNetwork)
+    setState(bannerState)
+  }, [address, isCorrectNetwork, userSignature, chainId, chains])
 
   if (!state.message) return null
   return (
@@ -52,17 +75,22 @@ export default function Banner() {
       {!userSignature && (
         <Button onClick={() => getUserSignature()} text="Provide Signature" />
       )}
-      {chain && !isCorrectNetwork && (
+      {!isCorrectNetwork && address && (
         <Button
-          disabled={!switchNetwork || isCorrectNetwork}
-          onClick={() => switchNetwork?.(parseInt(chainId))}
+          disabled={!openChainModal}
+          onClick={() => openChainModal?.()}
           className={styles.switchNetwork}
           text={
             isLoading && pendingChainId === parseInt(chainId)
-              ? 'Switching to Ethereum...'
-              : `Switch Network to ${
-                  chains.find((c) => c.id == parseInt(chainId))?.name
-                }`
+              ? 'Switching...'
+              : (() => {
+                  const expectedChain = chains.find(
+                    (c) => c.id === parseInt(chainId)
+                  )
+                  return expectedChain?.name
+                    ? `Switch Network to ${expectedChain.name}`
+                    : `Switch Network`
+                })()
           }
         />
       )}
