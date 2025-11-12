@@ -1,5 +1,7 @@
 import '@/styles/globals.css'
-import { Web3Modal } from '@web3modal/react'
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import '@rainbow-me/rainbowkit/styles.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { AppProps } from 'next/app'
 import { Inter } from 'next/font/google'
 import { NotificationContainer } from 'react-notifications'
@@ -17,6 +19,9 @@ import { PostHogProvider } from 'posthog-js/react'
 import { useEffect, useMemo } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
+
+// Create a query client for wagmi v2
+const queryClient = new QueryClient()
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
 if (
@@ -41,10 +46,9 @@ if (
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
-  const { wagmiConfig, ethereumClient, w3mProjectId, clientStatus } =
-    useEthereumClient()
+  const { wagmiConfig, chains, clientStatus } = useEthereumClient()
 
-  const configsStatus = wagmiConfig && ethereumClient && w3mProjectId
+  const configsStatus = wagmiConfig && chains.length > 0
 
   useEffect(() => {
     // Track page views
@@ -57,6 +61,7 @@ function App({ Component, pageProps }: AppProps) {
   }, [])
 
   const isHome = useMemo(() => router.pathname === '/', [router.pathname])
+
   return (
     <div className={inter.className}>
       <PostHogProvider client={posthog}>
@@ -64,16 +69,19 @@ function App({ Component, pageProps }: AppProps) {
         {configsStatus &&
           clientStatus !== EEthereumClientStatus.DISCONNECTED && (
             <>
-              <AppProvider wagmiConfig={wagmiConfig}>
-                <MainWrapper>
-                  <Component {...pageProps} />
-                </MainWrapper>
-              </AppProvider>
-
-              <Web3Modal
-                projectId={w3mProjectId}
-                ethereumClient={ethereumClient}
-              />
+              <QueryClientProvider client={queryClient}>
+                <AppProvider wagmiConfig={wagmiConfig}>
+                  <RainbowKitProvider
+                    modalSize="compact"
+                    initialChain={chains[0]}
+                    // Prevent auto-connection by not specifying any auto-connect settings
+                  >
+                    <MainWrapper>
+                      <Component {...pageProps} />
+                    </MainWrapper>
+                  </RainbowKitProvider>
+                </AppProvider>
+              </QueryClientProvider>
             </>
           )}
         {clientStatus === EEthereumClientStatus.DISCONNECTED && (

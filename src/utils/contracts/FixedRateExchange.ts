@@ -9,6 +9,15 @@ class FixedRateExchange {
     public address: string,
     public provider: ethers.providers.Provider
   ) {
+    // Validate address before creating contract
+    if (
+      !address ||
+      address === '0x0' ||
+      address === ethers.constants.AddressZero
+    ) {
+      throw new Error(`FixedRateExchange: Invalid address provided: ${address}`)
+    }
+
     this.instance = new ethers.Contract(
       this.address,
       FixedRateExchangeABI,
@@ -20,6 +29,14 @@ class FixedRateExchange {
     exchangeId: string
   ): Promise<TCalcBaseInGivenOutDTResult | Error> {
     try {
+      // Validate exchangeId before making the call
+      if (
+        !exchangeId ||
+        exchangeId ===
+          '0x0000000000000000000000000000000000000000000000000000000000000000'
+      ) {
+        return new Error('Invalid exchange ID')
+      }
       const result = (await this.instance.calcBaseInGivenOutDT(
         exchangeId,
         ethers.utils.parseEther('1'),

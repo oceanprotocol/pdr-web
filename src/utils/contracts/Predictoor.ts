@@ -67,40 +67,102 @@ class Predictoor {
         )
 
     // Get stake token and create new token instance
-    const stakeToken = await this.instance.connect(this.signer).stakeToken()
+    try {
+      const stakeToken = await this.instance.connect(this.signer).stakeToken()
 
-    this.token = new Token(
-      stakeToken,
-      this.provider,
-      this.signer,
-      this.isSapphire
-    )
+      this.token = new Token(
+        stakeToken,
+        this.provider,
+        this.signer,
+        this.isSapphire
+      )
+    } catch (error: any) {
+      console.error('Predictoor: Failed to get stake token:', error)
+      return
+    }
 
     // Get exchanges and log fixed rates
     const fixedRates = await this.getExchanges()
 
     // If there are fixed rates, set exchange and exchangeId
-    if (fixedRates) {
+    if (fixedRates && fixedRates.length > 0) {
       const [fixedRateAddress, exchangeId]: [string, BigNumber] = fixedRates[0]
-      const exchange = new FixedRateExchange(fixedRateAddress, this.provider)
-      this.FRE = exchange
-      this.exchangeId = exchangeId
+
+      // Validate fixed rate address before creating exchange
+      if (
+        fixedRateAddress &&
+        fixedRateAddress !== '0x0' &&
+        fixedRateAddress !== ethers.constants.AddressZero
+      ) {
+        try {
+          const exchange = new FixedRateExchange(
+            fixedRateAddress,
+            this.provider
+          )
+          this.FRE = exchange
+          this.exchangeId = exchangeId
+        } catch (error: any) {
+          console.error(
+            'Predictoor: Failed to create FixedRateExchange:',
+            error
+          )
+        }
+      }
     }
   }
   // Check if subscription is valid
   async isValidSubscription(address: string): Promise<boolean> {
-    return this.instance?.isValidSubscription(address)
+    try {
+      return await this.instance?.isValidSubscription(address)
+    } catch (e: any) {
+      // Handle contract revert errors gracefully
+      if (
+        e.code === 'CALL_EXCEPTION' ||
+        e.reason === 'missing revert data' ||
+        e.error?.code === 'CALL_EXCEPTION'
+      ) {
+        // Contract call reverted, subscription likely doesn't exist
+        return false
+      }
+      console.error('Predictoor.isValidSubscription error:', e.message || e)
+      return false
+    }
   }
   // Get subscriptions
-  async getSubscriptions(address: string): Promise<TGetSubscriptions> {
-    return this.instance?.subscriptions(address)
+  async getSubscriptions(address: string): Promise<TGetSubscriptions | null> {
+    try {
+      return await this.instance?.subscriptions(address)
+    } catch (e: any) {
+      // Handle contract revert errors gracefully
+      if (
+        e.code === 'CALL_EXCEPTION' ||
+        e.reason === 'missing revert data' ||
+        e.error?.code === 'CALL_EXCEPTION'
+      ) {
+        // Contract call reverted, user likely doesn't have a subscription
+        // Suppress noisy console errors for expected contract reverts
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(
+            `Predictoor: Contract call reverted for subscriptions(${address}). User may not have a subscription.`
+          )
+        }
+        return null
+      }
+      // Log unexpected errors
+      console.error('Predictoor.getSubscriptions error:', e.message || e)
+      return null
+    }
   }
 
   // Calculate provider fee
   async getCalculatedProviderFee(
     user: ethers.providers.JsonRpcSigner
   ): Promise<Maybe<TProviderFee>> {
-    const address = user._address
+    // Get address properly using getAddress() to avoid null errors
+    const address = await user.getAddress()
+    if (!address) {
+      throw new Error('Unable to get address from signer')
+    }
     const providerData = JSON.stringify({ timeout: 0 })
     const providerFeeToken = ethers.constants.AddressZero
     const providerFeeAmount = 0
@@ -139,14 +201,20 @@ class Predictoor {
   async getOrderParams(address: string, user: ethers.providers.JsonRpcSigner) {
     const providerFee = await this.getCalculatedProviderFee(user)
     if (!providerFee) return null
+
+    // Validate publishMarketFeeAddress
+    const publishMarketFeeAddress =
+      this.details.publishMarketFeeAddress || ethers.constants.AddressZero
+
     return {
       consumer: address,
       serviceIndex: 0,
       _providerFee: providerFee,
       _consumeMarketFee: {
-        consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
-        consumeMarketFeeToken: this.details.publishMarketFeeToken,
-        consumeMarketFeeAmount: this.details.publishMarketFeeAmount
+        consumeMarketFeeAddress: publishMarketFeeAddress,
+        consumeMarketFeeToken:
+          this.details.publishMarketFeeToken || ethers.constants.AddressZero,
+        consumeMarketFeeAmount: this.details.publishMarketFeeAmount || 0
       }
     }
   }
@@ -161,7 +229,7 @@ class Predictoor {
       if (!this.FRE || !this.token || !this.instanceWrite) {
         return Error('Assert FRE and token requirements.')
       }
-      const address = user._address
+      const address = await user.getAddress()
       const orderParams = await this.getOrderParams(address, user)
       if (!orderParams) return Error('Assert order parameters.')
       const freParams = {
@@ -185,8 +253,6 @@ class Predictoor {
       //}
       //const gasLimit = (await networkProvider.getProvider().getBlock('latest'))
       //  .gasLimit
-
-      const currentNonce = await user.getTransactionCount()
 
       // Execute transaction and wait for receipt
       const tx = await this.instanceWrite
@@ -282,40 +348,40 @@ class Predictoor {
   async buyAndStartSubscription(
     user: ethers.providers.JsonRpcSigner
   ): Promise<ethers.ContractReceipt | Error | null> {
-    try {
-      const priceInfo = await this.getContractPrice()
+    const priceInfo = await this.getContractPrice()
 
-      if (priceInfo instanceof Error || !this.token) {
-        throw new Error('Error getting price')
-      }
-
-      const { formattedBaseTokenAmount, baseTokenAmount } = priceInfo
-      const address = user._address
-      const aprrovedTokenAmount = await this.token.allowance(
-        address,
-        this.address
-      )
-
-      if (
-        ethers.utils.formatEther(aprrovedTokenAmount) <
-        ethers.utils.formatEther(baseTokenAmount)
-      ) {
-        await this.token.approve(
-          user,
-          this.address || '',
-          ethers.utils.formatEther(baseTokenAmount),
-          this.provider
-        )
-      }
-
-      return await this.buyFromFreAndOrder(
-        user,
-        this.exchangeId?.toString(),
-        formattedBaseTokenAmount
-      )
-    } catch (e: any) {
-      throw e
+    if (priceInfo instanceof Error || !this.token) {
+      throw new Error('Error getting price')
     }
+
+    const { formattedBaseTokenAmount, baseTokenAmount } = priceInfo
+    // Get address properly using getAddress() to avoid null errors
+    const address = await user.getAddress()
+    if (!address) {
+      throw new Error('Unable to get address from signer')
+    }
+    const aprrovedTokenAmount = await this.token.allowance(
+      address,
+      this.address
+    )
+
+    if (
+      ethers.utils.formatEther(aprrovedTokenAmount) <
+      ethers.utils.formatEther(baseTokenAmount)
+    ) {
+      await this.token.approve(
+        user,
+        this.address,
+        ethers.utils.formatEther(baseTokenAmount),
+        this.provider
+      )
+    }
+
+    return await this.buyFromFreAndOrder(
+      user,
+      this.exchangeId?.toString(),
+      formattedBaseTokenAmount
+    )
   }
   // Start order
   startOrder(): Promise<ethers.ContractReceipt> {
