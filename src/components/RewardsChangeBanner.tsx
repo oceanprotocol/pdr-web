@@ -1,7 +1,7 @@
 import { CustomBanner } from '@/components/CustomBanner'
 import styles from '../styles/Banner.module.css'
 
-export const DATA_FARMING_DOCS_URL =
+export const BLOGPOST_URL =
   'https://docs.oceanprotocol.com/data-farming/predictoordf'
 
 export default function RewardsChangeBanner() {
@@ -9,15 +9,15 @@ export default function RewardsChangeBanner() {
     <CustomBanner bannerType="pink">
       <span className={styles.text}>
         <span className={styles.fw600}>
-          Predictoor Data Farming rewards have changed.
+          Predictoor will be stopped on December 3rd, 2026.
         </span>{' '}
         <a
           className={styles.link}
-          href={DATA_FARMING_DOCS_URL}
+          href={BLOGPOST_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Read the docs for more details
+          Read the blogpost for more details
         </a>
       </span>
     </CustomBanner>
